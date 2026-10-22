@@ -13,6 +13,8 @@ dependencies = [
     "httpx[socks]>=0.28,<1",
     "pydantic-settings>=2.8,<3",
     "pdfplumber>=0.11,<1",
+    "rank-bm25>=0.2.2,<0.3",
+    "streamlit>=1.45,<2",
 ]
 
 [project.scripts]
@@ -27,6 +29,7 @@ dev = [
     "import-linter>=2.2,<3",
     "pip-audit>=2.9,<3",
     "reportlab>=4,<5",
+    "playwright==1.56.0",
 ]
 
 [tool.hatch.build.targets.wheel]
@@ -34,8 +37,8 @@ packages = ["src/agro_rag", "src/agro_rag_ui"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-addopts = "-ra --strict-markers"
-markers = ["integration_live: requires explicit opt-in and external providers"]
+addopts = "-ra --strict-markers -m 'not e2e'"
+markers = ["e2e: real browser and local processes", "integration_live: requires explicit opt-in and external providers"]
 
 [tool.coverage.run]
 branch = true
@@ -72,3 +75,7 @@ name = "Frontend solo HTTP"
 type = "forbidden"
 source_modules = ["agro_rag_ui"]
 forbidden_modules = ["agro_rag"]
+
+[[tool.mypy.overrides]]
+module = ["rank_bm25"]
+ignore_missing_imports = true

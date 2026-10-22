@@ -1,0 +1,50 @@
+FFF                                                                      [100%]
+=================================== FAILURES ===================================
+____________ test_search_crop_filter_empty_and_accent_normalization ____________
+
+    def test_search_crop_filter_empty_and_accent_normalization():
+        a = evidence('a', 'Tomate: riego durante cuajado de frutos.')
+        b = evidence('b', 'Lechuga: humedad constante.', crop='lettuce')
+>       r = retriever([a, b])
+            ^^^^^^^^^^^^^^^^^
+
+tests/unit/test_retrieval.py:21: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+items = [Evidence(evidence_id='a', corpus_version='v1', source_id='A', title='Manual', edition='2026', source_url='https://exa...Lechuga: humedad constante.', original_text='Lechuga: humedad constante.', start=0, end=27, transformation='verbatim')]
+
+    def retriever(items):
+>       from agro_rag.infrastructure.retrieval import LexicalRetriever
+E       ModuleNotFoundError: No module named 'agro_rag.infrastructure.retrieval'
+
+tests/unit/test_retrieval.py:14: ModuleNotFoundError
+________________ test_source_cap_and_cache_do_not_leak_versions ________________
+
+    def test_source_cap_and_cache_do_not_leak_versions():
+        items = [evidence(str(i), 'riego tomate', source='A') for i in range(5)]
+        items.append(evidence('z', 'riego tomate', source='B'))
+>       r = retriever(items)
+            ^^^^^^^^^^^^^^^^
+
+tests/unit/test_retrieval.py:32: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+items = [Evidence(evidence_id='0', corpus_version='v1', source_id='A', title='Manual', edition='2026', source_url='https://exa...'Riego', crop='tomato', text='riego tomate', original_text='riego tomate', start=0, end=12, transformation='verbatim')]
+
+    def retriever(items):
+>       from agro_rag.infrastructure.retrieval import LexicalRetriever
+E       ModuleNotFoundError: No module named 'agro_rag.infrastructure.retrieval'
+
+tests/unit/test_retrieval.py:14: ModuleNotFoundError
+__________________ test_rrf_is_stable_and_fuses_duplicate_ids __________________
+
+    def test_rrf_is_stable_and_fuses_duplicate_ids():
+>       from agro_rag.application.retrieval import reciprocal_rank_fusion
+E       ModuleNotFoundError: No module named 'agro_rag.application.retrieval'
+
+tests/unit/test_retrieval.py:41: ModuleNotFoundError
+=========================== short test summary info ============================
+FAILED tests/unit/test_retrieval.py::test_search_crop_filter_empty_and_accent_normalization
+FAILED tests/unit/test_retrieval.py::test_source_cap_and_cache_do_not_leak_versions
+FAILED tests/unit/test_retrieval.py::test_rrf_is_stable_and_fuses_duplicate_ids
+3 failed in 0.03s

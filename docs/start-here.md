@@ -1,3 +1,9 @@
+# Estado actual y próxima sesión
+
+La base y el corpus ya se implementaron. Para ejecutar la primera versión, seguir [run-local](run-local.md). Revisar PR #4 y su CI antes de continuar; no repetir bootstrap ni reemplazar archivos del clon.
+
+Próximas tareas: configurar y probar un modelo real; ampliar corpus revisado; integrar recuperación semántica/reranker; benchmark. Conservar TDD y dependencias por PR. Las instrucciones iniciales debajo son el plan histórico y no deben ejecutarse de nuevo sobre la versión actual.
+
 # Primera sesión de desarrollo
 
 ## Resultado esperado

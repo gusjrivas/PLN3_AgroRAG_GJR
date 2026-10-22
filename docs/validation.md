@@ -20,3 +20,5 @@ Fecha: 21/10/2026 (America/Buenos_Aires).
 Esta sección registra la validación inicial de planificación y formato. El avance posterior de Engram se registra en [engram-setup](evidence/engram-setup.md). No se ejecutaron tests de backend/frontend porque todavía no existen. No se instalaron Engram ni dependencias del producto en la notebook. No se descargó/indexó el corpus del TP ni se generaron métricas científicas. El usuario creó el repositorio remoto independiente; su existencia y estado vacío se verificaron antes de preparar la carga.
 
 La carga inicial adapta la guía de inicio para clonar el nuevo repositorio. La publicación se verifica contra los objetos Git remotos después del commit. No se atribuye aprobación académica a esta revisión técnica.
+
+El manifiesto del paquete documental inicial se conserva como histórico en `docs/evidence/planning-package-manifest.json`; sus hashes corresponden a aquella entrega, no al código evolutivo actual.

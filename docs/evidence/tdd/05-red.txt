@@ -1,0 +1,115 @@
+FFFFF                                                                    [100%]
+=================================== FAILURES ===================================
+_________________ test_http_client_uses_key_and_query_contract _________________
+
+    def test_http_client_uses_key_and_query_contract():
+>       from agro_rag_ui.client import ApiClient
+E       ModuleNotFoundError: No module named 'agro_rag_ui.client'
+
+tests/ui/test_client.py:6: ModuleNotFoundError
+____________________ test_backend_error_does_not_leak_body _____________________
+
+    def test_backend_error_does_not_leak_body():
+>       from agro_rag_ui.client import ApiClient,ApiError
+E       ModuleNotFoundError: No module named 'agro_rag_ui.client'
+
+tests/ui/test_client.py:19: ModuleNotFoundError
+___________ test_preview_shows_provenance_without_duplicate_request ____________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7feca313f080>
+
+    def test_preview_shows_provenance_without_duplicate_request(monkeypatch):
+>       from agro_rag_ui.client import ApiClient
+E       ModuleNotFoundError: No module named 'agro_rag_ui.client'
+
+tests/ui/test_ui.py:7: ModuleNotFoundError
+____________________ test_missing_key_does_not_send_request ____________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7feca30a2f90>
+
+    def test_missing_key_does_not_send_request(monkeypatch):
+        monkeypatch.delenv('AGRO_READER_KEY',raising=False)
+>       app=AppTest.from_file('src/agro_rag_ui/app.py').run()
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/ui/test_ui.py:28: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+cls = <class 'streamlit.testing.v1.app_test.AppTest'>
+script_path = PosixPath('src/agro_rag_ui/app.py'), default_timeout = 3
+
+    @classmethod
+    def from_file(
+        cls, script_path: str | Path, *, default_timeout: float = 3
+    ) -> AppTest:
+        """
+        Create an ``AppTest`` for an app entrypoint defined in a file.
+    
+        This option is most convenient for CI workflows and testing of
+        published apps. The script must be executable on its own and so must
+        contain all necessary imports. For a multipage app, pass the main
+        script that you would supply to ``streamlit run``. To test a
+        file-based child page, initialize from the main script and use
+        ``AppTest.switch_page()``.
+    
+        Parameters
+        ----------
+        script_path: str | Path
+            Path to the app's entrypoint script. An absolute path is used as
+            given. A relative path is resolved against the Python file that
+            calls ``AppTest.from_file()``.
+    
+        default_timeout: float
+            Default time in seconds before a script run is timed out. Can be
+            overridden for individual ``.run()`` calls.
+    
+        Returns
+        -------
+        AppTest
+            A simulated Streamlit app for testing. The simulated app can be
+            executed via ``.run()``.
+    
+        Raises
+        ------
+        FileNotFoundError
+            If ``script_path`` does not point to an existing file.
+    
+        Examples
+        --------
+        Initialize a multipage app from its entrypoint, then switch to a page:
+    
+        >>> at = AppTest.from_file("app.py").run()
+        >>> at.switch_page("pages/settings.py").run()
+        """
+        script_path = Path(script_path)
+        if script_path.is_absolute():
+            path = script_path
+        else:
+            stack = traceback.StackSummary.extract(traceback.walk_stack(None))
+            caller_file = Path(stack[1].filename)
+            path = caller_file.parent / script_path
+    
+        if not path.is_file():
+>           raise FileNotFoundError(
+                f"AppTest script not found at {path.resolve()}. Relative paths are "
+                "resolved against the file that calls AppTest.from_file()."
+            )
+E           FileNotFoundError: AppTest script not found at /workspace/scratch/23020672a295/agro-dev/tests/ui/src/agro_rag_ui/app.py. Relative paths are resolved against the file that calls AppTest.from_file().
+
+.venv/lib/python3.12/site-packages/streamlit/testing/v1/app_test.py:475: FileNotFoundError
+________________ test_http_failure_is_visible_and_not_an_answer ________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7feca3a4df70>
+
+    def test_http_failure_is_visible_and_not_an_answer(monkeypatch):
+>       from agro_rag_ui.client import ApiClient,ApiError
+E       ModuleNotFoundError: No module named 'agro_rag_ui.client'
+
+tests/ui/test_ui.py:34: ModuleNotFoundError
+=========================== short test summary info ============================
+FAILED tests/ui/test_client.py::test_http_client_uses_key_and_query_contract
+FAILED tests/ui/test_client.py::test_backend_error_does_not_leak_body - Modul...
+FAILED tests/ui/test_ui.py::test_preview_shows_provenance_without_duplicate_request
+FAILED tests/ui/test_ui.py::test_missing_key_does_not_send_request - FileNotF...
+FAILED tests/ui/test_ui.py::test_http_failure_is_visible_and_not_an_answer - ...
+5 failed in 0.70s

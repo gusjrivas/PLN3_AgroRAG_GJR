@@ -1,0 +1,32 @@
+.....F                                                                   [100%]
+=================================== FAILURES ===================================
+__________________ test_clarification_keeps_original_question __________________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7fd3244d2420>
+
+    def test_clarification_keeps_original_question(monkeypatch):
+        from agro_rag_ui.client import ApiClient
+        monkeypatch.setenv('AGRO_READER_KEY','test-reader-token-123456')
+        calls=[]
+        def query(self,question,crop,context,clarification=None):
+            calls.append((question,clarification))
+            return {'status':'needs_clarification','missing_information':['¿Qué etapa?'],
+                    'citations':[],'limitations':[]}
+        monkeypatch.setattr(ApiClient,'query',query)
+        app=AppTest.from_file(str(Path('src/agro_rag_ui/app.py').resolve())).run()
+        app.sidebar.radio[0].set_value('Respuesta verificada').run()
+        app.text_area[0].set_value('¿Cuánto riego?')
+        app.button[0].click().run()
+>       assert len(app.text_area)==2
+E       AssertionError: assert 1 == 2
+E        +  where 1 = len(WidgetList(_list=[TextArea(_value=InitialValue(), label='¿Qué querés saber?', max_chars=2000, placeholder='¿Cuándo es crítico evitar la falta de agua en tomate?', form_id='query')]))
+E        +    where WidgetList(_list=[TextArea(_value=InitialValue(), label='¿Qué querés saber?', max_chars=2000, placeholder='¿Cuándo es crítico evitar la falta de agua en tomate?', form_id='query')]) = AppTest(\n    _script_path='/workspace/scratch/23020672a295/agro-dev/src/agro_rag_ui/app.py',\n    default_timeout=3,\n  ...              1: Caption()\n            }\n        ),\n        2: SpecialBlock(\n            type='event'\n        )\n    }\n).text_area
+
+tests/ui/test_ui.py:74: AssertionError
+----------------------------- Captured stderr call -----------------------------
+2026-10-21 22:01:58.744 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+------------------------------ Captured log call -------------------------------
+WARNING  streamlit.runtime.scriptrunner_utils.script_run_context:script_run_context.py:508 Thread 'MainThread': missing ScriptRunContext! This warning can be ignored when running in bare mode.
+=========================== short test summary info ============================
+FAILED tests/ui/test_ui.py::test_clarification_keeps_original_question - Asse...
+1 failed, 5 passed in 0.95s

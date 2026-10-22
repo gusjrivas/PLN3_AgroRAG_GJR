@@ -1,6 +1,6 @@
 # Tasks: API y colaboración de dos agentes
 
-Responsable: Backend/agentes. Dependencias: 03-retrieval. Todas las tareas están pendientes de ejecución.
+Responsable: Backend/agentes. Dependencias: 03-retrieval. Primera implementación parcial en PR #4. Evidencia: docs/evidence/tdd/03-05-first-version.md. Mantener casillas abiertas hasta cubrir todos los escenarios, incluidos proveedores reales, índice híbrido y hardening pendientes.
 
 ## 1. Preparación
 

@@ -1,6 +1,6 @@
 # Tasks: Recuperación híbrida y reranking evaluables
 
-Responsable: RAG/datos. Dependencias: 02-corpus. Todas las tareas están pendientes de ejecución.
+Responsable: RAG/datos. Dependencias: 02-corpus. Primera implementación parcial en PR #4. Evidencia: docs/evidence/tdd/03-05-first-version.md. Mantener casillas abiertas hasta cubrir todos los escenarios, incluidos proveedores reales, índice híbrido y hardening pendientes.
 
 ## 1. Preparación
 

@@ -1,0 +1,170 @@
+   Building pln3-agro-rag @ file:///workspace/scratch/23020672a295/agro-dev
+      Built pln3-agro-rag @ file:///workspace/scratch/23020672a295/agro-dev
+Uninstalled 1 package in 0.32ms
+Installed 1 package in 0.77ms
+FFFFFFFFFFF...                                                           [100%]
+=================================== FAILURES ===================================
+________________ test_two_agents_approve_only_existing_evidence ________________
+
+    def test_two_agents_approve_only_existing_evidence():
+        model = FakeModel([draft(), {'decision': 'approve', 'feedback': ''}])
+>       result = execute(model)
+                 ^^^^^^^^^^^^^^
+
+tests/unit/test_query.py:35: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+model = <test_query.FakeModel object at 0x7fd14c01d0d0>
+question = 'riego lechuga'
+
+    def execute(model, question='riego lechuga'):
+>       from agro_rag.application.query import QueryService
+E       ModuleNotFoundError: No module named 'agro_rag.application.query'
+
+tests/unit/test_query.py:28: ModuleNotFoundError
+_____________________ test_revision_is_dynamic_and_bounded _____________________
+
+    def test_revision_is_dynamic_and_bounded():
+        model = FakeModel([draft(), {'decision': 'revise', 'feedback': 'Precisar cultivo'},
+                           draft(), {'decision': 'revise', 'feedback': 'Todavía incorrecto'}])
+>       result = execute(model)
+                 ^^^^^^^^^^^^^^
+
+tests/unit/test_query.py:47: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+model = <test_query.FakeModel object at 0x7fd14c036f60>
+question = 'riego lechuga'
+
+    def execute(model, question='riego lechuga'):
+>       from agro_rag.application.query import QueryService
+E       ModuleNotFoundError: No module named 'agro_rag.application.query'
+
+tests/unit/test_query.py:28: ModuleNotFoundError
+__________ test_invalid_model_evidence_is_operational_error[output0] ___________
+
+output = {'status': 'answered', 'claims': [{'text': 'Mantener humedad constante.', 'evidence_ids': ['invented']}], 'missing_information': []}
+
+    @pytest.mark.parametrize('output', [draft(('invented',)), draft(()), {'status':'answered','claims':[]}])
+    def test_invalid_model_evidence_is_operational_error(output):
+>       from agro_rag.application.query import UpstreamError
+E       ModuleNotFoundError: No module named 'agro_rag.application.query'
+
+tests/unit/test_query.py:56: ModuleNotFoundError
+__________ test_invalid_model_evidence_is_operational_error[output1] ___________
+
+output = {'status': 'answered', 'claims': [{'text': 'Mantener humedad constante.', 'evidence_ids': []}], 'missing_information': []}
+
+    @pytest.mark.parametrize('output', [draft(('invented',)), draft(()), {'status':'answered','claims':[]}])
+    def test_invalid_model_evidence_is_operational_error(output):
+>       from agro_rag.application.query import UpstreamError
+E       ModuleNotFoundError: No module named 'agro_rag.application.query'
+
+tests/unit/test_query.py:56: ModuleNotFoundError
+__________ test_invalid_model_evidence_is_operational_error[output2] ___________
+
+output = {'status': 'answered', 'claims': []}
+
+    @pytest.mark.parametrize('output', [draft(('invented',)), draft(()), {'status':'answered','claims':[]}])
+    def test_invalid_model_evidence_is_operational_error(output):
+>       from agro_rag.application.query import UpstreamError
+E       ModuleNotFoundError: No module named 'agro_rag.application.query'
+
+tests/unit/test_query.py:56: ModuleNotFoundError
+____________________ test_no_evidence_makes_no_model_calls _____________________
+
+    def test_no_evidence_makes_no_model_calls():
+        model = FakeModel([])
+>       assert execute(model, 'hipoteca bancaria')['status'] == 'insufficient_evidence'
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/unit/test_query.py:62: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+model = <test_query.FakeModel object at 0x7fd14c037ad0>
+question = 'hipoteca bancaria'
+
+    def execute(model, question='riego lechuga'):
+>       from agro_rag.application.query import QueryService
+E       ModuleNotFoundError: No module named 'agro_rag.application.query'
+
+tests/unit/test_query.py:28: ModuleNotFoundError
+_______________ test_clarification_requires_missing_information ________________
+
+    def test_clarification_requires_missing_information():
+        model = FakeModel([{'status': 'needs_clarification', 'missing_information':['Etapa del cultivo']}])
+>       assert execute(model)['missing_information'] == ['Etapa del cultivo']
+               ^^^^^^^^^^^^^^
+
+tests/unit/test_query.py:68: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+model = <test_query.FakeModel object at 0x7fd14c035a00>
+question = 'riego lechuga'
+
+    def execute(model, question='riego lechuga'):
+>       from agro_rag.application.query import QueryService
+E       ModuleNotFoundError: No module named 'agro_rag.application.query'
+
+tests/unit/test_query.py:28: ModuleNotFoundError
+____________________ test_abstention_and_approved_revision _____________________
+
+    def test_abstention_and_approved_revision():
+>       assert execute(FakeModel([{'status':'insufficient_evidence'}]))['status']=='insufficient_evidence'
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/unit/test_query.py:75: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+model = <test_query.FakeModel object at 0x7fd14c036420>
+question = 'riego lechuga'
+
+    def execute(model, question='riego lechuga'):
+>       from agro_rag.application.query import QueryService
+E       ModuleNotFoundError: No module named 'agro_rag.application.query'
+
+tests/unit/test_query.py:28: ModuleNotFoundError
+__________________ test_verifier_abstention_and_clarification __________________
+
+    def test_verifier_abstention_and_clarification():
+>       assert execute(FakeModel([draft(), {'decision':'abstain','feedback':'sin soporte'}]))['status'] == 'insufficient_evidence'
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/unit/test_query.py:82: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+model = <test_query.FakeModel object at 0x7fd14c0377a0>
+question = 'riego lechuga'
+
+    def execute(model, question='riego lechuga'):
+>       from agro_rag.application.query import QueryService
+E       ModuleNotFoundError: No module named 'agro_rag.application.query'
+
+tests/unit/test_query.py:28: ModuleNotFoundError
+_______________________ test_deadline_cancels_slow_model _______________________
+
+    def test_deadline_cancels_slow_model():
+>       from agro_rag.application.query import QueryService
+E       ModuleNotFoundError: No module named 'agro_rag.application.query'
+
+tests/unit/test_query.py:88: ModuleNotFoundError
+__________________ test_token_limit_fails_before_extra_calls ___________________
+
+    def test_token_limit_fails_before_extra_calls():
+>       from agro_rag.application.query import Generation, QueryService, BudgetExceeded
+E       ModuleNotFoundError: No module named 'agro_rag.application.query'
+
+tests/unit/test_query.py:98: ModuleNotFoundError
+=========================== short test summary info ============================
+FAILED tests/unit/test_query.py::test_two_agents_approve_only_existing_evidence
+FAILED tests/unit/test_query.py::test_revision_is_dynamic_and_bounded - Modul...
+FAILED tests/unit/test_query.py::test_invalid_model_evidence_is_operational_error[output0]
+FAILED tests/unit/test_query.py::test_invalid_model_evidence_is_operational_error[output1]
+FAILED tests/unit/test_query.py::test_invalid_model_evidence_is_operational_error[output2]
+FAILED tests/unit/test_query.py::test_no_evidence_makes_no_model_calls - Modu...
+FAILED tests/unit/test_query.py::test_clarification_requires_missing_information
+FAILED tests/unit/test_query.py::test_abstention_and_approved_revision - Modu...
+FAILED tests/unit/test_query.py::test_verifier_abstention_and_clarification
+FAILED tests/unit/test_query.py::test_deadline_cancels_slow_model - ModuleNot...
+FAILED tests/unit/test_query.py::test_token_limit_fails_before_extra_calls - ...
+11 failed, 3 passed in 0.29s
