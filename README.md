@@ -5,7 +5,7 @@ Autor y responsable académico: Gustavo Julián Rivas. Fecha del plan: 21/10/202
 
 Repositorio independiente: https://github.com/gusjrivas/PLN3_AgroRAG_GJR
 
-**Estado: diseño propuesto y listo para comenzar por etapas. No hay backend, frontend, corpus indexado ni resultados implementados.**
+**Estado: base Python implementada con endpoint de salud y controles de calidad. RAG y frontend funcional pendientes.**
 Engram 3.5.2 está instalado y verificado en el entorno de trabajo remoto; `.engram/config.json` identifica este proyecto. La instalación en la notebook y la activación de los clientes permanecen pendientes. Ver [evidencia](docs/evidence/engram-setup.md). Los ADR son propuestas técnicas; TDD y Python son requisitos expresos del usuario.
 
 ## Empezar aquí
@@ -53,3 +53,12 @@ Las carpetas de runtime se crearán con el cambio 00. Esta entrega contiene docu
 TDD obligatorio; ningún test no ejecutado se informa como aprobado. Las evaluaciones con LLM reales se distinguen de pruebas con dobles. La exposición dura 15 minutos; informe PDF y código se entregan a más tardar en Teoría 7. Falta confirmar la fecha calendario de esa clase.
 
 Ver [fuentes](docs/sources.md), [protocolo de evaluación](docs/evaluation.md) y [estado de validación](docs/validation.md).
+
+## Ejecutar la base
+
+```bash
+uv sync --frozen
+uv run uvicorn agro_rag.bootstrap.app:create_app --factory --host 127.0.0.1 --port 8000
+```
+
+`GET /health/live` devuelve `{"status":"ok"}`. Pruebas: `uv run pytest --cov`.

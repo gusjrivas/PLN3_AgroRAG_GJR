@@ -28,3 +28,6 @@ test-results/
 
 # Herramientas locales; no versionar binarios ni archivos descargados
 .tools/
+
+coverage.xml
+.import_linter_cache/
