@@ -1,5 +1,13 @@
 # Plan de inicio y ejecución
 
+## Estado al 22/10/2026
+
+PR #1: setup operativo de Engram; PR #2: base y CI; PR #3: corpus; PR #4: primera versión de API, UI y consulta. Los cuatro están integrados. El corpus descargado es INTA Huerta 2008 y FAO56 1998, con selección revisada de 12 fragmentos; ver docs/corpus.md y data/manifest.json. El runbook vigente es docs/run-local.md.
+
+Siguiente corte: `feat/03-retrieval-contracts`, responsable coordinador/RAG, implementación por esta sesión. Propiedad: application/retrieval_pipeline.py, infrastructure/retrieval.py, tests/unit/test_retrieval_pipeline.py y documentación/evidencia de 03. Implementa contratos de modos y selección de contexto mediante TDD; no activa proveedores semánticos ficticios. ADR-013 fija límites y siguientes puertas. La secuencia original de abajo es planificación histórica, ajustada por ADR-012 para entregar un corte vertical temprano.
+
+Después: adaptadores E5/Pinecone/reranker y tokenizer reales → integración aislada y evaluación dev → conectar el modo híbrido con deadline/API → evaluar generación real y completar hardening/entrega. La falta de credenciales no bloquea contratos offline, pero sí la acreditación de integración real. No cerrar etapas enteras por un corte parcial.
+
 ## Decisión de organización
 
 Usar el repositorio independiente creado por el usuario: https://github.com/gusjrivas/PLN3_AgroRAG_GJR. `src`, `tests`, `docs` y `openspec` pertenecen a su raíz; las carpetas runtime se crean durante 00-foundation. `gusjrivas/PLN3_GJR` se conserva exclusivamente como referencia docente de lectura, sin copiar su historial ni modificarlo. La primera carga contiene planificación. Las ramas funcionales parten del commit documental de main.

@@ -2,6 +2,18 @@
 
 Responsable: RAG/datos. Dependencias: 02-corpus. Primera implementación parcial en PR #4. Evidencia: docs/evidence/tdd/03-05-first-version.md. Mantener casillas abiertas hasta cubrir todos los escenarios, incluidos proveedores reales, índice híbrido y hardening pendientes.
 
+## Corte independiente: contratos offline
+
+Responsable: coordinador/RAG, misma sesión. Rama: feat/03-retrieval-contracts. Propiedad y límites: docs/plan.md y ADR-013. Evidencia: docs/evidence/tdd/03-pipeline.md.
+
+- [x] C.1 Leer contratos/ADR y verificar corpus descargado y base main.
+- [x] C.2 RED: cuatro modos, fallo vector, identidad de índice, filtros, diversidad y presupuesto.
+- [x] C.3 GREEN/REFACTOR: pipeline por puertos, candidatos lexicales y errores controlados; suite y checks locales.
+- [ ] C.4 CI remota y revisión del diff; integrar sólo con checks aprobados.
+- [ ] C.5 Adaptadores reales, tokenizer, prefijos E5, evaluación en español y activación por bootstrap (otro PR).
+
+Los checks del corte no cierran los requisitos completos siguientes.
+
 ## 1. Preparación
 
 - [ ] 1.1 Leer ADR aplicables, fijar archivos de propiedad y comprobar dependencias.

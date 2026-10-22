@@ -27,3 +27,7 @@ Cada escenario tiene ID estable. Escribir primero el test de comportamiento indi
 ## Risks / trade-offs
 
 Consultar docs/plan.md. Si un proveedor o recurso local falta, las pruebas offline pueden continuar, pero integración real queda pendiente. Cambiar un modelo o contrato exige actualizar ADR/spec y repetir pruebas afectadas. Una memoria Engram no permite sobrepasar estas condiciones.
+
+## Corte de contratos del 22/10/2026
+
+ADR-013 concreta el diseño del pipeline puro: puertos CandidateRanker/Reranker/TokenCounter, identidad IndexIdentity, resultado inmutable con rankings por etapa, filtros de corpus/cultivo y presupuesto de contexto serializado. El adaptador lexical entrega candidatos sin recorte de diversidad previo. La composición del producto continúa lexical hasta validar adaptadores reales. Ver docs/evidence/tdd/03-pipeline.md; RET-02-e5 y las integraciones científicas siguen pendientes.

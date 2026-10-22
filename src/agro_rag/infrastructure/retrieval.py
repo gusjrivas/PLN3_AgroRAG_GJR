@@ -5,6 +5,7 @@ from functools import lru_cache
 
 from rank_bm25 import BM25Plus
 
+from agro_rag.application.retrieval_pipeline import ScoredId
 from agro_rag.domain.evidence import Catalogue, Evidence
 
 STOP = set("a de del la las el los y o en un una que como cual para por es se su al".split())
@@ -20,6 +21,7 @@ class LexicalRetriever:
     """Explicit baseline, not a semantic index. Cache belongs to this snapshot only."""
 
     def __init__(self, catalogue: Catalogue) -> None:
+        self.corpus_version = catalogue.version
         self.items = catalogue.evidence
         self.terms = [tokens(item.section + " " + item.text) for item in self.items]
         self.index = BM25Plus(self.terms) if self.items else None
@@ -28,7 +30,7 @@ class LexicalRetriever:
     def search(self, question: str, crop: str | None) -> tuple[Evidence, ...]:
         return self._cached(question, crop)
 
-    def _search(self, question: str, crop: str | None) -> tuple[Evidence, ...]:
+    def rank(self, question: str, crop: str | None) -> tuple[ScoredId, ...]:
         query = tokens(question)
         if not query or self.index is None:
             return ()
@@ -36,13 +38,23 @@ class LexicalRetriever:
         indices = sorted(
             range(len(self.items)), key=lambda i: (-scores[i], self.items[i].evidence_id)
         )
-        selected = []
-        counts: Counter[str] = Counter()
+        ranked = []
         for i in indices:
             item = self.items[i]
             if crop and item.crop not in (None, crop):
                 continue
-            if not set(query).intersection(self.terms[i]) or counts[item.source_id] >= 2:
+            if not set(query).intersection(self.terms[i]):
+                continue
+            ranked.append(ScoredId(item.evidence_id, float(scores[i])))
+        return tuple(ranked)
+
+    def _search(self, question: str, crop: str | None) -> tuple[Evidence, ...]:
+        items = {item.evidence_id: item for item in self.items}
+        selected = []
+        counts: Counter[str] = Counter()
+        for row in self.rank(question, crop):
+            item = items[row.evidence_id]
+            if counts[item.source_id] >= 2:
                 continue
             selected.append(item)
             counts[item.source_id] += 1
