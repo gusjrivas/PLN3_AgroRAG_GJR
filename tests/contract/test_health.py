@@ -20,4 +20,4 @@ def test_liveness_works_without_credentials_or_network(monkeypatch):
 def test_liveness_does_not_claim_readiness():
     with TestClient(create_app()) as client:
         assert client.get("/health/live").json() == {"status": "ok"}
-        assert client.get("/health/ready").status_code == 404
+        assert client.get("/health/ready").status_code == 401

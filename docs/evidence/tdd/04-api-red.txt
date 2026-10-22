@@ -1,0 +1,81 @@
+FFFFFF                                                                   [100%]
+=================================== FAILURES ===================================
+_________ test_ollama_uses_question_and_untrusted_evidence_separately __________
+
+    def test_ollama_uses_question_and_untrusted_evidence_separately():
+>       from agro_rag.infrastructure.ollama import OllamaModel
+E       ModuleNotFoundError: No module named 'agro_rag.infrastructure.ollama'
+
+tests/integration/test_model.py:9: ModuleNotFoundError
+_________________ test_malformed_model_output_is_error[body0] __________________
+
+body = {'message': {'content': 'not json'}}
+
+    @pytest.mark.parametrize('body',[{'message':{'content':'not json'}},{'message':{'content':'[]'}}])
+    def test_malformed_model_output_is_error(body):
+>       from agro_rag.infrastructure.ollama import OllamaModel
+E       ModuleNotFoundError: No module named 'agro_rag.infrastructure.ollama'
+
+tests/integration/test_model.py:33: ModuleNotFoundError
+_________________ test_malformed_model_output_is_error[body1] __________________
+
+body = {'message': {'content': '[]'}}
+
+    @pytest.mark.parametrize('body',[{'message':{'content':'not json'}},{'message':{'content':'[]'}}])
+    def test_malformed_model_output_is_error(body):
+>       from agro_rag.infrastructure.ollama import OllamaModel
+E       ModuleNotFoundError: No module named 'agro_rag.infrastructure.ollama'
+
+tests/integration/test_model.py:33: ModuleNotFoundError
+____________________ test_auth_and_unavailable_are_distinct ____________________
+
+    def test_auth_and_unavailable_are_distinct():
+>       with client() as c:
+             ^^^^^^^^
+
+tests/contract/test_query_api.py:15: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def client():
+        from agro_rag.bootstrap.app import create_app
+>       from agro_rag.bootstrap.settings import Settings
+E       ModuleNotFoundError: No module named 'agro_rag.bootstrap.settings'
+
+tests/contract/test_query_api.py:10: ModuleNotFoundError
+____________________________ test_input_validation _____________________________
+
+    def test_input_validation():
+>       with client() as c:
+             ^^^^^^^^
+
+tests/contract/test_query_api.py:23: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def client():
+        from agro_rag.bootstrap.app import create_app
+>       from agro_rag.bootstrap.settings import Settings
+E       ModuleNotFoundError: No module named 'agro_rag.bootstrap.settings'
+
+tests/contract/test_query_api.py:10: ModuleNotFoundError
+_________________ test_catalogue_search_and_versioned_evidence _________________
+
+    def test_catalogue_search_and_versioned_evidence():
+        from agro_rag.bootstrap.app import create_app
+>       from agro_rag.bootstrap.settings import Settings
+E       ModuleNotFoundError: No module named 'agro_rag.bootstrap.settings'
+
+tests/contract/test_query_api.py:36: ModuleNotFoundError
+=============================== warnings summary ===============================
+.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/23020672a295/agro-dev/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/integration/test_model.py::test_ollama_uses_question_and_untrusted_evidence_separately
+FAILED tests/integration/test_model.py::test_malformed_model_output_is_error[body0]
+FAILED tests/integration/test_model.py::test_malformed_model_output_is_error[body1]
+FAILED tests/contract/test_query_api.py::test_auth_and_unavailable_are_distinct
+FAILED tests/contract/test_query_api.py::test_input_validation - ModuleNotFou...
+FAILED tests/contract/test_query_api.py::test_catalogue_search_and_versioned_evidence
+6 failed, 1 warning in 0.26s

@@ -1,10 +1,14 @@
 name: quality
-on: [push, pull_request]
+on:
+  pull_request:
+  push:
+    branches: [main]
 permissions:
   contents: read
 jobs:
   offline:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v6
@@ -17,6 +21,7 @@ jobs:
       - run: uv run mypy
       - run: uv run lint-imports
       - run: uv run pytest --cov --cov-report=term-missing --cov-report=xml
+      - run: uv run coverage report --include='src/agro_rag/domain/*,src/agro_rag/application/*' --fail-under=90
       - uses: actions/upload-artifact@v4
         if: always()
         with:
@@ -24,9 +29,23 @@ jobs:
           path: coverage.xml
   specs:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
       - run: npx --yes @fission-ai/openspec@1.14.3 validate --all --strict
+
+  browser:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          version: '0.12.23'
+          enable-cache: true
+      - run: uv sync --frozen --python 3.12
+      - run: uv run playwright install --with-deps chromium
+      - run: uv run pytest -m e2e tests/e2e -q

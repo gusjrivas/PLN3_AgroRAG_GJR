@@ -1,6 +1,6 @@
 # Tasks: Interfaz Python, seguridad y optimización
 
-Responsable: Frontend y revisor. Dependencias: 04-agents-backend; UI puede preparar fixtures desde contratos congelados. Todas las tareas están pendientes de ejecución.
+Responsable: Frontend y revisor. Dependencias: 04-agents-backend; UI puede preparar fixtures desde contratos congelados. Primera implementación parcial en PR #4. Evidencia: docs/evidence/tdd/03-05-first-version.md. Mantener casillas abiertas hasta cubrir todos los escenarios, incluidos proveedores reales, índice híbrido y hardening pendientes.
 
 ## 1. Preparación
 

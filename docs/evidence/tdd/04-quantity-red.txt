@@ -1,0 +1,68 @@
+F                                                                        [100%]
+=================================== FAILURES ===================================
+__________________ test_percentage_alone_never_becomes_litres __________________
+
+self = <test_query.FakeModel object at 0x7fa4d5d154c0>, role = 'researcher'
+payload = {'question': '¿Cuántos litros de riego necesita?', 'crop': 'tomato', 'context': {'measurement': {'value': 30, 'unit': ...type': 'volumetric_water_content'}}, 'evidence': [{'evidence_id': 'a', 'text': 'riego tomate', 'source_id': 'A'}], ...}
+timeout = 59.99971323800037
+
+    async def generate(self, role, payload, timeout):
+        from agro_rag.application.query import Generation
+    
+        self.roles.append(role)
+        self.payloads.append(payload)
+>       return Generation(next(self.results), 100, 20)
+                          ^^^^^^^^^^^^^^^^^^
+E       StopIteration
+
+tests/unit/test_query.py:18: StopIteration
+
+The above exception was the direct cause of the following exception:
+
+    def test_percentage_alone_never_becomes_litres():
+        from agro_rag.application.query import QueryService
+        model=FakeModel([])
+        r=retriever([evidence('a','riego tomate')])
+>       result=asyncio.run(QueryService(r,model,'v1').run(
+            '¿Cuántos litros de riego necesita?', 'tomato',
+            {'measurement':{'value':30,'unit':'%','measurement_type':'volumetric_water_content'}}))
+
+tests/unit/test_query.py:143: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/runners.py:195: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/base_events.py:691: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+src/agro_rag/application/query.py:44: in run
+    return await self._run(question, crop, context)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/agro_rag/application/query.py:142: in _run
+    draft = await generate(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+role = 'researcher'
+payload = {'question': '¿Cuántos litros de riego necesita?', 'crop': 'tomato', 'context': {'measurement': {'value': 30, 'unit': ...type': 'volumetric_water_content'}}, 'evidence': [{'evidence_id': 'a', 'text': 'riego tomate', 'source_id': 'A'}], ...}
+
+    async def generate(role: str, payload: dict[str, Any]) -> dict[str, Any]:
+        # Byte count is a conservative upper estimate for UTF-8 BPE input;
+        # reserve room for the system instructions and capped output.
+        reserve = len(json.dumps(payload, ensure_ascii=False).encode()) + 2048
+        used = int(usage["input_tokens"]) + int(usage["output_tokens"])
+        if usage["llm_calls"] >= 6 or used + reserve > 12000:
+            raise BudgetExceeded("Presupuesto de tokens agotado")
+        remaining = self.deadline_seconds - (time.monotonic() - started)
+        if remaining <= 0:
+            raise TimeoutError
+>       generated = await self.model.generate(role, payload, remaining)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       RuntimeError: coroutine raised StopIteration
+
+src/agro_rag/application/query.py:123: RuntimeError
+=========================== short test summary info ============================
+FAILED tests/unit/test_query.py::test_percentage_alone_never_becomes_litres
+1 failed in 0.12s

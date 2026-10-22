@@ -5,12 +5,12 @@ Autor y responsable académico: Gustavo Julián Rivas. Fecha del plan: 21/10/202
 
 Repositorio independiente: https://github.com/gusjrivas/PLN3_AgroRAG_GJR
 
-**Estado: base Python implementada con endpoint de salud y controles de calidad. Ingesta PDF curada y catálogo local implementados; RAG y frontend funcional pendientes.**
+**Estado: primera versión local implementada: corpus piloto, búsqueda, API, interfaz y flujo investigador/verificador. Generación real pendiente de configurar y evaluar un modelo.**
 Engram 3.5.2 está instalado y verificado en el entorno de trabajo remoto; `.engram/config.json` identifica este proyecto. La instalación en la notebook y la activación de los clientes permanecen pendientes. Ver [evidencia](docs/evidence/engram-setup.md). Los ADR son propuestas técnicas; TDD y Python son requisitos expresos del usuario.
 
 ## Empezar aquí
 
-**Primera sesión:** seguir [start-here](docs/start-here.md), con el encargo listo para Codex o Claude Code. Repositorio independiente: `PLN3_AgroRAG_GJR`.
+**Para ejecutarlo:** seguir [run-local](docs/run-local.md). **Para continuar el desarrollo:** [start-here](docs/start-here.md). Repositorio independiente: `PLN3_AgroRAG_GJR`.
 
 1. [Plan de ejecución](docs/plan.md): secuencia, dependencias y puertas de salida.
 2. [Requisitos y trazabilidad](docs/requirements.md): consigna → cambio → prueba → evidencia.
@@ -46,7 +46,7 @@ Fuera del MVP: predicciones con sensores, automatización del riego, CNN/ViT, fi
 | `configs/`, `data/`, `scripts/` | Configuración, corpus/evaluación y operaciones |
 | `infra/`, `docs/`, `openspec/` | Ejecución local, decisiones y especificaciones |
 
-Las carpetas de runtime se crearán con el cambio 00. Esta entrega contiene documentación y configuración de planificación, no módulos vacíos que aparenten funcionalidad.
+Las carpetas de runtime contienen la primera implementación. Algunas capacidades del diseño objetivo continúan pendientes; consultar el runbook y la evidencia por PR.
 
 ## Reglas de entrega
 
