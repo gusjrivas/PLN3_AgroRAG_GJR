@@ -6,7 +6,7 @@ Autor y responsable académico: Gustavo Julián Rivas. Fecha del plan: 21/10/202
 Repositorio independiente: https://github.com/gusjrivas/PLN3_AgroRAG_GJR
 
 **Estado: diseño propuesto y listo para comenzar por etapas. No hay backend, frontend, corpus indexado ni resultados implementados.**
-La instalación de Engram en la notebook y su integración MCP permanecen pendientes. Los ADR son propuestas técnicas; TDD y Python son requisitos expresos del usuario.
+Engram 3.5.2 está instalado y verificado en el entorno de trabajo remoto; `.engram/config.json` identifica este proyecto. La instalación en la notebook y la activación de los clientes permanecen pendientes. Ver [evidencia](docs/evidence/engram-setup.md). Los ADR son propuestas técnicas; TDD y Python son requisitos expresos del usuario.
 
 ## Empezar aquí
 

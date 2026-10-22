@@ -1,6 +1,6 @@
 # Tasks: Memoria local de agentes de desarrollo
 
-Responsable: Coordinador. Dependencias: 00-foundation. Todas las tareas están pendientes de ejecución.
+Responsable: Coordinador. Dependencias: 00-foundation. Avance parcial: binario 3.5.2 instalado en el entorno remoto, proyecto configurado y smoke CLI/MCP verificado. Ver docs/evidence/engram-setup.md. Por pedido explícito del usuario se adelanta sólo la instalación operativa; 00-foundation continúa pendiente. Las casillas permanecen abiertas porque todavía no se cumplen los escenarios completos de integración de clientes y producto.
 
 ## 1. Preparación
 

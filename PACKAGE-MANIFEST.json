@@ -1,15 +1,19 @@
 {
   "project": "PLN3_AgroRAG_GJR",
-  "status": "planning_only",
+  "status": "planning_with_partial_engram_setup",
   "repository_url": "https://github.com/gusjrivas/PLN3_AgroRAG_GJR",
   "files": [
+    {
+      "path": ".engram/config.json",
+      "sha256": "940ef80f4ec4d90c32acf100754be23ffb359e3eb31b7cf73d9ae67ac3eee1bf"
+    },
     {
       "path": ".github/pull_request_template.md",
       "sha256": "e9c592872c094dee3b912c79c19f22a6361c8493d84eab9f89a9b65ea2d3cc77"
     },
     {
       "path": ".gitignore",
-      "sha256": "62be578f5947ca8bb95fba6bcb3a9d74e76d1fb297c718b894ea9d33e3f8ba57"
+      "sha256": "55339ba079e6b15a1c71aae89842c79d74cd32a5ec3e3d2d2304627050c2427e"
     },
     {
       "path": "AGENTS.md",
@@ -17,7 +21,7 @@
     },
     {
       "path": "README.md",
-      "sha256": "9e31561ad938af33960e74957fcec1d830bcf84f56482e903e1380d3811427ef"
+      "sha256": "9facef217737b0e44b51a18d9bcfe2f9708beed8714add56244853b141bb4efc"
     },
     {
       "path": "data/corpus/candidates.json",
@@ -100,6 +104,10 @@
       "sha256": "7ed2bd2fab2c5f5e39fd42b4ab5de4d387d0f239ea67e91b2be558fcbb6ed235"
     },
     {
+      "path": "docs/evidence/engram-setup.md",
+      "sha256": "8a3c00709db586b86ea05487b2fc1f6e98ef7853d01edd69181916be6d80200d"
+    },
+    {
       "path": "docs/frontend.md",
       "sha256": "e8de29e6a9a3cbb8657120d668c0268376c5fd17714a975a6453dccab208df71"
     },
@@ -117,7 +125,7 @@
     },
     {
       "path": "docs/setup-engram.md",
-      "sha256": "f0fc2c06dddfa8a59de2a37291bc29a77d1c4516985021774d375e201d2e4cd7"
+      "sha256": "8c22a525778ff7352fa33914c5ac26d00aed5e30fd69668b2566810dfe9d16f7"
     },
     {
       "path": "docs/sources.md",
@@ -133,7 +141,7 @@
     },
     {
       "path": "docs/validation.md",
-      "sha256": "830e6eb6f8ff9248cbaf537e514680f7d65945099237f83639e7a87eaf5480af"
+      "sha256": "a96c2e97eb6189860bda64d020d370ee3e11584583db2a0e52754db7337b5f00"
     },
     {
       "path": "openspec/README.md",
@@ -169,7 +177,7 @@
     },
     {
       "path": "openspec/changes/01-engram/design.md",
-      "sha256": "1fd5226d3c788a881fdd565923867179a721c94bc4a65ea59c10c50a4b60f992"
+      "sha256": "6ad81933f149221d483c8eb45f53f2755e2f8ac19222c89e79593bc27c7bd190"
     },
     {
       "path": "openspec/changes/01-engram/proposal.md",
@@ -181,7 +189,7 @@
     },
     {
       "path": "openspec/changes/01-engram/tasks.md",
-      "sha256": "b3631a944bdaeaca586b308bdf1a6600d3a630fa5ce0eb639e3febe103c7dfe1"
+      "sha256": "f526dfacbe43ebaf5347fc091697d13a1de7d4798a092c82549111e7dfcf192c"
     },
     {
       "path": "openspec/changes/01-engram/test-plan.md",
