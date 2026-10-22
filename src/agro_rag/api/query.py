@@ -38,7 +38,7 @@ def query_router(
     active = 0
 
     def authorize(given: str | None) -> None:
-        if not key or not given or not secrets.compare_digest(key, given):
+        if not key or not given or not secrets.compare_digest(key.encode(), given.encode()):
             raise error(401, "UNAUTHORIZED", "Credencial de lectura inválida")
 
     @router.get("/v1/corpus")

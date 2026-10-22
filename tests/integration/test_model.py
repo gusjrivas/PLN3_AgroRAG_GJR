@@ -61,3 +61,15 @@ def test_malformed_model_output_is_error(body):
 
     with pytest.raises(UpstreamError):
         asyncio.run(run())
+
+
+def test_malformed_readiness_response_is_unavailable():
+    from agro_rag.infrastructure.ollama import OllamaModel
+
+    async def run():
+        async with httpx.AsyncClient(
+            transport=httpx.MockTransport(lambda r: httpx.Response(200, json={"models": [None]}))
+        ) as client:
+            return await OllamaModel(client, "http://localhost:11434", "test").ready()
+
+    assert asyncio.run(run()) is False

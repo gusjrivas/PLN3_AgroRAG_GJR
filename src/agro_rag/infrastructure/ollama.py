@@ -40,7 +40,11 @@ class OllamaModel:
         try:
             response = await self.client.get(self.base_url + "/api/tags", timeout=3)
             response.raise_for_status()
-            return any(x.get("name") == self.model for x in response.json().get("models", []))
+            body = response.json()
+            models = body.get("models") if isinstance(body, dict) else None
+            return isinstance(models, list) and any(
+                isinstance(item, dict) and item.get("name") == self.model for item in models
+            )
         except (httpx.HTTPError, ValueError):
             return False
 

@@ -58,7 +58,7 @@ def create_app(
         if (
             not config.reader_key
             or not x_api_key
-            or not secrets.compare_digest(config.reader_key, x_api_key)
+            or not secrets.compare_digest(config.reader_key.encode(), x_api_key.encode())
         ):
             raise error(401, "UNAUTHORIZED", "Credencial de lectura inválida")
         if service is None or (model is not None and not await model.ready()):

@@ -1,0 +1,153 @@
+FF                                                                       [100%]
+=================================== FAILURES ===================================
+_________ test_non_ascii_invalid_key_is_rejected_without_server_error __________
+
+    def test_non_ascii_invalid_key_is_rejected_without_server_error():
+        with client() as c:
+>           response=c.post('/v1/query',headers={b'X-API-Key':b'\xff'},json={'question':'riego'})
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/contract/test_query_api.py:215: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+.venv/lib/python3.12/site-packages/httpx/_client.py:1144: in post
+    return self.request(
+.venv/lib/python3.12/site-packages/starlette/testclient.py:518: in request
+    return super().request(
+.venv/lib/python3.12/site-packages/httpx/_client.py:825: in request
+    return self.send(request, auth=auth, follow_redirects=follow_redirects)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/httpx/_client.py:928: in send
+    raise exc
+.venv/lib/python3.12/site-packages/httpx/_client.py:922: in send
+    response.read()
+.venv/lib/python3.12/site-packages/httpx/_models.py:881: in read
+    self._content = b"".join(self.iter_bytes())
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/httpx/_models.py:897: in iter_bytes
+    for raw_bytes in self.iter_raw():
+                     ^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/httpx/_models.py:951: in iter_raw
+    for raw_stream_bytes in self.stream:
+                            ^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/httpx/_client.py:153: in __iter__
+    for chunk in self._stream:
+                 ^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/starlette/testclient.py:384: in iter_body
+    exit_stack.close()
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py:618: in close
+    self.__exit__(None, None, None)
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py:610: in __exit__
+    raise exc_details[1]
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/contextlib.py:595: in __exit__
+    if cb(*exc_details):
+       ^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/starlette/testclient.py:399: in close_app
+    raise exception
+.venv/lib/python3.12/site-packages/anyio/from_thread.py:265: in _call_func
+    retval = await retval_or_awaitable
+             ^^^^^^^^^^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/starlette/testclient.py:366: in run_app
+    await self.app(scope, receive, send)
+.venv/lib/python3.12/site-packages/fastapi/applications.py:1194: in __call__
+    await super().__call__(scope, receive, send)
+.venv/lib/python3.12/site-packages/starlette/applications.py:96: in __call__
+    await self.middleware_stack(scope, receive, send)
+.venv/lib/python3.12/site-packages/starlette/middleware/errors.py:186: in __call__
+    raise exc
+.venv/lib/python3.12/site-packages/starlette/middleware/errors.py:164: in __call__
+    await self.app(scope, receive, _send)
+.venv/lib/python3.12/site-packages/fastapi/telemetry/_asgi.py:151: in __call__
+    await self.app(scope, receive, send)
+.venv/lib/python3.12/site-packages/starlette/middleware/exceptions.py:63: in __call__
+    await wrap_app_handling_exceptions(self.app, conn)(scope, receive, send)
+.venv/lib/python3.12/site-packages/starlette/_exception_handler.py:53: in wrapped_app
+    raise exc
+.venv/lib/python3.12/site-packages/starlette/_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+.venv/lib/python3.12/site-packages/fastapi/middleware/asyncexitstack.py:18: in __call__
+    await self.app(scope, receive, send)
+.venv/lib/python3.12/site-packages/starlette/routing.py:678: in __call__
+    await self.middleware_stack(scope, receive, send)
+.venv/lib/python3.12/site-packages/fastapi/routing.py:2813: in app
+    await route.handle(scope, receive, send)
+.venv/lib/python3.12/site-packages/fastapi/routing.py:1841: in handle
+    await self.original_router.handle(scope, receive, send)
+.venv/lib/python3.12/site-packages/fastapi/routing.py:2896: in handle
+    await included_router._handle_selected(scope, receive, send)
+.venv/lib/python3.12/site-packages/fastapi/routing.py:1867: in _handle_selected
+    await original_route.handle(scope, receive, send)
+.venv/lib/python3.12/site-packages/fastapi/routing.py:1330: in handle
+    await effective_context.app(scope, receive, send)
+.venv/lib/python3.12/site-packages/fastapi/routing.py:167: in app
+    await wrap_app_handling_exceptions(app, request)(scope, receive, send)
+.venv/lib/python3.12/site-packages/starlette/_exception_handler.py:53: in wrapped_app
+    raise exc
+.venv/lib/python3.12/site-packages/starlette/_exception_handler.py:42: in wrapped_app
+    await app(scope, receive, sender)
+.venv/lib/python3.12/site-packages/fastapi/routing.py:153: in app
+    response = await f(request)
+               ^^^^^^^^^^^^^^^^
+.venv/lib/python3.12/site-packages/fastapi/routing.py:746: in app
+    raw_response = await run_endpoint_function(
+.venv/lib/python3.12/site-packages/fastapi/routing.py:373: in run_endpoint_function
+    return await dependant.call(**values)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/agro_rag/api/query.py:88: in query
+    authorize(x_api_key)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+given = 'Ã¿'
+
+    def authorize(given: str | None) -> None:
+>       if not key or not given or not secrets.compare_digest(key, given):
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+E       TypeError: comparing strings with non-ASCII characters is not supported
+
+src/agro_rag/api/query.py:41: TypeError
+_______________ test_malformed_readiness_response_is_unavailable _______________
+
+    def test_malformed_readiness_response_is_unavailable():
+        from agro_rag.infrastructure.ollama import OllamaModel
+        async def run():
+            async with httpx.AsyncClient(transport=httpx.MockTransport(
+                lambda r:httpx.Response(200,json={'models':[None]}))) as client:
+                return await OllamaModel(client,'http://localhost:11434','test').ready()
+>       assert asyncio.run(run()) is False
+               ^^^^^^^^^^^^^^^^^^
+
+tests/integration/test_model.py:72: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/runners.py:195: in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/runners.py:118: in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+/opt/codex/runtimes/codex-primary-runtime/dependencies/python/lib/python3.12/asyncio/base_events.py:691: in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+tests/integration/test_model.py:71: in run
+    return await OllamaModel(client,'http://localhost:11434','test').ready()
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+src/agro_rag/infrastructure/ollama.py:43: in ready
+    return any(x.get("name") == self.model for x in response.json().get("models", []))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+.0 = <list_iterator object at 0x7f94ad0ba3b0>
+
+>   return any(x.get("name") == self.model for x in response.json().get("models", []))
+               ^^^^^
+E   AttributeError: 'NoneType' object has no attribute 'get'
+
+src/agro_rag/infrastructure/ollama.py:43: AttributeError
+=============================== warnings summary ===============================
+.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/23020672a295/agro-dev/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/contract/test_query_api.py::test_non_ascii_invalid_key_is_rejected_without_server_error
+FAILED tests/integration/test_model.py::test_malformed_readiness_response_is_unavailable
+2 failed, 1 warning in 0.85s

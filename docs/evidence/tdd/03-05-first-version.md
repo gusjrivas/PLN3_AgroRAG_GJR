@@ -11,18 +11,23 @@ Rama feat/03-query. Responsable y revisión: misma sesión Codex, sin revisor in
 - Cantidades: el test de porcentaje convertido a litros detectó una llamada indebida al modelo antes de aclarar; se agregó guardia de contexto para preguntas cuantitativas. Log 04-quantity-red.txt.
 - UI: los tests de cliente HTTP se escribieron antes del cliente (2 rojos válidos). El primer harness AppTest tenía además una ruta relativa equivocada; esos 3 fallos no se presentan como RED funcional válido. Se corrigió la ruta absoluta y pasaron. Esta limitación del RED inicial de renderizado queda documentada, sin fabricar evidencia retrospectiva.
 - Aclaración UI: después de corregir el harness, un test falló por faltar el segundo formulario (sólo había un textarea). Log 05-clarification-red.txt. Se implementó contexto explícito preservando pregunta original y límite de tres aclaraciones.
-- Regresión final: 54 tests aprobados, 1 E2E excluido de la suite rápida, cobertura global 88.72% y core 94% (redondeado). Log 04-05-green.txt. Ruff, mypy e imports correctos.
+- Regresión final: 56 tests aprobados, 1 E2E excluido de la suite rápida, cobertura global 89.18% y core 94% (redondeado). Log 04-05-green.txt. Ruff, mypy e imports correctos.
 - E2E: `uv run pytest -m e2e tests/e2e -q`: 1 aprobado, navegador Chromium -> Streamlit -> FastAPI -> PDF sintético. Prueba de regresión, no se le atribuye RED retrospectivo.
+
+- Revisión final: dos tests rojos adicionales revelaron error con clave HTTP no ASCII y respuesta de readiness malformada. Log 04-hardening-red.txt. Se compara la clave como bytes y se valida la lista de modelos; ambas regresiones pasan.
+- Las corridas intermedias fallidas se conservan con nombres explícitos: 04-api-intermediate-failure.txt y 05-harness-error.txt. No representan gates verdes.
 
 ## Verificaciones operativas
 
-Auditoría `pip-audit --local --skip-editable`: ninguna vulnerabilidad conocida al ejecutar, antes de incorporar Playwright al grupo de desarrollo; repetir en el gate final.
+Auditoría final `pip-audit --local --skip-editable`, incluyendo Playwright: ninguna vulnerabilidad conocida al ejecutar. OpenSpec: 7 cambios aprobados, 0 fallos.
 
 Se fijó Playwright 1.56.0 después de que la descarga del navegador de 1.64.0 devolviera un ZIP inválido en este entorno. El instalador de 1.56.0 obtuvo Chromium desde su mirror oficial. Es una dependencia de pruebas, no navegador distribuido con el producto. Se conserva el pin para reproducir el smoke; revisar actualización en mantenimiento.
 
 No se cambió el contrato de liveness: sigue indicando sólo proceso. Su regresión sobre readiness pasó de esperar 404 a 401 porque ahora existe el endpoint protegido. No se rebajaron umbrales de cobertura ni se excluyó código para alcanzar las metas.
 
 Smoke adicional con el corpus real: navegador consultó el período crítico del tomate y desplegó dos pasajes de INTA con páginas físicas e impresas. La prueba exploratoria se ejecutó con API y UI locales en el mismo proceso de verificación, sin modelo.
+
+Reproducción desde directorio vacío mediante la CLI del proyecto: descargó ambas fuentes, comprobó hashes y reprodujo exactamente la versión a85bec55032f5adea8675749c0cafa71be5ed61664535f93cdf4da9a981a9313 con 12 fragmentos.
 
 ## Riesgos/pendientes
 

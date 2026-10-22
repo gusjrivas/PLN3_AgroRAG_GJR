@@ -208,3 +208,9 @@ def test_only_two_queries_can_run_at_once():
             assert (await request()).status_code == 504
 
     asyncio.run(exercise())
+
+
+def test_non_ascii_invalid_key_is_rejected_without_server_error():
+    with client() as c:
+        response = c.post("/v1/query", headers={b"X-API-Key": b"\xff"}, json={"question": "riego"})
+        assert response.status_code == 401
