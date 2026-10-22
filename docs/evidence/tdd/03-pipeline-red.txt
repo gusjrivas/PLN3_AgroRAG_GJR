@@ -1,0 +1,624 @@
+Using CPython 3.12.14 interpreter at: /opt/codex/runtimes/codex-primary-runtime/dependencies/python/bin/python3.12
+Removed virtual environment at: .venv
+Creating virtual environment at: .venv
+   Building pln3-agro-rag @ file:///workspace/scratch/23020672a295/agro-dev
+Downloading pdfminer-six (6.3MiB)
+Downloading cryptography (4.5MiB)
+Downloading pypdfium2 (3.6MiB)
+Downloading pip (1.7MiB)
+Downloading pygments (1.2MiB)
+Downloading pydantic-core (2.1MiB)
+Downloading pandas (10.3MiB)
+Downloading playwright (44.1MiB)
+Downloading mypy (14.1MiB)
+Downloading pyarrow (51.4MiB)
+Downloading reportlab (1.9MiB)
+Downloading numpy (16.0MiB)
+Downloading grimp (2.2MiB)
+Downloading pillow (6.8MiB)
+Downloading ruff (9.9MiB)
+Downloading streamlit (9.9MiB)
+Downloading pydeck (10.9MiB)
+ Downloaded numpy
+ Downloaded mypy
+ Downloaded pandas
+ Downloaded streamlit
+ Downloaded ruff
+ Downloaded playwright
+ Downloaded pillow
+ Downloaded pyarrow
+ Downloaded pypdfium2
+ Downloaded pdfminer-six
+ Downloaded cryptography
+ Downloaded grimp
+ Downloaded pydantic-core
+ Downloaded reportlab
+ Downloaded pip
+ Downloaded pygments
+ Downloaded pydeck
+      Built pln3-agro-rag @ file:///workspace/scratch/23020672a295/agro-dev
+Installed 93 packages in 259ms
+FFFFFFFFFFFFFFFFFFFFFFFFF                                                [100%]
+=================================== FAILURES ===================================
+_ test_ret_01_four_modes_keep_stage_scores_and_stable_order[bm25-order0-stages0] _
+
+mode = 'bm25', order = ['a', 'b'], stages = {'bm25'}
+
+    @pytest.mark.parametrize("mode,order,stages", [
+        ("bm25", ["a", "b"], {"bm25"}),
+        ("vector", ["b", "a"], {"vector"}),
+        ("hybrid", ["a", "b"], {"bm25", "vector", "rrf"}),
+        ("hybrid_rerank", ["a", "b"], {"bm25", "vector", "rrf", "reranker"}),
+    ])
+    def test_ret_01_four_modes_keep_stage_scores_and_stable_order(mode, order, stages):
+>       result = build(mode).retrieve("riego", "tomato")
+                 ^^^^^^^^^^^
+
+tests/unit/test_retrieval_pipeline.py:72: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/unit/test_retrieval_pipeline.py:47: in build
+    m = api()
+        ^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def api():
+>       from agro_rag.application import retrieval_pipeline
+E       ImportError: cannot import name 'retrieval_pipeline' from 'agro_rag.application' (/workspace/scratch/23020672a295/agro-dev/src/agro_rag/application/__init__.py)
+
+tests/unit/test_retrieval_pipeline.py:10: ImportError
+_ test_ret_01_four_modes_keep_stage_scores_and_stable_order[vector-order1-stages1] _
+
+mode = 'vector', order = ['b', 'a'], stages = {'vector'}
+
+    @pytest.mark.parametrize("mode,order,stages", [
+        ("bm25", ["a", "b"], {"bm25"}),
+        ("vector", ["b", "a"], {"vector"}),
+        ("hybrid", ["a", "b"], {"bm25", "vector", "rrf"}),
+        ("hybrid_rerank", ["a", "b"], {"bm25", "vector", "rrf", "reranker"}),
+    ])
+    def test_ret_01_four_modes_keep_stage_scores_and_stable_order(mode, order, stages):
+>       result = build(mode).retrieve("riego", "tomato")
+                 ^^^^^^^^^^^
+
+tests/unit/test_retrieval_pipeline.py:72: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/unit/test_retrieval_pipeline.py:47: in build
+    m = api()
+        ^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def api():
+>       from agro_rag.application import retrieval_pipeline
+E       ImportError: cannot import name 'retrieval_pipeline' from 'agro_rag.application' (/workspace/scratch/23020672a295/agro-dev/src/agro_rag/application/__init__.py)
+
+tests/unit/test_retrieval_pipeline.py:10: ImportError
+_ test_ret_01_four_modes_keep_stage_scores_and_stable_order[hybrid-order2-stages2] _
+
+mode = 'hybrid', order = ['a', 'b'], stages = {'bm25', 'rrf', 'vector'}
+
+    @pytest.mark.parametrize("mode,order,stages", [
+        ("bm25", ["a", "b"], {"bm25"}),
+        ("vector", ["b", "a"], {"vector"}),
+        ("hybrid", ["a", "b"], {"bm25", "vector", "rrf"}),
+        ("hybrid_rerank", ["a", "b"], {"bm25", "vector", "rrf", "reranker"}),
+    ])
+    def test_ret_01_four_modes_keep_stage_scores_and_stable_order(mode, order, stages):
+>       result = build(mode).retrieve("riego", "tomato")
+                 ^^^^^^^^^^^
+
+tests/unit/test_retrieval_pipeline.py:72: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/unit/test_retrieval_pipeline.py:47: in build
+    m = api()
+        ^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def api():
+>       from agro_rag.application import retrieval_pipeline
+E       ImportError: cannot import name 'retrieval_pipeline' from 'agro_rag.application' (/workspace/scratch/23020672a295/agro-dev/src/agro_rag/application/__init__.py)
+
+tests/unit/test_retrieval_pipeline.py:10: ImportError
+_ test_ret_01_four_modes_keep_stage_scores_and_stable_order[hybrid_rerank-order3-stages3] _
+
+mode = 'hybrid_rerank', order = ['a', 'b']
+stages = {'bm25', 'reranker', 'rrf', 'vector'}
+
+    @pytest.mark.parametrize("mode,order,stages", [
+        ("bm25", ["a", "b"], {"bm25"}),
+        ("vector", ["b", "a"], {"vector"}),
+        ("hybrid", ["a", "b"], {"bm25", "vector", "rrf"}),
+        ("hybrid_rerank", ["a", "b"], {"bm25", "vector", "rrf", "reranker"}),
+    ])
+    def test_ret_01_four_modes_keep_stage_scores_and_stable_order(mode, order, stages):
+>       result = build(mode).retrieve("riego", "tomato")
+                 ^^^^^^^^^^^
+
+tests/unit/test_retrieval_pipeline.py:72: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/unit/test_retrieval_pipeline.py:47: in build
+    m = api()
+        ^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def api():
+>       from agro_rag.application import retrieval_pipeline
+E       ImportError: cannot import name 'retrieval_pipeline' from 'agro_rag.application' (/workspace/scratch/23020672a295/agro-dev/src/agro_rag/application/__init__.py)
+
+tests/unit/test_retrieval_pipeline.py:10: ImportError
+___________ test_ret_01_no_silent_lexical_fallback_on_vector_failure ___________
+
+    def test_ret_01_no_silent_lexical_fallback_on_vector_failure():
+>       with pytest.raises(api().RetrievalUnavailable, match="vector") as exc:
+                           ^^^^^
+
+tests/unit/test_retrieval_pipeline.py:82: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def api():
+>       from agro_rag.application import retrieval_pipeline
+E       ImportError: cannot import name 'retrieval_pipeline' from 'agro_rag.application' (/workspace/scratch/23020672a295/agro-dev/src/agro_rag/application/__init__.py)
+
+tests/unit/test_retrieval_pipeline.py:10: ImportError
+_ test_ret_02_reject_incompatible_index_even_same_dimension[corpus_version-old] _
+
+field = 'corpus_version', value = 'old'
+
+    @pytest.mark.parametrize("field,value", [
+        ("corpus_version", "old"), ("model", "another-model"),
+        ("revision", "revision-2"), ("dimension", 768),
+    ])
+    def test_ret_02_reject_incompatible_index_even_same_dimension(field, value):
+>       identity = api().IndexIdentity("v1", "e5", "revision-1", 384)
+                   ^^^^^
+
+tests/unit/test_retrieval_pipeline.py:93: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def api():
+>       from agro_rag.application import retrieval_pipeline
+E       ImportError: cannot import name 'retrieval_pipeline' from 'agro_rag.application' (/workspace/scratch/23020672a295/agro-dev/src/agro_rag/application/__init__.py)
+
+tests/unit/test_retrieval_pipeline.py:10: ImportError
+_ test_ret_02_reject_incompatible_index_even_same_dimension[model-another-model] _
+
+field = 'model', value = 'another-model'
+
+    @pytest.mark.parametrize("field,value", [
+        ("corpus_version", "old"), ("model", "another-model"),
+        ("revision", "revision-2"), ("dimension", 768),
+    ])
+    def test_ret_02_reject_incompatible_index_even_same_dimension(field, value):
+>       identity = api().IndexIdentity("v1", "e5", "revision-1", 384)
+                   ^^^^^
+
+tests/unit/test_retrieval_pipeline.py:93: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def api():
+>       from agro_rag.application import retrieval_pipeline
+E       ImportError: cannot import name 'retrieval_pipeline' from 'agro_rag.application' (/workspace/scratch/23020672a295/agro-dev/src/agro_rag/application/__init__.py)
+
+tests/unit/test_retrieval_pipeline.py:10: ImportError
+_ test_ret_02_reject_incompatible_index_even_same_dimension[revision-revision-2] _
+
+field = 'revision', value = 'revision-2'
+
+    @pytest.mark.parametrize("field,value", [
+        ("corpus_version", "old"), ("model", "another-model"),
+        ("revision", "revision-2"), ("dimension", 768),
+    ])
+    def test_ret_02_reject_incompatible_index_even_same_dimension(field, value):
+>       identity = api().IndexIdentity("v1", "e5", "revision-1", 384)
+                   ^^^^^
+
+tests/unit/test_retrieval_pipeline.py:93: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def api():
+>       from agro_rag.application import retrieval_pipeline
+E       ImportError: cannot import name 'retrieval_pipeline' from 'agro_rag.application' (/workspace/scratch/23020672a295/agro-dev/src/agro_rag/application/__init__.py)
+
+tests/unit/test_retrieval_pipeline.py:10: ImportError
+___ test_ret_02_reject_incompatible_index_even_same_dimension[dimension-768] ___
+
+field = 'dimension', value = 768
+
+    @pytest.mark.parametrize("field,value", [
+        ("corpus_version", "old"), ("model", "another-model"),
+        ("revision", "revision-2"), ("dimension", 768),
+    ])
+    def test_ret_02_reject_incompatible_index_even_same_dimension(field, value):
+>       identity = api().IndexIdentity("v1", "e5", "revision-1", 384)
+                   ^^^^^
+
+tests/unit/test_retrieval_pipeline.py:93: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def api():
+>       from agro_rag.application import retrieval_pipeline
+E       ImportError: cannot import name 'retrieval_pipeline' from 'agro_rag.application' (/workspace/scratch/23020672a295/agro-dev/src/agro_rag/application/__init__.py)
+
+tests/unit/test_retrieval_pipeline.py:10: ImportError
+_ test_ret_03_filters_stale_ids_crop_and_duplicate_candidates_before_reranking _
+
+    def test_ret_03_filters_stale_ids_crop_and_duplicate_candidates_before_reranking():
+        items = [evidence("a", "riego"), evidence("b", "humedad", "B"),
+                 evidence("lettuce", "lechuga", crop="lettuce")]
+        ranker = Reranker(["b", "a"])
+>       result = build("hybrid_rerank", items, lexical=Ranking(["a", "a", "old"]),
+                       vector=Ranking(["lettuce", "b", "old"]), reranker=ranker).retrieve("riego", "tomato")
+
+tests/unit/test_retrieval_pipeline.py:102: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/unit/test_retrieval_pipeline.py:47: in build
+    m = api()
+        ^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def api():
+>       from agro_rag.application import retrieval_pipeline
+E       ImportError: cannot import name 'retrieval_pipeline' from 'agro_rag.application' (/workspace/scratch/23020672a295/agro-dev/src/agro_rag/application/__init__.py)
+
+tests/unit/test_retrieval_pipeline.py:10: ImportError
+_____ test_ret_03_source_cap_counts_pdf_not_page_and_respects_total_limit ______
+
+    def test_ret_03_source_cap_counts_pdf_not_page_and_respects_total_limit():
+        items = [replace(evidence(str(i), "riego", "A" if i < 3 else str(i)), pdf_page=i+1)
+                 for i in range(6)]
+>       result = build("bm25", items, lexical=Ranking([str(i) for i in range(6)])).retrieve("riego", None)
+                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/unit/test_retrieval_pipeline.py:112: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/unit/test_retrieval_pipeline.py:47: in build
+    m = api()
+        ^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def api():
+>       from agro_rag.application import retrieval_pipeline
+E       ImportError: cannot import name 'retrieval_pipeline' from 'agro_rag.application' (/workspace/scratch/23020672a295/agro-dev/src/agro_rag/application/__init__.py)
+
+tests/unit/test_retrieval_pipeline.py:10: ImportError
+__ test_ret_03_budget_counts_serialized_context_and_skips_whole_long_passages __
+
+    def test_ret_03_budget_counts_serialized_context_and_skips_whole_long_passages():
+        items = [evidence("long", "x" * 1000), evidence("short", "agua", "B")]
+>       all_result = build("bm25", [items[1]], lexical=Ranking(["short"])).retrieve("agua", None)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/unit/test_retrieval_pipeline.py:118: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/unit/test_retrieval_pipeline.py:47: in build
+    m = api()
+        ^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def api():
+>       from agro_rag.application import retrieval_pipeline
+E       ImportError: cannot import name 'retrieval_pipeline' from 'agro_rag.application' (/workspace/scratch/23020672a295/agro-dev/src/agro_rag/application/__init__.py)
+
+tests/unit/test_retrieval_pipeline.py:10: ImportError
+_ test_empty_query_never_calls_providers_and_no_candidates_never_calls_reranker _
+
+    def test_empty_query_never_calls_providers_and_no_candidates_never_calls_reranker():
+        lexical, vector, reranker = Ranking([], True), Ranking([], True), Reranker(["invented"])
+>       assert build(lexical=lexical, vector=vector).retrieve("  ", None).evidence == ()
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/unit/test_retrieval_pipeline.py:129: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/unit/test_retrieval_pipeline.py:47: in build
+    m = api()
+        ^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def api():
+>       from agro_rag.application import retrieval_pipeline
+E       ImportError: cannot import name 'retrieval_pipeline' from 'agro_rag.application' (/workspace/scratch/23020672a295/agro-dev/src/agro_rag/application/__init__.py)
+
+tests/unit/test_retrieval_pipeline.py:10: ImportError
+_______ test_reranker_cannot_invent_ids_or_reintroduce_filtered_evidence _______
+
+    def test_reranker_cannot_invent_ids_or_reintroduce_filtered_evidence():
+>       with pytest.raises(api().RetrievalContractError, match="reranker"):
+                           ^^^^^
+
+tests/unit/test_retrieval_pipeline.py:135: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def api():
+>       from agro_rag.application import retrieval_pipeline
+E       ImportError: cannot import name 'retrieval_pipeline' from 'agro_rag.application' (/workspace/scratch/23020672a295/agro-dev/src/agro_rag/application/__init__.py)
+
+tests/unit/test_retrieval_pipeline.py:10: ImportError
+___________ test_invalid_configuration_fails_before_query[options0] ____________
+
+options = {'mode': 'unknown'}
+
+    @pytest.mark.parametrize("options", [
+        {"mode": "unknown"}, {"token_budget": 0}, {"source_cap": 0},
+        {"max_items": 0}, {"candidate_limit": 0}, {"vector": None},
+        {"actual_index": None}, {"expected_index": None},
+        {"mode": "hybrid_rerank", "reranker": None},
+    ])
+    def test_invalid_configuration_fails_before_query(options):
+        with pytest.raises(ValueError):
+>           build(**options)
+
+tests/unit/test_retrieval_pipeline.py:147: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/unit/test_retrieval_pipeline.py:47: in build
+    m = api()
+        ^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def api():
+>       from agro_rag.application import retrieval_pipeline
+E       ImportError: cannot import name 'retrieval_pipeline' from 'agro_rag.application' (/workspace/scratch/23020672a295/agro-dev/src/agro_rag/application/__init__.py)
+
+tests/unit/test_retrieval_pipeline.py:10: ImportError
+___________ test_invalid_configuration_fails_before_query[options1] ____________
+
+options = {'token_budget': 0}
+
+    @pytest.mark.parametrize("options", [
+        {"mode": "unknown"}, {"token_budget": 0}, {"source_cap": 0},
+        {"max_items": 0}, {"candidate_limit": 0}, {"vector": None},
+        {"actual_index": None}, {"expected_index": None},
+        {"mode": "hybrid_rerank", "reranker": None},
+    ])
+    def test_invalid_configuration_fails_before_query(options):
+        with pytest.raises(ValueError):
+>           build(**options)
+
+tests/unit/test_retrieval_pipeline.py:147: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/unit/test_retrieval_pipeline.py:47: in build
+    m = api()
+        ^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def api():
+>       from agro_rag.application import retrieval_pipeline
+E       ImportError: cannot import name 'retrieval_pipeline' from 'agro_rag.application' (/workspace/scratch/23020672a295/agro-dev/src/agro_rag/application/__init__.py)
+
+tests/unit/test_retrieval_pipeline.py:10: ImportError
+___________ test_invalid_configuration_fails_before_query[options2] ____________
+
+options = {'source_cap': 0}
+
+    @pytest.mark.parametrize("options", [
+        {"mode": "unknown"}, {"token_budget": 0}, {"source_cap": 0},
+        {"max_items": 0}, {"candidate_limit": 0}, {"vector": None},
+        {"actual_index": None}, {"expected_index": None},
+        {"mode": "hybrid_rerank", "reranker": None},
+    ])
+    def test_invalid_configuration_fails_before_query(options):
+        with pytest.raises(ValueError):
+>           build(**options)
+
+tests/unit/test_retrieval_pipeline.py:147: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/unit/test_retrieval_pipeline.py:47: in build
+    m = api()
+        ^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def api():
+>       from agro_rag.application import retrieval_pipeline
+E       ImportError: cannot import name 'retrieval_pipeline' from 'agro_rag.application' (/workspace/scratch/23020672a295/agro-dev/src/agro_rag/application/__init__.py)
+
+tests/unit/test_retrieval_pipeline.py:10: ImportError
+___________ test_invalid_configuration_fails_before_query[options3] ____________
+
+options = {'max_items': 0}
+
+    @pytest.mark.parametrize("options", [
+        {"mode": "unknown"}, {"token_budget": 0}, {"source_cap": 0},
+        {"max_items": 0}, {"candidate_limit": 0}, {"vector": None},
+        {"actual_index": None}, {"expected_index": None},
+        {"mode": "hybrid_rerank", "reranker": None},
+    ])
+    def test_invalid_configuration_fails_before_query(options):
+        with pytest.raises(ValueError):
+>           build(**options)
+
+tests/unit/test_retrieval_pipeline.py:147: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/unit/test_retrieval_pipeline.py:47: in build
+    m = api()
+        ^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def api():
+>       from agro_rag.application import retrieval_pipeline
+E       ImportError: cannot import name 'retrieval_pipeline' from 'agro_rag.application' (/workspace/scratch/23020672a295/agro-dev/src/agro_rag/application/__init__.py)
+
+tests/unit/test_retrieval_pipeline.py:10: ImportError
+___________ test_invalid_configuration_fails_before_query[options4] ____________
+
+options = {'candidate_limit': 0}
+
+    @pytest.mark.parametrize("options", [
+        {"mode": "unknown"}, {"token_budget": 0}, {"source_cap": 0},
+        {"max_items": 0}, {"candidate_limit": 0}, {"vector": None},
+        {"actual_index": None}, {"expected_index": None},
+        {"mode": "hybrid_rerank", "reranker": None},
+    ])
+    def test_invalid_configuration_fails_before_query(options):
+        with pytest.raises(ValueError):
+>           build(**options)
+
+tests/unit/test_retrieval_pipeline.py:147: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/unit/test_retrieval_pipeline.py:47: in build
+    m = api()
+        ^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def api():
+>       from agro_rag.application import retrieval_pipeline
+E       ImportError: cannot import name 'retrieval_pipeline' from 'agro_rag.application' (/workspace/scratch/23020672a295/agro-dev/src/agro_rag/application/__init__.py)
+
+tests/unit/test_retrieval_pipeline.py:10: ImportError
+___________ test_invalid_configuration_fails_before_query[options5] ____________
+
+options = {'vector': None}
+
+    @pytest.mark.parametrize("options", [
+        {"mode": "unknown"}, {"token_budget": 0}, {"source_cap": 0},
+        {"max_items": 0}, {"candidate_limit": 0}, {"vector": None},
+        {"actual_index": None}, {"expected_index": None},
+        {"mode": "hybrid_rerank", "reranker": None},
+    ])
+    def test_invalid_configuration_fails_before_query(options):
+        with pytest.raises(ValueError):
+>           build(**options)
+
+tests/unit/test_retrieval_pipeline.py:147: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/unit/test_retrieval_pipeline.py:47: in build
+    m = api()
+        ^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def api():
+>       from agro_rag.application import retrieval_pipeline
+E       ImportError: cannot import name 'retrieval_pipeline' from 'agro_rag.application' (/workspace/scratch/23020672a295/agro-dev/src/agro_rag/application/__init__.py)
+
+tests/unit/test_retrieval_pipeline.py:10: ImportError
+___________ test_invalid_configuration_fails_before_query[options6] ____________
+
+options = {'actual_index': None}
+
+    @pytest.mark.parametrize("options", [
+        {"mode": "unknown"}, {"token_budget": 0}, {"source_cap": 0},
+        {"max_items": 0}, {"candidate_limit": 0}, {"vector": None},
+        {"actual_index": None}, {"expected_index": None},
+        {"mode": "hybrid_rerank", "reranker": None},
+    ])
+    def test_invalid_configuration_fails_before_query(options):
+        with pytest.raises(ValueError):
+>           build(**options)
+
+tests/unit/test_retrieval_pipeline.py:147: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/unit/test_retrieval_pipeline.py:47: in build
+    m = api()
+        ^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def api():
+>       from agro_rag.application import retrieval_pipeline
+E       ImportError: cannot import name 'retrieval_pipeline' from 'agro_rag.application' (/workspace/scratch/23020672a295/agro-dev/src/agro_rag/application/__init__.py)
+
+tests/unit/test_retrieval_pipeline.py:10: ImportError
+___________ test_invalid_configuration_fails_before_query[options7] ____________
+
+options = {'expected_index': None}
+
+    @pytest.mark.parametrize("options", [
+        {"mode": "unknown"}, {"token_budget": 0}, {"source_cap": 0},
+        {"max_items": 0}, {"candidate_limit": 0}, {"vector": None},
+        {"actual_index": None}, {"expected_index": None},
+        {"mode": "hybrid_rerank", "reranker": None},
+    ])
+    def test_invalid_configuration_fails_before_query(options):
+        with pytest.raises(ValueError):
+>           build(**options)
+
+tests/unit/test_retrieval_pipeline.py:147: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/unit/test_retrieval_pipeline.py:47: in build
+    m = api()
+        ^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def api():
+>       from agro_rag.application import retrieval_pipeline
+E       ImportError: cannot import name 'retrieval_pipeline' from 'agro_rag.application' (/workspace/scratch/23020672a295/agro-dev/src/agro_rag/application/__init__.py)
+
+tests/unit/test_retrieval_pipeline.py:10: ImportError
+___________ test_invalid_configuration_fails_before_query[options8] ____________
+
+options = {'mode': 'hybrid_rerank', 'reranker': None}
+
+    @pytest.mark.parametrize("options", [
+        {"mode": "unknown"}, {"token_budget": 0}, {"source_cap": 0},
+        {"max_items": 0}, {"candidate_limit": 0}, {"vector": None},
+        {"actual_index": None}, {"expected_index": None},
+        {"mode": "hybrid_rerank", "reranker": None},
+    ])
+    def test_invalid_configuration_fails_before_query(options):
+        with pytest.raises(ValueError):
+>           build(**options)
+
+tests/unit/test_retrieval_pipeline.py:147: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/unit/test_retrieval_pipeline.py:47: in build
+    m = api()
+        ^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def api():
+>       from agro_rag.application import retrieval_pipeline
+E       ImportError: cannot import name 'retrieval_pipeline' from 'agro_rag.application' (/workspace/scratch/23020672a295/agro-dev/src/agro_rag/application/__init__.py)
+
+tests/unit/test_retrieval_pipeline.py:10: ImportError
+________________ test_catalogue_and_ranker_versions_must_match _________________
+
+    def test_catalogue_and_ranker_versions_must_match():
+        with pytest.raises(ValueError, match="catálogo"):
+>           build(items=[replace(evidence("a", "riego"), corpus_version="old")])
+
+tests/unit/test_retrieval_pipeline.py:152: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+tests/unit/test_retrieval_pipeline.py:47: in build
+    m = api()
+        ^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def api():
+>       from agro_rag.application import retrieval_pipeline
+E       ImportError: cannot import name 'retrieval_pipeline' from 'agro_rag.application' (/workspace/scratch/23020672a295/agro-dev/src/agro_rag/application/__init__.py)
+
+tests/unit/test_retrieval_pipeline.py:10: ImportError
+_________ test_lexical_adapter_exposes_candidates_before_diversity_cap _________
+
+    def test_lexical_adapter_exposes_candidates_before_diversity_cap():
+        from agro_rag.infrastructure.retrieval import LexicalRetriever
+    
+        r = LexicalRetriever(Catalogue("v1", tuple(evidence(str(i), "riego") for i in range(5))))
+>       assert r.corpus_version == "v1"
+               ^^^^^^^^^^^^^^^^
+E       AttributeError: 'LexicalRetriever' object has no attribute 'corpus_version'
+
+tests/unit/test_retrieval_pipeline.py:165: AttributeError
+=========================== short test summary info ============================
+FAILED tests/unit/test_retrieval_pipeline.py::test_ret_01_four_modes_keep_stage_scores_and_stable_order[bm25-order0-stages0]
+FAILED tests/unit/test_retrieval_pipeline.py::test_ret_01_four_modes_keep_stage_scores_and_stable_order[vector-order1-stages1]
+FAILED tests/unit/test_retrieval_pipeline.py::test_ret_01_four_modes_keep_stage_scores_and_stable_order[hybrid-order2-stages2]
+FAILED tests/unit/test_retrieval_pipeline.py::test_ret_01_four_modes_keep_stage_scores_and_stable_order[hybrid_rerank-order3-stages3]
+FAILED tests/unit/test_retrieval_pipeline.py::test_ret_01_no_silent_lexical_fallback_on_vector_failure
+FAILED tests/unit/test_retrieval_pipeline.py::test_ret_02_reject_incompatible_index_even_same_dimension[corpus_version-old]
+FAILED tests/unit/test_retrieval_pipeline.py::test_ret_02_reject_incompatible_index_even_same_dimension[model-another-model]
+FAILED tests/unit/test_retrieval_pipeline.py::test_ret_02_reject_incompatible_index_even_same_dimension[revision-revision-2]
+FAILED tests/unit/test_retrieval_pipeline.py::test_ret_02_reject_incompatible_index_even_same_dimension[dimension-768]
+FAILED tests/unit/test_retrieval_pipeline.py::test_ret_03_filters_stale_ids_crop_and_duplicate_candidates_before_reranking
+FAILED tests/unit/test_retrieval_pipeline.py::test_ret_03_source_cap_counts_pdf_not_page_and_respects_total_limit
+FAILED tests/unit/test_retrieval_pipeline.py::test_ret_03_budget_counts_serialized_context_and_skips_whole_long_passages
+FAILED tests/unit/test_retrieval_pipeline.py::test_empty_query_never_calls_providers_and_no_candidates_never_calls_reranker
+FAILED tests/unit/test_retrieval_pipeline.py::test_reranker_cannot_invent_ids_or_reintroduce_filtered_evidence
+FAILED tests/unit/test_retrieval_pipeline.py::test_invalid_configuration_fails_before_query[options0]
+FAILED tests/unit/test_retrieval_pipeline.py::test_invalid_configuration_fails_before_query[options1]
+FAILED tests/unit/test_retrieval_pipeline.py::test_invalid_configuration_fails_before_query[options2]
+FAILED tests/unit/test_retrieval_pipeline.py::test_invalid_configuration_fails_before_query[options3]
+FAILED tests/unit/test_retrieval_pipeline.py::test_invalid_configuration_fails_before_query[options4]
+FAILED tests/unit/test_retrieval_pipeline.py::test_invalid_configuration_fails_before_query[options5]
+FAILED tests/unit/test_retrieval_pipeline.py::test_invalid_configuration_fails_before_query[options6]
+FAILED tests/unit/test_retrieval_pipeline.py::test_invalid_configuration_fails_before_query[options7]
+FAILED tests/unit/test_retrieval_pipeline.py::test_invalid_configuration_fails_before_query[options8]
+FAILED tests/unit/test_retrieval_pipeline.py::test_catalogue_and_ranker_versions_must_match
+FAILED tests/unit/test_retrieval_pipeline.py::test_lexical_adapter_exposes_candidates_before_diversity_cap
+25 failed in 0.56s

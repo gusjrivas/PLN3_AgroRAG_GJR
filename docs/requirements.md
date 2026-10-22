@@ -25,7 +25,7 @@ CNN/ViT y acción final externa automática son opcionales en la consigna y qued
 
 ## Matriz de requisitos de implementación
 
-Todos están en estado ESPECIFICADO, pendiente de implementación/verificación. Al completar, añadir commit y ubicación de evidencia; no cambiar sólo la etiqueta de estado.
+La matriz describe el objetivo completo. Hay implementación parcial en PR #1–#4 y evidencia en docs/evidence/tdd; ver docs/plan.md para estado actual. RET-01/02/03 avanzan con contratos offline según ADR-013, sin declarar integración semántica ni evaluación real. Al completar un requisito entero, añadir commit y ubicación de evidencia; no cambiar sólo la etiqueta de estado.
 
 | ID | Requisito | Cambio/spec | Escenarios | Evidencia prevista |
 |---|---|---|---|---|

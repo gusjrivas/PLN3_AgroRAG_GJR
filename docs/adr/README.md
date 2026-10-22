@@ -17,3 +17,4 @@ Estado inicial: propuestas técnicas para revisión. Python, TDD y repositorio s
 | [ADR-011](011.md) | Evaluación controlada y entrega reproducible | Propuesto | 06-evaluation-delivery |
 
 - [ADR-012: primera versión incremental](012.md).
+- [ADR-013: contratos de recuperación y activación semántica](013.md).

@@ -1,0 +1,58 @@
+============================= test session starts ==============================
+platform linux -- Python 3.12.14, pytest-9.1.1, pluggy-1.7.0
+rootdir: /workspace/scratch/23020672a295/agro-dev
+configfile: pyproject.toml
+testpaths: tests
+plugins: anyio-4.15.1, platformdirs-4.13.5, cov-7.1.0
+collected 96 items / 1 deselected / 95 selected
+
+tests/contract/test_health.py ..                                         [  2%]
+tests/contract/test_query_api.py .........                               [ 11%]
+tests/integration/test_corpus.py ..............                          [ 26%]
+tests/integration/test_download.py ......                                [ 32%]
+tests/integration/test_model.py ....                                     [ 36%]
+tests/ui/test_client.py ..                                               [ 38%]
+tests/ui/test_ui.py ....                                                 [ 43%]
+tests/unit/test_query.py ............                                    [ 55%]
+tests/unit/test_retrieval.py ...                                         [ 58%]
+tests/unit/test_retrieval_pipeline.py .................................. [ 94%]
+.....                                                                    [100%]
+
+=============================== warnings summary ===============================
+.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/23020672a295/agro-dev/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+================================ tests coverage ================================
+_______________ coverage: platform linux, python 3.12.14-final-0 _______________
+
+Name                                             Stmts   Miss Branch BrPart  Cover   Missing
+--------------------------------------------------------------------------------------------
+src/agro_rag/__init__.py                             0      0      0      0   100%
+src/agro_rag/api/__init__.py                         0      0      0      0   100%
+src/agro_rag/api/health.py                           5      0      0      0   100%
+src/agro_rag/api/query.py                           64      4     20      6    88%   48, 62->65, 63->62, 75, 77, 97
+src/agro_rag/api/schemas.py                         79      9     14      5    81%   19, 22-24, 39-41, 102, 104
+src/agro_rag/application/__init__.py                 0      0      0      0   100%
+src/agro_rag/application/query.py                  108      6     40      6    92%   120, 123, 126, 194, 214, 222
+src/agro_rag/application/retrieval.py               11      0      6      0   100%
+src/agro_rag/application/retrieval_pipeline.py     142      0     52      0   100%
+src/agro_rag/bootstrap/__init__.py                   0      0      0      0   100%
+src/agro_rag/bootstrap/app.py                       46      2      8      2    93%   33, 65
+src/agro_rag/bootstrap/cli.py                       28      1      6      1    94%   28
+src/agro_rag/bootstrap/settings.py                   9      0      0      0   100%
+src/agro_rag/domain/__init__.py                      0      0      0      0   100%
+src/agro_rag/domain/evidence.py                     22      0      0      0   100%
+src/agro_rag/infrastructure/__init__.py              0      0      0      0   100%
+src/agro_rag/infrastructure/corpus.py              131      9     42     10    89%   72, 85, 88->94, 112, 149, 163, 167, 186, 196, 199
+src/agro_rag/infrastructure/download.py             31      2     12      2    91%   19, 34
+src/agro_rag/infrastructure/ollama.py               38      4      4      1    88%   48-49, 78, 81
+src/agro_rag/infrastructure/retrieval.py            49      1     14      1    97%   62
+src/agro_rag_ui/__init__.py                          0      0      0      0   100%
+src/agro_rag_ui/app.py                              87      8     30      7    87%   51, 79, 84-85, 111-115, 118, 121->exit
+src/agro_rag_ui/client.py                           29      6      6      3    74%   19-20, 30, 36-37, 42
+--------------------------------------------------------------------------------------------
+TOTAL                                              879     52    254     44    91%
+Required test coverage of 85.0% reached. Total coverage: 91.17%
+================= 95 passed, 1 deselected, 1 warning in 9.55s ==================
