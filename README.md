@@ -5,7 +5,7 @@ Autor y responsable académico: Gustavo Julián Rivas. Fecha del plan: 21/10/202
 
 Repositorio independiente: https://github.com/gusjrivas/PLN3_AgroRAG_GJR
 
-**Estado: base Python implementada con endpoint de salud y controles de calidad. RAG y frontend funcional pendientes.**
+**Estado: base Python implementada con endpoint de salud y controles de calidad. Ingesta PDF curada y catálogo local implementados; RAG y frontend funcional pendientes.**
 Engram 3.5.2 está instalado y verificado en el entorno de trabajo remoto; `.engram/config.json` identifica este proyecto. La instalación en la notebook y la activación de los clientes permanecen pendientes. Ver [evidencia](docs/evidence/engram-setup.md). Los ADR son propuestas técnicas; TDD y Python son requisitos expresos del usuario.
 
 ## Empezar aquí
@@ -62,3 +62,5 @@ uv run uvicorn agro_rag.bootstrap.app:create_app --factory --host 127.0.0.1 --po
 ```
 
 `GET /health/live` devuelve `{"status":"ok"}`. Pruebas: `uv run pytest --cov`.
+
+Descargar e ingerir el corpus piloto: [docs/corpus.md](docs/corpus.md). La primera selección contiene 12 fragmentos revisados; no equivale a una evaluación científica completa.

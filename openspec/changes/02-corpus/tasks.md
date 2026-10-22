@@ -1,6 +1,6 @@
 # Tasks: Corpus versionado con evidencia
 
-Responsable: RAG/datos. Dependencias: 00-foundation y 01-engram; puede continuar desde Git si memoria tiene bloqueo documentado. Todas las tareas están pendientes de ejecución.
+Responsable: RAG/datos. Dependencias: 00-foundation y 01-engram; puede continuar desde Git si memoria tiene bloqueo documentado. Implementación piloto y evidencia en docs/evidence/tdd/02-corpus.md. Admisión, tablas revisadas y catálogo local implementados. COR-03 remoto y ampliación de corpus pendientes; no archivar.
 
 ## 1. Preparación
 

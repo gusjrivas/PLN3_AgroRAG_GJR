@@ -15,3 +15,5 @@ Estado inicial: propuestas técnicas para revisión. Python, TDD y repositorio s
 | [ADR-009](009.md) | Seguridad y operación local proporcionadas | Propuesto | 05-frontend-hardening |
 | [ADR-010](010.md) | Costos, caching y observabilidad | Propuesto | 05-frontend-hardening |
 | [ADR-011](011.md) | Evaluación controlada y entrega reproducible | Propuesto | 06-evaluation-delivery |
+
+- [ADR-012: primera versión incremental](012.md).

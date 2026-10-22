@@ -1,0 +1,126 @@
+{
+  "sources": [
+    {
+      "source_id": "INTA-HUERTA-2008",
+      "title": "Manual de cultivos para la huerta orgánica familiar",
+      "authors": [
+        "Enrique David Goites"
+      ],
+      "institution": "INTA",
+      "edition": "1a edición, 2008",
+      "language": "es",
+      "source_url": "https://www.argentina.gob.ar/sites/default/files/2023/08/script-tmp-manual_de_cultivos_para_la_huerta_organica_familiar_-.pdf",
+      "access_date": "2026-10-22",
+      "local_file": "raw/inta-huerta-2008.pdf",
+      "sha256": "b46eed913543dabc8b4bc3e00b4ce1ec8d8deb2b0810516e426c769181c7d5b7",
+      "rights_status": "public_access_no_redistribution",
+      "review_status": "reviewed",
+      "pages": [
+        {
+          "pdf_page": 69,
+          "printed_page": "67",
+          "section": "Lechuga: clima y suelo",
+          "crop": "lettuce",
+          "start_marker": "Clima y Suelo"
+        },
+        {
+          "pdf_page": 72,
+          "printed_page": "70",
+          "section": "Lechuga: riego",
+          "crop": "lettuce",
+          "start_marker": "El riego puede",
+          "end_marker": "Las plagas"
+        },
+        {
+          "pdf_page": 103,
+          "printed_page": "101",
+          "section": "Tomate: riego",
+          "crop": "tomato",
+          "start_marker": "En lo que respecta al riego",
+          "end_marker": "En el siguiente cuadro"
+        },
+        {
+          "pdf_page": 131,
+          "printed_page": "129",
+          "section": "Períodos críticos",
+          "crop": "lettuce",
+          "table": {
+            "headers": [
+              "Cultivo",
+              "Período crítico a la falta de agua"
+            ],
+            "rows": [
+              [
+                "Lechuga",
+                "Humedad siempre, sobre todo antes de la cosecha"
+              ]
+            ],
+            "reviewed": true
+          }
+        },
+        {
+          "pdf_page": 131,
+          "printed_page": "129",
+          "section": "Períodos críticos",
+          "crop": "tomato",
+          "table": {
+            "headers": [
+              "Cultivo",
+              "Período crítico a la falta de agua"
+            ],
+            "rows": [
+              [
+                "Tomate",
+                "Durante el cuajado de frutos"
+              ]
+            ],
+            "reviewed": true
+          }
+        }
+      ]
+    },
+    {
+      "source_id": "FAO56-1998",
+      "title": "Crop evapotranspiration: Guidelines for computing crop water requirements",
+      "authors": [
+        "Richard G. Allen",
+        "Luis S. Pereira",
+        "Dirk Raes",
+        "Martin Smith"
+      ],
+      "institution": "FAO; copia institucional USDA-NRCS",
+      "edition": "1998; copia con errata y ejemplos corregidos de febrero de 2006 al final",
+      "language": "en",
+      "source_url": "https://www.wcc.nrcs.usda.gov/ftpref/wntsc/waterMgt/irrigation/fao56.pdf",
+      "access_date": "2026-10-22",
+      "local_file": "raw/fao56-1998.pdf",
+      "sha256": "bba2b84e839336453556ebe8422dc862f10831deda1a8ab46bfd3a9092d8665a",
+      "rights_status": "public_access_no_redistribution",
+      "review_status": "reviewed",
+      "pages": [
+        {
+          "pdf_page": 27,
+          "printed_page": "1",
+          "section": "Evaporation",
+          "crop": null,
+          "start_marker": "EVAPOTRANSPIRATION PROCESS"
+        },
+        {
+          "pdf_page": 29,
+          "printed_page": "3",
+          "section": "Transpiration",
+          "crop": null,
+          "start_marker": "Transpiration",
+          "end_marker": "UNITS"
+        },
+        {
+          "pdf_page": 187,
+          "printed_page": "161",
+          "section": "Soil water availability",
+          "crop": null,
+          "start_marker": "SOIL WATER AVAILABILITY"
+        }
+      ]
+    }
+  ]
+}

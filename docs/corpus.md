@@ -29,3 +29,14 @@ Chunking inicial: ventanas de ~200 tokens léxicos y overlap ~60 como baseline d
 ## Baseline docente
 
 Fuente de código: Teoria1/Codigo/RAG al commit 1f4cdbb37f59a049ef9b35c482ccb1de850fbc43. Conservar atribución y registrar qué módulos se adaptaron. No mezclar sus papers de RAG y qrels de muestra con el corpus/evaluación agronómicos.
+
+## Primer corpus descargado e implementado
+
+La selección piloto efectiva está en `data/manifest.json`; reemplaza el estado de investigación de la tabla anterior para las dos fuentes descargadas. INTA: PDF 69, 72, 103 y dos filas de 131. FAO: PDF 27, 29 y sección final de 187. Resultado inicial: 12 fragmentos. Página física e impresa son campos diferentes. Ver docs/evidence/tdd/02-corpus.md.
+
+```bash
+uv run agro-rag download data/manifest.json
+uv run agro-rag ingest data/manifest.json --output data/processed/catalogue
+```
+
+La descarga se realiza sólo mediante CLI administrativa, con hashes fijados y dominios institucionales permitidos. No se aceptan URLs de usuarios por API. Si un archivo publicado cambia, el comando falla: revisar nueva edición y actualizar el manifiesto antes de admitirlo.

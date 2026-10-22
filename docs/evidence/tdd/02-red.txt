@@ -1,0 +1,238 @@
+FFFFFFFFFF                                                               [100%]
+=================================== FAILURES ===================================
+___________________ test_real_pdf_provenance_and_idempotency ___________________
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-0/test_real_pdf_provenance_and_i0')
+
+    def test_real_pdf_provenance_and_idempotency(tmp_path):
+        manifest, source = fixture_source(tmp_path)
+>       first = build(manifest, tmp_path / 'catalogues')
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/integration/test_corpus.py:37: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+manifest = PosixPath('/tmp/pytest-of-root/pytest-0/test_real_pdf_provenance_and_i0/manifest.json')
+output = PosixPath('/tmp/pytest-of-root/pytest-0/test_real_pdf_provenance_and_i0/catalogues')
+
+    def build(manifest, output):
+>       from agro_rag.infrastructure.corpus import build_catalogue
+E       ModuleNotFoundError: No module named 'agro_rag.infrastructure.corpus'
+
+tests/integration/test_corpus.py:31: ModuleNotFoundError
+__________ test_invalid_admission_preserves_previous_catalogue[hash] ___________
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-0/test_invalid_admission_preserv0')
+failure = 'hash'
+
+    @pytest.mark.parametrize('failure', ['hash', 'rights', 'review', 'pages', 'empty', 'duplicate'])
+    def test_invalid_admission_preserves_previous_catalogue(tmp_path, failure):
+        manifest, source = fixture_source(tmp_path)
+        output = tmp_path / 'catalogues'
+>       first = build(manifest, output)
+                ^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/integration/test_corpus.py:54: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+manifest = PosixPath('/tmp/pytest-of-root/pytest-0/test_invalid_admission_preserv0/manifest.json')
+output = PosixPath('/tmp/pytest-of-root/pytest-0/test_invalid_admission_preserv0/catalogues')
+
+    def build(manifest, output):
+>       from agro_rag.infrastructure.corpus import build_catalogue
+E       ModuleNotFoundError: No module named 'agro_rag.infrastructure.corpus'
+
+tests/integration/test_corpus.py:31: ModuleNotFoundError
+_________ test_invalid_admission_preserves_previous_catalogue[rights] __________
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-0/test_invalid_admission_preserv1')
+failure = 'rights'
+
+    @pytest.mark.parametrize('failure', ['hash', 'rights', 'review', 'pages', 'empty', 'duplicate'])
+    def test_invalid_admission_preserves_previous_catalogue(tmp_path, failure):
+        manifest, source = fixture_source(tmp_path)
+        output = tmp_path / 'catalogues'
+>       first = build(manifest, output)
+                ^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/integration/test_corpus.py:54: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+manifest = PosixPath('/tmp/pytest-of-root/pytest-0/test_invalid_admission_preserv1/manifest.json')
+output = PosixPath('/tmp/pytest-of-root/pytest-0/test_invalid_admission_preserv1/catalogues')
+
+    def build(manifest, output):
+>       from agro_rag.infrastructure.corpus import build_catalogue
+E       ModuleNotFoundError: No module named 'agro_rag.infrastructure.corpus'
+
+tests/integration/test_corpus.py:31: ModuleNotFoundError
+_________ test_invalid_admission_preserves_previous_catalogue[review] __________
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-0/test_invalid_admission_preserv2')
+failure = 'review'
+
+    @pytest.mark.parametrize('failure', ['hash', 'rights', 'review', 'pages', 'empty', 'duplicate'])
+    def test_invalid_admission_preserves_previous_catalogue(tmp_path, failure):
+        manifest, source = fixture_source(tmp_path)
+        output = tmp_path / 'catalogues'
+>       first = build(manifest, output)
+                ^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/integration/test_corpus.py:54: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+manifest = PosixPath('/tmp/pytest-of-root/pytest-0/test_invalid_admission_preserv2/manifest.json')
+output = PosixPath('/tmp/pytest-of-root/pytest-0/test_invalid_admission_preserv2/catalogues')
+
+    def build(manifest, output):
+>       from agro_rag.infrastructure.corpus import build_catalogue
+E       ModuleNotFoundError: No module named 'agro_rag.infrastructure.corpus'
+
+tests/integration/test_corpus.py:31: ModuleNotFoundError
+__________ test_invalid_admission_preserves_previous_catalogue[pages] __________
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-0/test_invalid_admission_preserv3')
+failure = 'pages'
+
+    @pytest.mark.parametrize('failure', ['hash', 'rights', 'review', 'pages', 'empty', 'duplicate'])
+    def test_invalid_admission_preserves_previous_catalogue(tmp_path, failure):
+        manifest, source = fixture_source(tmp_path)
+        output = tmp_path / 'catalogues'
+>       first = build(manifest, output)
+                ^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/integration/test_corpus.py:54: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+manifest = PosixPath('/tmp/pytest-of-root/pytest-0/test_invalid_admission_preserv3/manifest.json')
+output = PosixPath('/tmp/pytest-of-root/pytest-0/test_invalid_admission_preserv3/catalogues')
+
+    def build(manifest, output):
+>       from agro_rag.infrastructure.corpus import build_catalogue
+E       ModuleNotFoundError: No module named 'agro_rag.infrastructure.corpus'
+
+tests/integration/test_corpus.py:31: ModuleNotFoundError
+__________ test_invalid_admission_preserves_previous_catalogue[empty] __________
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-0/test_invalid_admission_preserv4')
+failure = 'empty'
+
+    @pytest.mark.parametrize('failure', ['hash', 'rights', 'review', 'pages', 'empty', 'duplicate'])
+    def test_invalid_admission_preserves_previous_catalogue(tmp_path, failure):
+        manifest, source = fixture_source(tmp_path)
+        output = tmp_path / 'catalogues'
+>       first = build(manifest, output)
+                ^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/integration/test_corpus.py:54: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+manifest = PosixPath('/tmp/pytest-of-root/pytest-0/test_invalid_admission_preserv4/manifest.json')
+output = PosixPath('/tmp/pytest-of-root/pytest-0/test_invalid_admission_preserv4/catalogues')
+
+    def build(manifest, output):
+>       from agro_rag.infrastructure.corpus import build_catalogue
+E       ModuleNotFoundError: No module named 'agro_rag.infrastructure.corpus'
+
+tests/integration/test_corpus.py:31: ModuleNotFoundError
+________ test_invalid_admission_preserves_previous_catalogue[duplicate] ________
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-0/test_invalid_admission_preserv5')
+failure = 'duplicate'
+
+    @pytest.mark.parametrize('failure', ['hash', 'rights', 'review', 'pages', 'empty', 'duplicate'])
+    def test_invalid_admission_preserves_previous_catalogue(tmp_path, failure):
+        manifest, source = fixture_source(tmp_path)
+        output = tmp_path / 'catalogues'
+>       first = build(manifest, output)
+                ^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/integration/test_corpus.py:54: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+manifest = PosixPath('/tmp/pytest-of-root/pytest-0/test_invalid_admission_preserv5/manifest.json')
+output = PosixPath('/tmp/pytest-of-root/pytest-0/test_invalid_admission_preserv5/catalogues')
+
+    def build(manifest, output):
+>       from agro_rag.infrastructure.corpus import build_catalogue
+E       ModuleNotFoundError: No module named 'agro_rag.infrastructure.corpus'
+
+tests/integration/test_corpus.py:31: ModuleNotFoundError
+__________________________ test_blank_pdf_is_rejected __________________________
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-0/test_blank_pdf_is_rejected0')
+
+    def test_blank_pdf_is_rejected(tmp_path):
+        manifest, _ = fixture_source(tmp_path, blank=True)
+        with pytest.raises(ValueError, match='texto'):
+>           build(manifest, tmp_path / 'catalogues')
+
+tests/integration/test_corpus.py:72: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+manifest = PosixPath('/tmp/pytest-of-root/pytest-0/test_blank_pdf_is_rejected0/manifest.json')
+output = PosixPath('/tmp/pytest-of-root/pytest-0/test_blank_pdf_is_rejected0/catalogues')
+
+    def build(manifest, output):
+>       from agro_rag.infrastructure.corpus import build_catalogue
+E       ModuleNotFoundError: No module named 'agro_rag.infrastructure.corpus'
+
+tests/integration/test_corpus.py:31: ModuleNotFoundError
+___________________ test_metadata_changes_create_new_version ___________________
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-0/test_metadata_changes_create_n0')
+
+    def test_metadata_changes_create_new_version(tmp_path):
+        manifest, source = fixture_source(tmp_path)
+>       first = build(manifest, tmp_path / 'catalogues')
+                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/integration/test_corpus.py:78: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+manifest = PosixPath('/tmp/pytest-of-root/pytest-0/test_metadata_changes_create_n0/manifest.json')
+output = PosixPath('/tmp/pytest-of-root/pytest-0/test_metadata_changes_create_n0/catalogues')
+
+    def build(manifest, output):
+>       from agro_rag.infrastructure.corpus import build_catalogue
+E       ModuleNotFoundError: No module named 'agro_rag.infrastructure.corpus'
+
+tests/integration/test_corpus.py:31: ModuleNotFoundError
+___________ test_table_rows_preserve_headers_and_only_selected_crops ___________
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-0/test_table_rows_preserve_heade0')
+
+    def test_table_rows_preserve_headers_and_only_selected_crops(tmp_path):
+        manifest, source = fixture_source(tmp_path)
+        source['pages'][0]['table'] = {
+            'headers': ['Cultivo', 'Periodo critico'],
+            'rows': [['Lechuga', 'Humedad constante']],
+            'reviewed': True,
+        }
+        manifest.write_text(json.dumps({'sources': [source]}))
+>       item = build(manifest, tmp_path / 'catalogues').evidence[0]
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests/integration/test_corpus.py:94: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+manifest = PosixPath('/tmp/pytest-of-root/pytest-0/test_table_rows_preserve_heade0/manifest.json')
+output = PosixPath('/tmp/pytest-of-root/pytest-0/test_table_rows_preserve_heade0/catalogues')
+
+    def build(manifest, output):
+>       from agro_rag.infrastructure.corpus import build_catalogue
+E       ModuleNotFoundError: No module named 'agro_rag.infrastructure.corpus'
+
+tests/integration/test_corpus.py:31: ModuleNotFoundError
+=========================== short test summary info ============================
+FAILED tests/integration/test_corpus.py::test_real_pdf_provenance_and_idempotency
+FAILED tests/integration/test_corpus.py::test_invalid_admission_preserves_previous_catalogue[hash]
+FAILED tests/integration/test_corpus.py::test_invalid_admission_preserves_previous_catalogue[rights]
+FAILED tests/integration/test_corpus.py::test_invalid_admission_preserves_previous_catalogue[review]
+FAILED tests/integration/test_corpus.py::test_invalid_admission_preserves_previous_catalogue[pages]
+FAILED tests/integration/test_corpus.py::test_invalid_admission_preserves_previous_catalogue[empty]
+FAILED tests/integration/test_corpus.py::test_invalid_admission_preserves_previous_catalogue[duplicate]
+FAILED tests/integration/test_corpus.py::test_blank_pdf_is_rejected - ModuleN...
+FAILED tests/integration/test_corpus.py::test_metadata_changes_create_new_version
+FAILED tests/integration/test_corpus.py::test_table_rows_preserve_headers_and_only_selected_crops
+10 failed in 0.26s
