@@ -25,3 +25,6 @@ logs/
 runs/
 playwright-report/
 test-results/
+
+# Herramientas locales; no versionar binarios ni archivos descargados
+.tools/

@@ -1,6 +1,6 @@
 # Preparación local: repositorio, OpenSpec y Engram
 
-Estado: procedimiento preparado, no ejecutado sobre `C:\Repo\PLN3_AgroRAG_GJR` ni sobre las configuraciones locales del usuario.
+Estado: Engram 3.5.2 instalado y verificado en Linux en el entorno de trabajo remoto. Proyecto inicializado mediante `.engram/config.json`. No ejecutado sobre `C:\Repo\PLN3_AgroRAG_GJR` ni sobre las configuraciones locales del usuario. Ver [evidencia y pasos para Windows](evidence/engram-setup.md).
 
 ## 1. Checkout seguro
 
@@ -46,7 +46,7 @@ engram setup claude-code
 
 Ejecutar sólo los setup de clientes realmente utilizados; reiniciarlos tras una configuración exitosa. Engram documenta MCP stdio para uso local habitual, sin Docker requerido. No habilitar cloud ni sync en este TP inicial.
 
-Crear o revisar `.engram/config.json` con `{"project_name":"pln3-agro-rag"}` durante 01. El directorio .engram/config.json identifica proyecto y puede versionarse; la base SQLite de memoria y sus backups quedan fuera de Git. Verificar la resolución efectiva, no asumirla.
+Revisar el archivo ya versionado `.engram/config.json` con `{"project_name":"pln3-agro-rag"}` durante 01. El directorio .engram/config.json identifica proyecto y puede versionarse; la base SQLite de memoria y sus backups quedan fuera de Git. Verificar la resolución efectiva, no asumirla.
 
 Para Codex, comprobar compatibilidad del core y registro real de sesión según documentación oficial. Si el cliente exige `capabilities.runtime_session_resolution`, resolver incompatibilidad actualizando/reiniciando explícitamente el runtime adecuado. No desactivar controles ni inventar session_id para forzar escritura.
 

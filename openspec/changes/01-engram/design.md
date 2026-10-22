@@ -2,7 +2,7 @@
 
 ## Context
 
-Proyecto nuevo PLN3_AgroRAG_GJR. Contratos comunes: docs/architecture.md y docs/contracts.md. Requisitos: MEM-01, MEM-02. Estado: propuesta, sin comportamiento implementado.
+Proyecto nuevo PLN3_AgroRAG_GJR. Contratos comunes: docs/architecture.md y docs/contracts.md. Requisitos: MEM-01, MEM-02. Estado: instalación operativa parcial documentada en docs/evidence/engram-setup.md; integración de clientes y verificación del producto pendientes.
 
 ## Goals / Non-Goals
 
