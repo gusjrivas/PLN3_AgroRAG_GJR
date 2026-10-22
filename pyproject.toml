@@ -1,0 +1,57 @@
+[build-system]
+requires = ["hatchling>=1.27,<2"]
+build-backend = "hatchling.build"
+
+[project]
+name = "pln3-agro-rag"
+version = "0.1.0"
+description = "Asistente documental verificable para horticultura"
+requires-python = ">=3.12,<3.13"
+dependencies = ["fastapi>=0.115,<1", "uvicorn>=0.34,<1", "httpx>=0.28,<1", "pydantic-settings>=2.8,<3"]
+
+[dependency-groups]
+dev = ["pytest>=8.3,<10", "pytest-cov>=6,<8", "ruff>=0.11,<1", "mypy>=1.15,<2", "import-linter>=2.2,<3", "pip-audit>=2.9,<3"]
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/agro_rag", "src/agro_rag_ui"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra --strict-markers"
+markers = ["integration_live: requires explicit opt-in and external providers"]
+
+[tool.coverage.run]
+branch = true
+source = ["src/agro_rag", "src/agro_rag_ui"]
+
+[tool.coverage.report]
+fail_under = 85
+show_missing = true
+
+[tool.ruff]
+line-length = 100
+target-version = "py312"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+packages = ["agro_rag", "agro_rag_ui"]
+
+[tool.importlinter]
+root_packages = ["agro_rag", "agro_rag_ui"]
+include_external_packages = true
+
+[[tool.importlinter.contracts]]
+name = "Dominio y aplicación independientes de adaptadores"
+type = "forbidden"
+source_modules = ["agro_rag.domain", "agro_rag.application"]
+forbidden_modules = ["agro_rag.infrastructure", "agro_rag.api", "agro_rag.bootstrap", "fastapi", "streamlit", "httpx", "langgraph"]
+
+[[tool.importlinter.contracts]]
+name = "Frontend solo HTTP"
+type = "forbidden"
+source_modules = ["agro_rag_ui"]
+forbidden_modules = ["agro_rag"]

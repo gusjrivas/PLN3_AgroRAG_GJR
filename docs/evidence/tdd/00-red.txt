@@ -1,0 +1,43 @@
+FF                                                                       [100%]
+=================================== FAILURES ===================================
+______________ test_liveness_works_without_credentials_or_network ______________
+
+monkeypatch = <_pytest.monkeypatch.MonkeyPatch object at 0x7f8210420b30>
+
+    def test_liveness_works_without_credentials_or_network(monkeypatch):
+        def forbidden(*args, **kwargs):
+            raise AssertionError("health must not connect to a provider")
+    
+        monkeypatch.setattr(socket.socket, "connect", forbidden)
+        monkeypatch.delenv("OPENAI_API_KEY", raising=False)
+        with TestClient(create_app()) as client:
+            response = client.get("/health/live")
+>       assert response.status_code == 200
+E       assert 404 == 200
+E        +  where 404 = <Response [404 Not Found]>.status_code
+
+tests/contract/test_health.py:16: AssertionError
+____________________ test_liveness_does_not_claim_readiness ____________________
+
+    def test_liveness_does_not_claim_readiness():
+        with TestClient(create_app()) as client:
+>           assert client.get("/health/live").json() == {"status": "ok"}
+E           AssertionError: assert {'detail': 'Not Found'} == {'status': 'ok'}
+E             
+E             Left contains 1 more item:
+E             {'detail': 'Not Found'}
+E             Right contains 1 more item:
+E             {'status': 'ok'}
+E             Use -v to get more diff
+
+tests/contract/test_health.py:22: AssertionError
+=============================== warnings summary ===============================
+.venv/lib/python3.12/site-packages/fastapi/testclient.py:1
+  /workspace/scratch/23020672a295/agro-dev/.venv/lib/python3.12/site-packages/fastapi/testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ============================
+FAILED tests/contract/test_health.py::test_liveness_works_without_credentials_or_network
+FAILED tests/contract/test_health.py::test_liveness_does_not_claim_readiness
+2 failed, 1 warning in 0.67s
