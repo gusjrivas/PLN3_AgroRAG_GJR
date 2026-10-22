@@ -1,0 +1,319 @@
+{
+  "project": "PLN3_AgroRAG_GJR",
+  "status": "planning_only",
+  "repository_url": "https://github.com/gusjrivas/PLN3_AgroRAG_GJR",
+  "files": [
+    {
+      "path": ".github/pull_request_template.md",
+      "sha256": "e9c592872c094dee3b912c79c19f22a6361c8493d84eab9f89a9b65ea2d3cc77"
+    },
+    {
+      "path": ".gitignore",
+      "sha256": "62be578f5947ca8bb95fba6bcb3a9d74e76d1fb297c718b894ea9d33e3f8ba57"
+    },
+    {
+      "path": "AGENTS.md",
+      "sha256": "a7264d70c4db5f2ba49ccd7a667e79ff19efb123aa154012ef7b43c0efc80b11"
+    },
+    {
+      "path": "README.md",
+      "sha256": "9e31561ad938af33960e74957fcec1d830bcf84f56482e903e1380d3811427ef"
+    },
+    {
+      "path": "data/corpus/candidates.json",
+      "sha256": "5c8b978dbfdb1e7cbcaef68e334c8c52a959bdd5cfd70e1598b715cded7e4b9a"
+    },
+    {
+      "path": "docs/adr/001.md",
+      "sha256": "1450df91101aaa35c5a769f13caa4ff44e31548ecfdd1541a3dea47283a5ab20"
+    },
+    {
+      "path": "docs/adr/002.md",
+      "sha256": "580807ca6efdaac48855abf1a17a81e684705bf61287f5a3092ed9d1daa1a5e6"
+    },
+    {
+      "path": "docs/adr/003.md",
+      "sha256": "0c830cccfbbc2e89b648df0597249f24fa5f2b5efc0dcf8213b2ce4620ebb800"
+    },
+    {
+      "path": "docs/adr/004.md",
+      "sha256": "280a1e980e8cf4f147c4521476848218f16f8ef577106594c8499ec14c1868c1"
+    },
+    {
+      "path": "docs/adr/005.md",
+      "sha256": "746719126593c5ef7e378fac5e4e7e2c8dd79a112493395ef975233a80fc80bf"
+    },
+    {
+      "path": "docs/adr/006.md",
+      "sha256": "10cf2e3faa24f08864d959e8f4605eaa74614731286988d6a8793def61074274"
+    },
+    {
+      "path": "docs/adr/007.md",
+      "sha256": "d9b6cc1aeb5ae118330e8f5f653c3a6a930a33cd85dd0c36e99e5def1bb250eb"
+    },
+    {
+      "path": "docs/adr/008.md",
+      "sha256": "7dc503561cb896e8f1a8929cc400fb1c66b843f1d8891f3b37833d5618d687b9"
+    },
+    {
+      "path": "docs/adr/009.md",
+      "sha256": "c6a7f0983288f78ed09d04f222c67708836e0068ee75232cd21d70a460b2d717"
+    },
+    {
+      "path": "docs/adr/010.md",
+      "sha256": "1eee28cceec6385962a39331b74c9ed327e528c9091d9c35a393f5ad5862a312"
+    },
+    {
+      "path": "docs/adr/011.md",
+      "sha256": "1b9635bbbbcb15a5a89eca8d452e17339b0453ef526044be25c90263311325d0"
+    },
+    {
+      "path": "docs/adr/README.md",
+      "sha256": "dd30f58a731ba6481500f0cf2f2427d9088cd07d0ac8da3680678e395fcfa8c8"
+    },
+    {
+      "path": "docs/architecture.md",
+      "sha256": "c39b8b546b7cfcefb239fe2f233d2662fc46d716fc7c3f3392ab29ad52dc0758"
+    },
+    {
+      "path": "docs/contracts.md",
+      "sha256": "10e5b9fa9691e5488fccf70f624a289eefc58ad9265115ea4ac4fea4b1ca1697"
+    },
+    {
+      "path": "docs/corpus.md",
+      "sha256": "0bfc400c9f755ac25f50a64417064873dc65bb1c7eb5848ab0f69d215535dea3"
+    },
+    {
+      "path": "docs/delivery.md",
+      "sha256": "24e569aa602796655dee6c6f882d17b3faf16b31b99bdf35376bdee8b9fb8e58"
+    },
+    {
+      "path": "docs/development-agents.md",
+      "sha256": "d46ee72ad65c11949b6d114052b70b45dc20f2fbc9c5f4981296c6d0764c5962"
+    },
+    {
+      "path": "docs/evaluation.md",
+      "sha256": "151215740f42935acbccc61bc47f3c228d5af83c6586587e1725e5701bc6ec5b"
+    },
+    {
+      "path": "docs/evidence/README.md",
+      "sha256": "7ed2bd2fab2c5f5e39fd42b4ab5de4d387d0f239ea67e91b2be558fcbb6ed235"
+    },
+    {
+      "path": "docs/frontend.md",
+      "sha256": "e8de29e6a9a3cbb8657120d668c0268376c5fd17714a975a6453dccab208df71"
+    },
+    {
+      "path": "docs/plan.md",
+      "sha256": "1fe38559e08757d64cde0e7c392e584e10bdc80f337fec23ca136c778251835c"
+    },
+    {
+      "path": "docs/requirements.md",
+      "sha256": "ceb8a723dea3f0f347b82123a40c4033c603df528cbd03fb48a556eab1cc39c4"
+    },
+    {
+      "path": "docs/security.md",
+      "sha256": "4887f87c313c0cdf9057090a4f529acd0217ddb706c6337c09368aa9ecbedda5"
+    },
+    {
+      "path": "docs/setup-engram.md",
+      "sha256": "f0fc2c06dddfa8a59de2a37291bc29a77d1c4516985021774d375e201d2e4cd7"
+    },
+    {
+      "path": "docs/sources.md",
+      "sha256": "cb97652bbf6c61e346f3f9bf9bf060b0085a24b0179d42143a0b5ce94078bc8d"
+    },
+    {
+      "path": "docs/start-here.md",
+      "sha256": "92b52fa011060374dc7ad53b4ab124d17eda02575b3bd7546270ea47321031a6"
+    },
+    {
+      "path": "docs/tdd.md",
+      "sha256": "62998f7170d21806b354b8051dc6a0c22c2614aa9cf5634b0c94c296a523c5c2"
+    },
+    {
+      "path": "docs/validation.md",
+      "sha256": "830e6eb6f8ff9248cbaf537e514680f7d65945099237f83639e7a87eaf5480af"
+    },
+    {
+      "path": "openspec/README.md",
+      "sha256": "ecd6b7eb564dcaa9aba0a079f0a3dd506223c29539598a77768c4ed5cb8cfd01"
+    },
+    {
+      "path": "openspec/changes/00-foundation/.openspec.yaml",
+      "sha256": "30cfdee007123f96b2ab27ca107e406084602caf445d6b7cd2130ab329668ed3"
+    },
+    {
+      "path": "openspec/changes/00-foundation/design.md",
+      "sha256": "4f433b07321b7e9538873fe537ef5f1882fc49838d646ebc11d481c3a286a7c1"
+    },
+    {
+      "path": "openspec/changes/00-foundation/proposal.md",
+      "sha256": "60d2b8c8bdc6b2c60667a2eeed057cbd3d95c45d80365013694e4eda762923b0"
+    },
+    {
+      "path": "openspec/changes/00-foundation/specs/foundation/spec.md",
+      "sha256": "9a7cef94b60477edace49e7495176c72839bc8dea9e1517094551f52af6c1948"
+    },
+    {
+      "path": "openspec/changes/00-foundation/tasks.md",
+      "sha256": "527921af96f162d7b6900d915e0d5107efd65a9b84cf74e15eb1a8bed21d2279"
+    },
+    {
+      "path": "openspec/changes/00-foundation/test-plan.md",
+      "sha256": "81cc3d78af759cbc107f313893222d61be14e0234699031d45400463f7d5e265"
+    },
+    {
+      "path": "openspec/changes/01-engram/.openspec.yaml",
+      "sha256": "30cfdee007123f96b2ab27ca107e406084602caf445d6b7cd2130ab329668ed3"
+    },
+    {
+      "path": "openspec/changes/01-engram/design.md",
+      "sha256": "1fd5226d3c788a881fdd565923867179a721c94bc4a65ea59c10c50a4b60f992"
+    },
+    {
+      "path": "openspec/changes/01-engram/proposal.md",
+      "sha256": "d698f9d38ed36dc65f720ef043f14c2f009b0d2604530783f0170eadcb0de873"
+    },
+    {
+      "path": "openspec/changes/01-engram/specs/engram/spec.md",
+      "sha256": "d07b97a86fb2bf39320b2f3dcc554feeb4667610aaac2c28b737880cdaa1811a"
+    },
+    {
+      "path": "openspec/changes/01-engram/tasks.md",
+      "sha256": "b3631a944bdaeaca586b308bdf1a6600d3a630fa5ce0eb639e3febe103c7dfe1"
+    },
+    {
+      "path": "openspec/changes/01-engram/test-plan.md",
+      "sha256": "582edd17d435531eea6d464a56bd7f2bfa1c6ce1753a1e13d15f490ff64367d6"
+    },
+    {
+      "path": "openspec/changes/02-corpus/.openspec.yaml",
+      "sha256": "30cfdee007123f96b2ab27ca107e406084602caf445d6b7cd2130ab329668ed3"
+    },
+    {
+      "path": "openspec/changes/02-corpus/design.md",
+      "sha256": "dd54f53d393506190df231028424532cf4a06ccca0e804f71b0324651d26c9c9"
+    },
+    {
+      "path": "openspec/changes/02-corpus/proposal.md",
+      "sha256": "c44d6001b2a75ac28a822feb610225a963ed56464ec68125904cb3066b2e724d"
+    },
+    {
+      "path": "openspec/changes/02-corpus/specs/corpus/spec.md",
+      "sha256": "fa4932842d0ee5a665f1bc47dd431236a93b98d4730910fe938614b0f3b95dfc"
+    },
+    {
+      "path": "openspec/changes/02-corpus/tasks.md",
+      "sha256": "833fe933d68f8c31887159706fa4bb98cd0ad65393c55a030ca07b4de6e4f1ff"
+    },
+    {
+      "path": "openspec/changes/02-corpus/test-plan.md",
+      "sha256": "a0fb9eacc78d57d3af04a419a3db47a6244ab48b284e54c7341698995d34428e"
+    },
+    {
+      "path": "openspec/changes/03-retrieval/.openspec.yaml",
+      "sha256": "30cfdee007123f96b2ab27ca107e406084602caf445d6b7cd2130ab329668ed3"
+    },
+    {
+      "path": "openspec/changes/03-retrieval/design.md",
+      "sha256": "8c6583c107ccff63f30f87b68f7818a524b9bbd98dadbb46eede833438707748"
+    },
+    {
+      "path": "openspec/changes/03-retrieval/proposal.md",
+      "sha256": "b18a20b2bba66e875804168818e09507bcb364e25ebf0c7143d2f5eeb0ca590a"
+    },
+    {
+      "path": "openspec/changes/03-retrieval/specs/retrieval/spec.md",
+      "sha256": "4b1308819ec550742d380d6d4d493c6d156244bb5c09b2fdc927b4e119cc9e93"
+    },
+    {
+      "path": "openspec/changes/03-retrieval/tasks.md",
+      "sha256": "f443bbe8ae971a9ec2fb7b6293be023a0e744b1e4f1f12fcb3c3fc327f575e07"
+    },
+    {
+      "path": "openspec/changes/03-retrieval/test-plan.md",
+      "sha256": "b4d96f3c526c1056e841e32dd8d2527371f58f561a72f01c05c74055089965ba"
+    },
+    {
+      "path": "openspec/changes/04-agents-backend/.openspec.yaml",
+      "sha256": "30cfdee007123f96b2ab27ca107e406084602caf445d6b7cd2130ab329668ed3"
+    },
+    {
+      "path": "openspec/changes/04-agents-backend/design.md",
+      "sha256": "41b68dd1bed4c6668c22a390318aeec277554d4e71c92b17e3db834c6313f438"
+    },
+    {
+      "path": "openspec/changes/04-agents-backend/proposal.md",
+      "sha256": "1f8a8bef56295a18ed4b491b1e35afb623eacac4995f043ec6727f25246df249"
+    },
+    {
+      "path": "openspec/changes/04-agents-backend/specs/agents-backend/spec.md",
+      "sha256": "48f939a344bf5d1a9befff2e802f62cb942d8c440c82b6dc599174764894b46c"
+    },
+    {
+      "path": "openspec/changes/04-agents-backend/tasks.md",
+      "sha256": "1ef3f9282946e33c78a071751fe85a93821a3844a19cbe2d2e0af282560abe70"
+    },
+    {
+      "path": "openspec/changes/04-agents-backend/test-plan.md",
+      "sha256": "f8ada9606c0d707246b9a6ee19bbcd5df364325e5c9d5f55024cfee75663b823"
+    },
+    {
+      "path": "openspec/changes/05-frontend-hardening/.openspec.yaml",
+      "sha256": "30cfdee007123f96b2ab27ca107e406084602caf445d6b7cd2130ab329668ed3"
+    },
+    {
+      "path": "openspec/changes/05-frontend-hardening/design.md",
+      "sha256": "d35c0c37805786872b504442506d048ed860665b042b251f03c0b4b88bd1a1fa"
+    },
+    {
+      "path": "openspec/changes/05-frontend-hardening/proposal.md",
+      "sha256": "fcb07a5ef305fb969c6a4ae7ab9f6bf093178bb6828a85889ca66b995494dad2"
+    },
+    {
+      "path": "openspec/changes/05-frontend-hardening/specs/frontend-hardening/spec.md",
+      "sha256": "8bd0cf4d4c3681f3baa4765891dc1b0066a0d98c090c3ee53f48d781d5f113bf"
+    },
+    {
+      "path": "openspec/changes/05-frontend-hardening/tasks.md",
+      "sha256": "616c0e047dab7165acfa1493b8e30be4af64fb97968648ddf3db07b049d75af7"
+    },
+    {
+      "path": "openspec/changes/05-frontend-hardening/test-plan.md",
+      "sha256": "147fd57e4a162cad54eca985cc740730534aeeaf2cdb8f7f16923f8928073128"
+    },
+    {
+      "path": "openspec/changes/06-evaluation-delivery/.openspec.yaml",
+      "sha256": "30cfdee007123f96b2ab27ca107e406084602caf445d6b7cd2130ab329668ed3"
+    },
+    {
+      "path": "openspec/changes/06-evaluation-delivery/design.md",
+      "sha256": "9733bb917823b774331de7bea92dcba06ef8468309b0afba772fc8d9b059fcc7"
+    },
+    {
+      "path": "openspec/changes/06-evaluation-delivery/proposal.md",
+      "sha256": "5dd144f47d124370acc594b090f70c402db8c292588c3475da618da905bca561"
+    },
+    {
+      "path": "openspec/changes/06-evaluation-delivery/specs/evaluation-delivery/spec.md",
+      "sha256": "a036100ef8458d0a9b2a247e2bcf60c8eb170aa5f67dee708eeaf23363cbb3cc"
+    },
+    {
+      "path": "openspec/changes/06-evaluation-delivery/tasks.md",
+      "sha256": "7ed81f01703f620a2f7fa64c64a86ffa0491f24cf5bb1135be62564cc65e42c9"
+    },
+    {
+      "path": "openspec/changes/06-evaluation-delivery/test-plan.md",
+      "sha256": "7fd11df62926adb4d2b92f4a0b6eab6bbae601bd66783a6cbd711cf06b52f29d"
+    },
+    {
+      "path": "openspec/config.yaml",
+      "sha256": "b126cdb1c7cd33cea4f230e41186619dafb2ac30b836027f1ef57537367bb9c4"
+    },
+    {
+      "path": "openspec/specs/.gitkeep",
+      "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+    }
+  ]
+}

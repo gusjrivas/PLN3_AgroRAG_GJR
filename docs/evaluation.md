@@ -1,0 +1,46 @@
+# Protocolo de evaluación preregistrado propuesto
+
+Objetivo: medir aporte de recuperación híbrida/reranking y del verificador en español. No se prometen mejoras. Todo valor de esta sección es diseño experimental u objetivo, no resultado obtenido.
+
+## Conjunto
+
+60 casos únicos: 36 respondibles (incluye 12 que integran más de un pasaje), 12 ambiguos/sin soporte y 12 adversariales/fuera de alcance. Dividir por grupos de intención/familias de paráfrasis: 30 dev y 30 test, con 18/6/6 de cada categoría en cada split. Las paráfrasis de la misma pregunta no cruzan splits. Semilla 42, lista de IDs congelada y hash. El corpus completo sigue disponible en RAG; lo retenido son las preguntas/etiquetas de test, no necesariamente documentos.
+
+Cada caso: query_id, question, crop, category, expected_status, reference_answer, required_claims, relevant_evidence_ids, source_pages, split, annotator, review_status. Qrels binarios a nivel pasaje y, por separado, fuente; no mezclar denominadores. Anotación manual revisada; si sólo hay un anotador, declararlo y no inventar acuerdo interanotador. Idealmente segunda revisión en casos ambiguos y muestra del resto.
+
+No generar y aceptar etiquetas con el mismo LLM que se evalúa sin revisión. Guardar anotaciones y resultados por separado. Los 60 casos se construirán después de congelar el corpus; no inventar evidence_ids ahora.
+
+## Experimentos separados
+
+E1 recuperación: BM25; vectorial; híbrido RRF; híbrido + reranker. Mismos corpus/chunks/consultas y límites de candidatos. Mantener configuración original docente como referencia técnica, reportando su limitación de idioma; comparar embeddings multilingües en dev sin atribuir toda la mejora al reranker si también cambió embedding.
+
+E2 verificación: mismo retrieval y generador, con/sin verificador. Misma versión de prompt de investigación y contexto disponible, registrar búsquedas adicionales y presupuesto real. Cambios de respuesta, costo y latencia se reportan juntos. Ablation por rol claramente identificada; dos agentes no son dos modelos necesariamente.
+
+E3 operación: caché on/off con mismo set, primera ejecución fría y posteriores calientes separadas. Tres pasadas por configuración para latencia; muestras pequeñas y proveedor remoto impiden generalizar como benchmark de capacidad.
+
+## Métricas
+
+| Dimensión | Definición |
+|---|---|
+| Precision@k | Pasajes relevantes recuperados / k, k=5 y 10 |
+| Recall@k | Pasajes relevantes recuperados / total relevante anotado, k=5,10,20 |
+| nDCG@10, MRR@10, Hit@k | Orden, primer relevante y presencia de soporte; especificar truncación |
+| Context coverage | Claims requeridos con soporte disponible / claims requeridos |
+| Soporte factual | Claims verificables respaldados / claims verificables emitidos, revisión humana |
+| Citas correctas | Citas que respaldan su claim / citas emitidas; medir también resolución de ID por separado |
+| Abstención/aclaración | Matriz de confusión expected_status vs status; precisión/recall por clase |
+| Agentes | Decisión correcta del verificador, revisiones útiles/perjudiciales, búsquedas redundantes, pasos y límites |
+| Generación | Similitud semántica con referencia como complemento; no equivale a verdad ni reemplaza soporte |
+| Operación | p50/p95, tokens de entrada/salida, llamadas, fallos, costo estimado con tarifa fechada, hit rate caché |
+
+Queries sin relevantes anotados no entran en promedios IR respondibles; sí entran en métricas de abstención y fallos. Reportar denominadores y casos excluidos. Si el agente se abstiene, no asignar precisión factual perfecta por lista vacía; registrar no aplicable y cobertura 0 según el caso. Reportar todos los casos, incluidos timeouts.
+
+## Metas iniciales y decisiones
+
+Recall@20 ≥0,85 sobre respondibles de dev como objetivo de diseño, no requisito universal ni garantía. Citas resolubles: 100% por construcción/validación. Cero excedencias del límite de revisiones o presupuesto en tests. Latencia p95 caliente ≤30s, deadline 60s, sujetos a medición en equipo registrado. Registrar hardware/CPU/RAM, versiones, revisiones de modelos, hash corpus, commit, configuración y fecha.
+
+Elegir configuración con dev; congelar antes de test. Informar diferencias pareadas por consulta y bootstrap por query cuando el tamaño lo permita, con cautela por n pequeño. Si falla una meta, registrar resultado y causa; no cambiar silenciosamente las etiquetas ni ajustar con test. Un defecto de código puede corregirse con TDD y repetir todo el experimento con nueva versión dejando el anterior.
+
+## Artefactos
+
+questions.jsonl, qrels.csv, split_manifest.json, run_manifest.json, retrieval_per_query.csv, answers.jsonl, human_review.csv, summary.json y figuras. Ruta runs/<run_id> ignorada por defecto; sólo evidencia final curada se incorpora al reporte. Modelos/servicios simulados nunca se contabilizan como evidencia de calidad científica real.

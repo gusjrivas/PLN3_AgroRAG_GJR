@@ -1,0 +1,26 @@
+{
+  "status": "candidates_not_ingested",
+  "sources": [
+    {
+      "source_id": "INTA-HUERTA-2008",
+      "url": "https://www.argentina.gob.ar/sites/default/files/2023/08/script-tmp-manual_de_cultivos_para_la_huerta_organica_familiar_-.pdf",
+      "sha256": null,
+      "rights_status": "pending_review",
+      "availability": "pdf_verified_in_research"
+    },
+    {
+      "source_id": "FAO56-1998",
+      "url": "https://www.fao.org/4/X0490E/X0490E00.htm",
+      "sha256": null,
+      "rights_status": "pending_review",
+      "availability": "official_html_verified_pdf_pending"
+    },
+    {
+      "source_id": "INTA-RIEGO-2009",
+      "url": "https://www.fao.org/family-farming/detail/es/c/292401/",
+      "sha256": null,
+      "rights_status": "pending_review",
+      "availability": "catalog_verified_download_pending"
+    }
+  ]
+}

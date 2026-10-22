@@ -1,0 +1,60 @@
+# API y colaboración de dos agentes
+
+## ADDED Requirements
+
+### Requirement: API-01 Contrato de consulta
+La API MUST validar QueryRequest y devolver QueryResponse o ErrorResponse según docs/contracts.md, sin mezclar fallos operativos con estados de negocio.
+
+#### Scenario: API-01-valida
+- **GIVEN** request autenticado válido y providers fake.
+- **WHEN** se consulta.
+- **THEN** se obtiene 200 con request_id, versión y estado coherente.
+
+#### Scenario: API-01-invalida
+- **GIVEN** texto vacío, excesivo o unidad faltante.
+- **WHEN** se consulta.
+- **THEN** se devuelve 422 antes de ejecutar modelos.
+
+### Requirement: AGT-01 Investigación y verificación dinámicas
+El investigador y verificador MUST intercambiar resultados estructurados y permitir una ronda de corrección basada en evidencias.
+
+#### Scenario: AGT-01-revision
+- **GIVEN** borrador con claim no respaldado y evidencia adicional disponible.
+- **WHEN** el verificador solicita revisión.
+- **THEN** el investigador busca/corrige y el verificador revisa nuevamente dentro del límite.
+
+#### Scenario: AGT-01-limite
+- **GIVEN** segunda revisión todavía insuficiente.
+- **WHEN** el flujo decide.
+- **THEN** termina en abstención o aclaración; no se abre tercera pasada.
+
+### Requirement: AGT-02 Citas y abstención
+Una respuesta answered MUST respaldar cada claim con evidence_ids válidos; falta de datos SHALL producir aclaración y falta de soporte SHALL producir abstención.
+
+#### Scenario: AGT-02-citas
+- **GIVEN** draft con IDs reales.
+- **WHEN** se valida salida.
+- **THEN** citas se resuelven en catálogo de la versión y se entregan pasajes originales.
+
+#### Scenario: AGT-02-faltantes
+- **GIVEN** pregunta sobre cuánto regar sólo con porcentaje de humedad.
+- **WHEN** se analiza sin datos suficientes.
+- **THEN** solicita información pertinente y no inventa litros.
+
+#### Scenario: AGT-02-inventada
+- **GIVEN** LLM devuelve evidence_id inexistente.
+- **WHEN** se verifica.
+- **THEN** se rechaza la cita y no se presenta el draft como verificado.
+
+### Requirement: AGT-03 Presupuesto y errores
+La orquestación MUST respetar límites globales de llamadas, búsquedas, tokens y deadline, incluidos reintentos.
+
+#### Scenario: AGT-03-agotado
+- **GIVEN** proveedor lento o repetición de herramientas.
+- **WHEN** se consume presupuesto.
+- **THEN** se corta en el límite con motivo trazable y error operacional cuando corresponda.
+
+#### Scenario: AGT-03-schema
+- **GIVEN** proveedor devuelve JSON inválido.
+- **WHEN** se procesa salida.
+- **THEN** se aplica como máximo reparación permitida dentro de presupuesto o 502, sin filtrar stacktrace.

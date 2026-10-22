@@ -1,0 +1,22 @@
+schema: spec-driven
+context: |
+  Proyecto académico AgroRAG, PLN III FIUBA, en repositorio independiente PLN3_AgroRAG_GJR. PLN3_GJR es sólo referencia docente.
+  Estado: planificación; no declarar implementadas capacidades por existir documentos.
+  Producto íntegramente Python: FastAPI backend, Streamlit frontend HTTP desacoplado.
+  Monolito modular con puertos/adaptadores. RAG híbrido docente y dos agentes runtime.
+  TDD obligatorio: prueba roja, implementación verde, refactor y evidencia verificable por tarea.
+  Engram sólo memoria de desarrollo; Git/ADR/specs son la fuente auditable.
+  Corpus INTA/FAO curado, tomate y lechuga, fuentes con citas y abstención.
+  Referencias: docs/requirements.md, docs/architecture.md, docs/tdd.md, docs/adr/README.md.
+  Escribir documentación en español. Mantener palabras normativas MUST/SHALL y formato OpenSpec.
+rules:
+  proposal:
+    - Vincular requisitos de cátedra y del usuario, dependencias y exclusiones.
+  specs:
+    - Cada requisito MUST o SHALL tener escenarios observables de éxito y fallo cuando corresponda.
+    - Especificar seguridad, presupuesto, trazabilidad y casos sin evidencia.
+  design:
+    - Citar ADR aplicables, contratos, estrategia TDD y limitaciones reales.
+  tasks:
+    - Toda tarea funcional debe comenzar con test RED y cerrar GREEN/REFACTOR con evidencia.
+    - No marcar completado sin ejecución verificable; describir propietario y dependencia.
