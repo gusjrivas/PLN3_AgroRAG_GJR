@@ -1,0 +1,105 @@
+FFFFFF                                                                   [100%]
+=================================== FAILURES ===================================
+____________________ test_verified_download_and_idempotence ____________________
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-4/test_verified_download_and_ide0')
+
+    def test_verified_download_and_idempotence(tmp_path):
+>       from agro_rag.infrastructure.download import download_file
+E       ModuleNotFoundError: No module named 'agro_rag.infrastructure.download'
+
+tests/integration/test_download.py:8: ModuleNotFoundError
+_ test_bad_download_does_not_publish[https://evil.example/a.pdf-%PDF-test-200] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-4/test_bad_download_does_not_pub0')
+url = 'https://evil.example/a.pdf', body = b'%PDF-test', status = 200
+
+    @pytest.mark.parametrize('url,body,status', [
+        ('https://evil.example/a.pdf', b'%PDF-test', 200),
+        ('http://127.0.0.1/a.pdf', b'%PDF-test', 200),
+        ('https://www.argentina.gob.ar/a.pdf', b'not a pdf', 200),
+        ('https://www.argentina.gob.ar/a.pdf', b'%PDF-wrong-hash', 200),
+        ('https://www.argentina.gob.ar/a.pdf', b'', 302),
+    ])
+    def test_bad_download_does_not_publish(tmp_path, url, body, status):
+>       from agro_rag.infrastructure.download import download_file
+E       ModuleNotFoundError: No module named 'agro_rag.infrastructure.download'
+
+tests/integration/test_download.py:31: ModuleNotFoundError
+___ test_bad_download_does_not_publish[http://127.0.0.1/a.pdf-%PDF-test-200] ___
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-4/test_bad_download_does_not_pub1')
+url = 'http://127.0.0.1/a.pdf', body = b'%PDF-test', status = 200
+
+    @pytest.mark.parametrize('url,body,status', [
+        ('https://evil.example/a.pdf', b'%PDF-test', 200),
+        ('http://127.0.0.1/a.pdf', b'%PDF-test', 200),
+        ('https://www.argentina.gob.ar/a.pdf', b'not a pdf', 200),
+        ('https://www.argentina.gob.ar/a.pdf', b'%PDF-wrong-hash', 200),
+        ('https://www.argentina.gob.ar/a.pdf', b'', 302),
+    ])
+    def test_bad_download_does_not_publish(tmp_path, url, body, status):
+>       from agro_rag.infrastructure.download import download_file
+E       ModuleNotFoundError: No module named 'agro_rag.infrastructure.download'
+
+tests/integration/test_download.py:31: ModuleNotFoundError
+_ test_bad_download_does_not_publish[https://www.argentina.gob.ar/a.pdf-not a pdf-200] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-4/test_bad_download_does_not_pub2')
+url = 'https://www.argentina.gob.ar/a.pdf', body = b'not a pdf', status = 200
+
+    @pytest.mark.parametrize('url,body,status', [
+        ('https://evil.example/a.pdf', b'%PDF-test', 200),
+        ('http://127.0.0.1/a.pdf', b'%PDF-test', 200),
+        ('https://www.argentina.gob.ar/a.pdf', b'not a pdf', 200),
+        ('https://www.argentina.gob.ar/a.pdf', b'%PDF-wrong-hash', 200),
+        ('https://www.argentina.gob.ar/a.pdf', b'', 302),
+    ])
+    def test_bad_download_does_not_publish(tmp_path, url, body, status):
+>       from agro_rag.infrastructure.download import download_file
+E       ModuleNotFoundError: No module named 'agro_rag.infrastructure.download'
+
+tests/integration/test_download.py:31: ModuleNotFoundError
+_ test_bad_download_does_not_publish[https://www.argentina.gob.ar/a.pdf-%PDF-wrong-hash-200] _
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-4/test_bad_download_does_not_pub3')
+url = 'https://www.argentina.gob.ar/a.pdf', body = b'%PDF-wrong-hash'
+status = 200
+
+    @pytest.mark.parametrize('url,body,status', [
+        ('https://evil.example/a.pdf', b'%PDF-test', 200),
+        ('http://127.0.0.1/a.pdf', b'%PDF-test', 200),
+        ('https://www.argentina.gob.ar/a.pdf', b'not a pdf', 200),
+        ('https://www.argentina.gob.ar/a.pdf', b'%PDF-wrong-hash', 200),
+        ('https://www.argentina.gob.ar/a.pdf', b'', 302),
+    ])
+    def test_bad_download_does_not_publish(tmp_path, url, body, status):
+>       from agro_rag.infrastructure.download import download_file
+E       ModuleNotFoundError: No module named 'agro_rag.infrastructure.download'
+
+tests/integration/test_download.py:31: ModuleNotFoundError
+_ test_bad_download_does_not_publish[https://www.argentina.gob.ar/a.pdf--302] __
+
+tmp_path = PosixPath('/tmp/pytest-of-root/pytest-4/test_bad_download_does_not_pub4')
+url = 'https://www.argentina.gob.ar/a.pdf', body = b'', status = 302
+
+    @pytest.mark.parametrize('url,body,status', [
+        ('https://evil.example/a.pdf', b'%PDF-test', 200),
+        ('http://127.0.0.1/a.pdf', b'%PDF-test', 200),
+        ('https://www.argentina.gob.ar/a.pdf', b'not a pdf', 200),
+        ('https://www.argentina.gob.ar/a.pdf', b'%PDF-wrong-hash', 200),
+        ('https://www.argentina.gob.ar/a.pdf', b'', 302),
+    ])
+    def test_bad_download_does_not_publish(tmp_path, url, body, status):
+>       from agro_rag.infrastructure.download import download_file
+E       ModuleNotFoundError: No module named 'agro_rag.infrastructure.download'
+
+tests/integration/test_download.py:31: ModuleNotFoundError
+=========================== short test summary info ============================
+FAILED tests/integration/test_download.py::test_verified_download_and_idempotence
+FAILED tests/integration/test_download.py::test_bad_download_does_not_publish[https://evil.example/a.pdf-%PDF-test-200]
+FAILED tests/integration/test_download.py::test_bad_download_does_not_publish[http://127.0.0.1/a.pdf-%PDF-test-200]
+FAILED tests/integration/test_download.py::test_bad_download_does_not_publish[https://www.argentina.gob.ar/a.pdf-not a pdf-200]
+FAILED tests/integration/test_download.py::test_bad_download_does_not_publish[https://www.argentina.gob.ar/a.pdf-%PDF-wrong-hash-200]
+FAILED tests/integration/test_download.py::test_bad_download_does_not_publish[https://www.argentina.gob.ar/a.pdf--302]
+6 failed in 0.08s

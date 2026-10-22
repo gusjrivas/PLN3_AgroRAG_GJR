@@ -7,10 +7,27 @@ name = "pln3-agro-rag"
 version = "0.1.0"
 description = "Asistente documental verificable para horticultura"
 requires-python = ">=3.12,<3.13"
-dependencies = ["fastapi>=0.115,<1", "uvicorn>=0.34,<1", "httpx>=0.28,<1", "pydantic-settings>=2.8,<3"]
+dependencies = [
+    "fastapi>=0.115,<1",
+    "uvicorn>=0.34,<1",
+    "httpx[socks]>=0.28,<1",
+    "pydantic-settings>=2.8,<3",
+    "pdfplumber>=0.11,<1",
+]
+
+[project.scripts]
+agro-rag = "agro_rag.bootstrap.cli:main"
 
 [dependency-groups]
-dev = ["pytest>=8.3,<10", "pytest-cov>=6,<8", "ruff>=0.11,<1", "mypy>=1.15,<2", "import-linter>=2.2,<3", "pip-audit>=2.9,<3"]
+dev = [
+    "pytest>=8.3,<10",
+    "pytest-cov>=6,<8",
+    "ruff>=0.11,<1",
+    "mypy>=1.15,<2",
+    "import-linter>=2.2,<3",
+    "pip-audit>=2.9,<3",
+    "reportlab>=4,<5",
+]
 
 [tool.hatch.build.targets.wheel]
 packages = ["src/agro_rag", "src/agro_rag_ui"]
