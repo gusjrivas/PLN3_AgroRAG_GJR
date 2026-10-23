@@ -78,3 +78,4 @@ Change '02-corpus' is valid; exit 0
 La advertencia de deprecación Starlette/httpx continúa fuera de este alcance. Los PDFs y el
 catálogo generado permanecen ignorados por Git. No se usó ni imprimió ninguna credencial. No hubo
 un revisor independiente disponible; la misma sesión revisó el diff y ejecutó los gates.
+Commit de implementación y evidencia: `eb1cd64`.
