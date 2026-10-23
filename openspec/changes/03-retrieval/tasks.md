@@ -14,6 +14,23 @@ Responsable: coordinador/RAG, misma sesión. Rama: feat/03-retrieval-contracts. 
 
 Los checks del corte no cierran los requisitos completos siguientes.
 
+## Corte de adaptador docente Pinecone/E5
+
+Responsable: coordinador/RAG, misma sesión. Rama: `feat/pinecone-adapter`. Base:
+`PLN3_GJR/Teoria1/Codigo/RAG` en `1f4cdbb37f59a049ef9b35c482ccb1de850fbc43`.
+Propiedad: `src/agro_rag/infrastructure/pinecone.py`,
+`src/agro_rag/infrastructure/reranker.py`, `src/agro_rag/bootstrap/cli.py`,
+`src/agro_rag/bootstrap/settings.py`, `tests/unit/test_pinecone.py`, pruebas CLI afectadas,
+`pyproject.toml`, `uv.lock`, `.env.example`, documentación y evidencia de este corte.
+Evidencia: `docs/evidence/tdd/03-pinecone-adapter.md`.
+
+- [x] P.1 Leer README y módulos docentes; mapear `PineconeSearcher` al contrato `CandidateRanker`.
+- [x] P.2 RED: prefijos E5, manifiesto de identidad, ranking, filtros e ingesta no destructiva.
+- [x] P.3 GREEN: adaptar embeddings/Pinecone sin red, modelos o secretos al importar.
+- [x] P.4 Integrar comando administrativo con namespace nuevo; no activar consultas públicas aún.
+- [x] P.5 REFACTOR: suite, tipos, arquitectura, validación OpenSpec y evidencia.
+- [ ] P.6 Ejecutar `integration_live` aislada y benchmark antes de activar hybrid en bootstrap/API.
+
 ## Corte de seguridad local: credencial Pinecone
 
 Responsable: coordinador/RAG, misma sesión. Rama: `fix/pinecone-secret-config`. Propiedad:

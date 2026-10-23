@@ -17,6 +17,12 @@ dependencies = [
     "streamlit>=1.45,<2",
 ]
 
+[project.optional-dependencies]
+semantic = [
+    "pinecone>=10,<11",
+    "sentence-transformers>=5.1,<6",
+]
+
 [project.scripts]
 agro-rag = "agro_rag.bootstrap.cli:main"
 

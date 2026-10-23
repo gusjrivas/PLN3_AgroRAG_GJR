@@ -21,9 +21,15 @@ La revisión del ejemplo fue estática; no se afirma que sus servicios hayan sid
 
 - `raglib/config.py`: su carga de `.env` y variables Pinecone se adapta a
   `src/agro_rag/bootstrap/settings.py` mediante `pydantic-settings`.
-- `raglib/vector_pinecone.py::PineconeSearcher.__post_init__`: se conserva el nombre estándar
-  `PINECONE_API_KEY`; la clave pasa a `SecretStr`, se redacta en representaciones y deberá
-  inyectarse explícitamente en el adaptador real.
-- La creación de índice, carga de modelos y `clear_namespace` del ejemplo no se ejecutan al
-  importar ni al arrancar este proyecto. Su incorporación requiere el corte TDD de adaptadores,
-  identidad de índice y namespace aislado definido por ADR-013.
+- `raglib/vector_pinecone.py::PineconeSearcher`: se adapta en
+  `src/agro_rag/infrastructure/pinecone.py`. Conserva el patrón de embeddings, `upsert`, `query` y
+  filtros, pero implementa `CandidateRanker`, resuelve IDs contra el catálogo local y verifica
+  corpus, modelo, revisión y dimensión mediante un manifiesto remoto.
+- `raglib/pipeline.py` y `raglib/fusion.py`: su flujo BM25 + vector + RRF se separa entre los
+  contratos puros de `application/retrieval_pipeline.py` y los adaptadores de infraestructura.
+- `raglib/reranker.py`: se adapta en `src/agro_rag/infrastructure/reranker.py`, con carga diferida,
+  revisión fijada y salida `ScoredId`.
+- La creación de índice sólo ocurre con `index-pinecone --create-index`. La carga de modelos sólo
+  ocurre al invocar el comando administrativo; no hay red, modelos ni SDK requeridos al importar.
+  `clear_namespace` no se incorpora: cada versión usa un namespace nuevo y se rechazan namespaces
+  con datos. El manifiesto se publica después de verificar conteo e IDs.

@@ -5,7 +5,7 @@ Autor y responsable académico: Gustavo Julián Rivas. Fecha del plan: 21/10/202
 
 Repositorio independiente: https://github.com/gusjrivas/PLN3_AgroRAG_GJR
 
-**Estado: primera versión local implementada: corpus piloto, búsqueda, API, interfaz y flujo investigador/verificador. Generación real pendiente de configurar y evaluar un modelo.**
+**Estado: primera versión local implementada: corpus piloto, búsqueda, API, interfaz y flujo investigador/verificador. El adaptador administrativo Pinecone/E5 y el reranker están implementados, pero la API pública conserva el baseline lexical hasta completar integración real y benchmark.**
 Engram 3.5.2 está instalado y verificado en el entorno de trabajo remoto; `.engram/config.json` identifica este proyecto. La instalación en la notebook y la activación de los clientes permanecen pendientes. Ver [evidencia](docs/evidence/engram-setup.md). Los ADR son propuestas técnicas; TDD y Python son requisitos expresos del usuario.
 
 ## Empezar aquí

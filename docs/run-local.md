@@ -4,7 +4,10 @@
 
 Descarga institucional con hashes fijados, ingesta PDF curada, catálogo SQLite inmutable, búsqueda BM25 con filtro de cultivo, API con clave reader y frontend Streamlit. Dos roles de generación (investigador/verificador) intercambian JSON y admiten una corrección. Ollama se conecta por HTTP sólo si se configura un modelo instalado.
 
-La búsqueda es un baseline lexical: todavía no usa embeddings, Pinecone, CrossEncoder ni búsqueda bilingüe semántica. No es la entrega final de la cátedra. Los modelos reales y las métricas agronómicas no están validados. No hay Docker Compose aún.
+La búsqueda pública sigue siendo un baseline lexical. Existe un adaptador administrativo para
+indexar el catálogo con E5 en Pinecone y un adaptador CrossEncoder, pero todavía no están
+inyectados en la API. No es la entrega final de la cátedra: faltan integración real aislada,
+benchmark bilingüe y activación explícita. No hay Docker Compose aún.
 
 ## Preparar
 
@@ -54,17 +57,40 @@ El modelo no se descargó ni ejecutó en esta entrega. Las pruebas guionadas del
 
 ## Credencial local de Pinecone
 
-Esta configuración adapta el patrón docente de
+Esta implementación adapta el patrón docente de
 `Teoria1/Codigo/RAG/raglib/config.py` y `raglib/vector_pinecone.py` del commit
 `1f4cdbb37f59a049ef9b35c482ccb1de850fbc43`: se conserva el contrato
 `PINECONE_API_KEY`, pero la lectura queda centralizada en el bootstrap tipado y la clave se entrega
-explícitamente al futuro adaptador. No se copia la creación o limpieza automática de índices al
-arranque.
+explícitamente al adaptador. No se copia la creación o limpieza automática de índices al arranque.
 
-El adaptador real de Pinecone todavía no está activado. La configuración del backend ya acepta
-`PINECONE_API_KEY` para que su futura inyección no requiera guardar la clave en código. Para una
-sesión local, la opción recomendada es una variable de proceso: no persiste la clave en un archivo
-del proyecto ni en el historial de comandos.
+El adaptador no se activa al iniciar el backend. El comando administrativo usa prefijos
+`query:`/`passage:`, revisión de modelo fijada, un namespace nuevo por versión de corpus y un
+manifiesto de identidad. Rechaza sobrescribir namespaces, verifica conteo e IDs antes de publicar
+el manifiesto y nunca guarda el texto de los fragmentos en metadata remota.
+
+Instalar el grupo semántico únicamente en el entorno que realizará la indexación:
+
+```powershell
+uv sync --frozen --extra semantic
+```
+
+Con un índice compatible ya existente, ejecutar:
+
+```powershell
+uv run agro-rag index-pinecone
+```
+
+Si el índice configurado no existe, el comando falla sin crearlo. La creación serverless requiere
+la decisión explícita `--create-index`; usa `PINECONE_INDEX`, `PINECONE_CLOUD` y
+`PINECONE_REGION` del entorno. El nombre por defecto corresponde a E5 de 384 dimensiones y no es
+compatible con índices de otra dimensión.
+
+```powershell
+uv run agro-rag index-pinecone --create-index
+```
+
+Para una sesión local, la opción más segura es una variable de proceso: no persiste la clave en un
+archivo del proyecto ni en el historial de comandos.
 
 ```powershell
 $pineconeSecret = Read-Host "PINECONE_API_KEY" -AsSecureString

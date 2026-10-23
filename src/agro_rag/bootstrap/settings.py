@@ -18,6 +18,20 @@ class Settings(BaseSettings):
         validation_alias="PINECONE_API_KEY",
         repr=False,
     )
+    pinecone_index: str = Field(
+        default="pln3-agrorag-e5-384",
+        validation_alias="PINECONE_INDEX",
+    )
+    pinecone_namespace: str = Field(default="", validation_alias="PINECONE_NAMESPACE")
+    pinecone_cloud: str = Field(default="aws", validation_alias="PINECONE_CLOUD")
+    pinecone_region: str = Field(default="us-east-1", validation_alias="PINECONE_REGION")
+    pinecone_metric: str = "cosine"
+    pinecone_timeout: float = 30.0
+    pinecone_batch_size: int = 100
+    embedding_model: str = "intfloat/multilingual-e5-small"
+    embedding_revision: str = "614241f622f53c4eeff9890bdc4f31cfecc418b3"
+    reranker_model: str = "BAAI/bge-reranker-v2-m3"
+    reranker_revision: str = "953dc6f6f85a1b2dbfca4c34a2796e7dde08d41e"
     catalogue_path: Path = Path("data/processed/catalogue")
     ollama_url: str = "http://127.0.0.1:11434"
     model: str = ""

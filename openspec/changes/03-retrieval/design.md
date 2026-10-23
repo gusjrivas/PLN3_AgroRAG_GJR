@@ -2,7 +2,7 @@
 
 ## Context
 
-Proyecto nuevo PLN3_AgroRAG_GJR. Contratos comunes: docs/architecture.md y docs/contracts.md. Requisitos: RET-01, RET-02, RET-03. Estado: propuesta, sin comportamiento implementado.
+Proyecto nuevo PLN3_AgroRAG_GJR. Contratos comunes: docs/architecture.md y docs/contracts.md. Requisitos: RET-01, RET-02, RET-03. Estado: contratos y adaptadores administrativos implementados; activación y evaluación real pendientes.
 
 ## Goals / Non-Goals
 
@@ -31,3 +31,11 @@ Consultar docs/plan.md. Si un proveedor o recurso local falta, las pruebas offli
 ## Corte de contratos del 22/10/2026
 
 ADR-013 concreta el diseño del pipeline puro: puertos CandidateRanker/Reranker/TokenCounter, identidad IndexIdentity, resultado inmutable con rankings por etapa, filtros de corpus/cultivo y presupuesto de contexto serializado. El adaptador lexical entrega candidatos sin recorte de diversidad previo. La composición del producto continúa lexical hasta validar adaptadores reales. Ver docs/evidence/tdd/03-pipeline.md; RET-02-e5 y las integraciones científicas siguen pendientes.
+
+## Corte de adaptadores del 23/10/2026
+
+El ejemplo fijado de `PLN3_GJR/Teoria1/Codigo/RAG` se adapta a `PineconeVectorRanker`,
+`E5Embedder` y `CrossEncoderReranker`. Los modelos y el SDK se cargan sólo desde bootstrap
+administrativo. La ingesta usa IDs del catálogo, metadata mínima, namespace fresco y manifiesto
+publicado después de verificar visibilidad. La API no cambia de modo; `integration_live`, tokenizer
+real y benchmark siguen siendo puertas de activación.
