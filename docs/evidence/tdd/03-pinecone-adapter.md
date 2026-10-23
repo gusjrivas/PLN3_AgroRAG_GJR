@@ -88,5 +88,5 @@ pendientes; por eso la API pública conserva BM25.
 ## Revisión
 
 La misma sesión revisó diff, tipos, imports, ausencia de secretos y separación de capas. No hubo un
-revisor independiente disponible. Commit final y URL del PR se completan en el handoff del PR; esta
-evidencia no afirma integración real ni calidad semántica.
+revisor independiente disponible. Commit de implementación: `63c3826`. La URL del PR se registra
+en el handoff; esta evidencia no afirma integración real ni calidad semántica.
