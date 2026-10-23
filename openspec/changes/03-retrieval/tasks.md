@@ -14,6 +14,20 @@ Responsable: coordinador/RAG, misma sesión. Rama: feat/03-retrieval-contracts. 
 
 Los checks del corte no cierran los requisitos completos siguientes.
 
+## Corte de seguridad local: credencial Pinecone
+
+Responsable: coordinador/RAG, misma sesión. Rama: `fix/pinecone-secret-config`. Propiedad:
+`src/agro_rag/bootstrap/settings.py`, `tests/unit/test_settings.py`, `.env.example`,
+`docs/run-local.md`, `docs/sources.md`, este registro y
+`docs/evidence/tdd/RET-PINECONE-SECRET.md`. Alcance: preparar
+la inyección segura de la credencial local; no activa el adaptador ni declara RET-01/02 completo.
+
+- [x] S.1 Revisar archivos versionados, entorno local e historial sin imprimir valores secretos.
+- [x] S.2 RED: comprobar carga, precedencia y redacción de `PINECONE_API_KEY`.
+- [x] S.3 GREEN: tipar la credencial como `SecretStr`, ignorar vacíos y mantener `.env` fuera de Git.
+- [x] S.4 REFACTOR: ejecutar suite afectada, controles estáticos y revisión final del diff.
+- [x] S.5 Registrar evidencia y riesgos restantes.
+
 ## 1. Preparación
 
 - [ ] 1.1 Leer ADR aplicables, fijar archivos de propiedad y comprobar dependencias.

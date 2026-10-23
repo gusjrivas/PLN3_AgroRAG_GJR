@@ -52,6 +52,35 @@ Sin modelo configurado se devuelve 503. Una falla del modelo devuelve 502/504, n
 
 El modelo no se descargó ni ejecutó en esta entrega. Las pruebas guionadas del flujo no prueban calidad factual de un LLM real. Una cita válida tampoco garantiza que la afirmación sea correcta: falta evaluación semántica y agronómica.
 
+## Credencial local de Pinecone
+
+Esta configuración adapta el patrón docente de
+`Teoria1/Codigo/RAG/raglib/config.py` y `raglib/vector_pinecone.py` del commit
+`1f4cdbb37f59a049ef9b35c482ccb1de850fbc43`: se conserva el contrato
+`PINECONE_API_KEY`, pero la lectura queda centralizada en el bootstrap tipado y la clave se entrega
+explícitamente al futuro adaptador. No se copia la creación o limpieza automática de índices al
+arranque.
+
+El adaptador real de Pinecone todavía no está activado. La configuración del backend ya acepta
+`PINECONE_API_KEY` para que su futura inyección no requiera guardar la clave en código. Para una
+sesión local, la opción recomendada es una variable de proceso: no persiste la clave en un archivo
+del proyecto ni en el historial de comandos.
+
+```powershell
+$pineconeSecret = Read-Host "PINECONE_API_KEY" -AsSecureString
+$env:PINECONE_API_KEY = [Net.NetworkCredential]::new("", $pineconeSecret).Password
+Remove-Variable pineconeSecret
+```
+
+Ejecutar backend, ingesta o pruebas de integración desde esa misma terminal. Cerrar la terminal
+elimina la variable de proceso. No usar `setx`: persiste el secreto en el perfil de Windows.
+
+Como alternativa local, copiar `.env.example` a `.env` y completar `PINECONE_API_KEY`. `.env` y
+sus variantes están ignorados por Git, pero siguen siendo texto plano en disco: no sincronizarlos,
+adjuntarlos ni copiarlos a tickets. El tipo `SecretStr` evita que el valor aparezca en la
+representación de `Settings`; no cifra la variable ni el archivo. En CI o despliegues usar el secret
+store de la plataforma e inyectar la misma variable.
+
 ## Pruebas
 
 ```powershell
