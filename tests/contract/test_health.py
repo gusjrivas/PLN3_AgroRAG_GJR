@@ -1,15 +1,14 @@
-import socket
-
+import httpx
 from fastapi.testclient import TestClient
 
 from agro_rag.bootstrap.app import create_app
 
 
 def test_liveness_works_without_credentials_or_network(monkeypatch):
-    def forbidden(*args, **kwargs):
+    async def forbidden(*args, **kwargs):
         raise AssertionError("health must not connect to a provider")
 
-    monkeypatch.setattr(socket.socket, "connect", forbidden)
+    monkeypatch.setattr(httpx.AsyncClient, "send", forbidden)
     monkeypatch.delenv("OPENAI_API_KEY", raising=False)
     with TestClient(create_app()) as client:
         response = client.get("/health/live")

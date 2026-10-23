@@ -6,6 +6,7 @@ import os
 import re
 import sqlite3
 import tempfile
+from contextlib import closing
 from dataclasses import asdict
 from pathlib import Path
 from typing import Literal
@@ -152,15 +153,16 @@ def build_catalogue(manifest_path: Path, output: Path) -> Catalogue:
     # Each activation is an immutable complete snapshot; no shared DB is mutated.
     with tempfile.TemporaryDirectory(dir=output) as temp:
         db_path = Path(temp) / "catalogue.sqlite"
-        with sqlite3.connect(db_path) as db:
-            db.execute("CREATE TABLE evidence (id TEXT PRIMARY KEY, payload TEXT NOT NULL)")
-            db.executemany(
-                "INSERT INTO evidence VALUES (?,?)",
-                [(e.evidence_id, json.dumps(asdict(e), ensure_ascii=False)) for e in evidence],
-            )
-            count = db.execute("SELECT count(*) FROM evidence").fetchone()[0]
-            if count != len(evidence):
-                raise ValueError("Catálogo incompleto")
+        with closing(sqlite3.connect(db_path)) as db:
+            with db:
+                db.execute("CREATE TABLE evidence (id TEXT PRIMARY KEY, payload TEXT NOT NULL)")
+                db.executemany(
+                    "INSERT INTO evidence VALUES (?,?)",
+                    [(e.evidence_id, json.dumps(asdict(e), ensure_ascii=False)) for e in evidence],
+                )
+                count = db.execute("SELECT count(*) FROM evidence").fetchone()[0]
+                if count != len(evidence):
+                    raise ValueError("Catálogo incompleto")
         target = output / f"{version}.sqlite"
         if target.exists():
             if read_snapshot(target, version) != catalogue:
@@ -177,7 +179,7 @@ def build_catalogue(manifest_path: Path, output: Path) -> Catalogue:
 
 def read_snapshot(path: Path, version: str) -> Catalogue:
     try:
-        with sqlite3.connect(path.as_uri() + "?mode=ro", uri=True) as db:
+        with closing(sqlite3.connect(path.as_uri() + "?mode=ro", uri=True)) as db:
             items = tuple(
                 Evidence(**json.loads(row[0]))
                 for row in db.execute("SELECT payload FROM evidence ORDER BY rowid")
