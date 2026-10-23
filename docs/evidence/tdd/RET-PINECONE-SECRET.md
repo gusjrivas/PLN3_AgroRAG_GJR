@@ -3,6 +3,7 @@
 Fecha: 22/10/2026. Responsable/revisor: misma sesión, sin revisión independiente. Rama:
 `fix/pinecone-secret-config`. Base main:
 `21d124f775d1731f7e0bff3f82233a0932c72553`.
+Commit de implementación verificado: `e1a5921b03cfb4b906f0f3bf73a881c0db992508`.
 
 ## Fuente y alcance
 
