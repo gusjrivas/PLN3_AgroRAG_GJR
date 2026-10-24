@@ -47,6 +47,19 @@ Evidencia: `docs/evidence/tdd/03-live-eval.md`.
 - [x] L.5 Ejecutar BM25/vector/hybrid/rerank, registrar latencia y métricas por consulta.
 - [x] L.6 Revisar gates de activación; mantener BM25 público por qrels pendientes y latencia.
 
+## Corte de hardening: límite async entre API y retrieval
+
+Responsable: coordinador/backend, misma sesión. Rama: `feat/03-retrieval-api-activation`.
+Propiedad: `src/agro_rag/application/query.py`, `src/agro_rag/api/query.py`, pruebas afectadas,
+ADR-013 y evidencia `docs/evidence/tdd/03-retrieval-async-boundary.md`. Este corte prepara la
+activación sin cambiar el modo público BM25.
+
+- [x] A.1 RED: demostrar que retrieval bloquea el event loop, el deadline no lo interrumpe y su
+  indisponibilidad llega como 500.
+- [x] A.2 GREEN: ejecutar retrieval síncrono en worker y traducir fallos tipados a 502/503 sin
+  exponer el mensaje interno.
+- [x] A.3 REFACTOR: suite completa, tipos, arquitectura, OpenSpec, revisión del diff y CI remota.
+
 ## Corte de seguridad local: credencial Pinecone
 
 Responsable: coordinador/RAG, misma sesión. Rama: `fix/pinecone-secret-config`. Propiedad:

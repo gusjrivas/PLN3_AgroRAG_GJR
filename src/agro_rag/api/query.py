@@ -8,6 +8,10 @@ from fastapi import APIRouter, Header, HTTPException, Query
 from agro_rag.api.schemas import QueryRequest, QueryResponse
 from agro_rag.application.query import BudgetExceeded, QueryService, UpstreamError
 from agro_rag.application.retrieval import Retriever
+from agro_rag.application.retrieval_pipeline import (
+    RetrievalContractError,
+    RetrievalUnavailable,
+)
 from agro_rag.domain.evidence import Catalogue, Evidence
 
 
@@ -103,6 +107,20 @@ def query_router(
         except UpstreamError as exc:
             raise error(
                 502, "MODEL_INVALID", "El modelo no produjo una salida válida", True
+            ) from exc
+        except RetrievalUnavailable as exc:
+            raise error(
+                503,
+                "RETRIEVAL_UNAVAILABLE",
+                "El servicio de recuperación no está disponible",
+                True,
+            ) from exc
+        except RetrievalContractError as exc:
+            raise error(
+                502,
+                "RETRIEVAL_INVALID",
+                "El servicio de recuperación produjo una salida inválida",
+                True,
             ) from exc
         finally:
             active -= 1
