@@ -54,4 +54,6 @@ consumieron créditos. Los tests interceptan HTTP y comprueban destino, autoriza
 schema, respuesta, uso y redacción. Una prueba live queda pendiente hasta que exista una key y
 acceso al modelo; no se presenta este GREEN offline como validación real del proveedor.
 
-Commit, PR y CI se registran al cerrar la rama.
+Commit funcional: `1f2d1d4`. PR apilado sobre #15:
+[#16](https://github.com/gusjrivas/PLN3_AgroRAG_GJR/pull/16). CI del commit funcional:
+`specs`, `offline` y `browser` aprobados.
