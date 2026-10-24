@@ -4,11 +4,13 @@ import asyncio
 import json
 import time
 import unicodedata
+from collections import OrderedDict
 from dataclasses import dataclass
 from typing import Any, Protocol
 from uuid import uuid4
 
 from agro_rag.application.retrieval import Retriever
+from agro_rag.domain.evidence import Evidence
 
 
 class UpstreamError(Exception):
@@ -31,14 +33,34 @@ class Model(Protocol):
     async def generate(self, role: str, payload: dict[str, Any], timeout: float) -> Generation: ...
 
 
+def normalize_question(question: str) -> str:
+    plain = "".join(
+        character
+        for character in unicodedata.normalize("NFKD", question.casefold())
+        if not unicodedata.combining(character)
+    )
+    return " ".join(plain.split())
+
+
 class QueryService:
     def __init__(
-        self, retriever: Retriever, model: Model, version: str, deadline_seconds: float = 60.0
+        self,
+        retriever: Retriever,
+        model: Model,
+        version: str,
+        deadline_seconds: float = 60.0,
+        retrieval_cache_size: int = 128,
     ) -> None:
+        if retrieval_cache_size <= 0:
+            raise ValueError("El tamaño de caché debe ser positivo")
         self.retriever = retriever
         self.model = model
         self.version = version
         self.deadline_seconds = deadline_seconds
+        self.retrieval_cache_size = retrieval_cache_size
+        self._retrieval_cache: OrderedDict[tuple[str, str, str | None], tuple[Evidence, ...]] = (
+            OrderedDict()
+        )
 
     async def run(self, question: str, crop: str | None, context: dict[str, Any]) -> dict[str, Any]:
         async with asyncio.timeout(self.deadline_seconds):
@@ -48,7 +70,18 @@ class QueryService:
         self, question: str, crop: str | None, context: dict[str, Any]
     ) -> dict[str, Any]:
         started = time.monotonic()
-        hits = await asyncio.to_thread(self.retriever.search, question, crop)
+        normalized = normalize_question(question)
+        cache_key = (self.version, normalized, crop)
+        try:
+            hits = self._retrieval_cache.pop(cache_key)
+            self._retrieval_cache[cache_key] = hits
+            cache_hit = True
+        except KeyError:
+            hits = await asyncio.to_thread(self.retriever.search, question, crop)
+            self._retrieval_cache[cache_key] = hits
+            if len(self._retrieval_cache) > self.retrieval_cache_size:
+                self._retrieval_cache.popitem(last=False)
+            cache_hit = False
         available = {item.evidence_id: item for item in hits}
         usage = {
             "llm_calls": 0,
@@ -56,7 +89,7 @@ class QueryService:
             "output_tokens": 0,
             "estimated": False,
             "total_ms": 0,
-            "cache_hit": False,
+            "cache_hit": cache_hit,
         }
         revision = 0
         decision = "abstain"
@@ -132,11 +165,6 @@ class QueryService:
                 raise BudgetExceeded("Proveedor superó presupuesto")
             return generated.data
 
-        normalized = "".join(
-            c
-            for c in unicodedata.normalize("NFKD", question.casefold())
-            if not unicodedata.combining(c)
-        )
         if (
             ("litro" in normalized or "cuanto" in normalized)
             and ("riego" in normalized or "regar" in normalized)

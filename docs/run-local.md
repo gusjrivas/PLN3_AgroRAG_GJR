@@ -58,6 +58,11 @@ viola su contrato devuelve `502 RETRIEVAL_INVALID`. El detalle interno se conser
 error en el proceso pero no se expone por HTTP. Retrieval síncrono se ejecuta fuera del event loop y
 queda incluido en el deadline global de la consulta.
 
+Cada instancia del backend mantiene un LRU de retrieval de hasta 128 claves. Repetir la misma
+pregunta normalizada con igual cultivo y corpus evita otra búsqueda y devuelve
+`usage.cache_hit=true`. Cambiar cultivo, corpus o reiniciar el proceso produce miss. Los errores del
+proveedor nunca se guardan en caché; las respuestas generadas tampoco se cachean.
+
 El modelo no se descargó ni ejecutó en esta entrega. Las pruebas guionadas del flujo no prueban calidad factual de un LLM real. Una cita válida tampoco garantiza que la afirmación sea correcta: falta evaluación semántica y agronómica.
 
 ## Credencial local de Pinecone
