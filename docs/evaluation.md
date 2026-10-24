@@ -2,6 +2,13 @@
 
 Objetivo: medir aporte de recuperación híbrida/reranking y del verificador en español. No se prometen mejoras. Todo valor de esta sección es diseño experimental u objetivo, no resultado obtenido.
 
+## Estado dev al 23/10/2026
+
+Se ejecutó un smoke real de retrieval sobre 8 consultas respondibles y 12 evidencias, documentado
+en `docs/evidence/tdd/03-live-eval.md`. Sus qrels están marcados `pending_human`: sirven para
+verificar el pipeline y detectar costos/fallos, pero no sustituyen el conjunto de 60 casos ni
+autorizan elegir configuración final. La API permanece en BM25.
+
 ## Conjunto
 
 60 casos únicos: 36 respondibles (incluye 12 que integran más de un pasaje), 12 ambiguos/sin soporte y 12 adversariales/fuera de alcance. Dividir por grupos de intención/familias de paráfrasis: 30 dev y 30 test, con 18/6/6 de cada categoría en cada split. Las paráfrasis de la misma pregunta no cruzan splits. Semilla 42, lista de IDs congelada y hash. El corpus completo sigue disponible en RAG; lo retenido son las preguntas/etiquetas de test, no necesariamente documentos.

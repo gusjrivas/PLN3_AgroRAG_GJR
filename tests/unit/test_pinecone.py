@@ -106,6 +106,21 @@ def test_ret_02_e5_uses_query_and_passage_prefixes_without_truncation() -> None:
     assert embedder.dimension == 3
 
 
+def test_e5_prefers_current_embedding_dimension_api() -> None:
+    from agro_rag.infrastructure.pinecone import E5Embedder
+
+    class ModernModel(FakeModel):
+        def get_embedding_dimension(self) -> int:
+            return 3
+
+        def get_sentence_embedding_dimension(self) -> int:
+            raise AssertionError("deprecated API must not be called")
+
+    embedder = E5Embedder(ModernModel(), model_name="e5", revision="revision")
+
+    assert embedder.dimension == 3
+
+
 def test_vector_ranker_reads_manifest_and_queries_only_compatible_namespace() -> None:
     from agro_rag.infrastructure.pinecone import PineconeVectorRanker
 
@@ -194,7 +209,7 @@ def test_catalogue_indexing_uses_evidence_ids_and_publishes_manifest_last() -> N
     assert "crop" not in rows[1]["metadata"]
     manifest = index.upserts[-1]["vectors"][0]
     assert manifest["id"] == "__agro_index_manifest__"
-    assert manifest["values"] == [0.0, 0.0, 0.0]
+    assert manifest["values"] == [1.0, 0.0, 0.0]
     assert manifest["metadata"]["kind"] == "manifest"
 
 
