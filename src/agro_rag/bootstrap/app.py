@@ -15,7 +15,21 @@ from agro_rag.domain.evidence import Catalogue
 from agro_rag.infrastructure.audit import LoggingAuditSink
 from agro_rag.infrastructure.corpus import load_catalogue
 from agro_rag.infrastructure.ollama import OllamaModel
+from agro_rag.infrastructure.openai import OpenAIModel
 from agro_rag.infrastructure.retrieval import LexicalRetriever
+
+
+def build_model(config: Settings, client: httpx.AsyncClient) -> OllamaModel | OpenAIModel | None:
+    if config.model_provider == "openai":
+        if config.openai_api_key is None or not config.openai_model:
+            return None
+        return OpenAIModel(
+            client,
+            config.openai_url,
+            config.openai_api_key.get_secret_value(),
+            config.openai_model,
+        )
+    return OllamaModel(client, config.ollama_url, config.model) if config.model else None
 
 
 def create_app(
@@ -29,7 +43,7 @@ def create_app(
         catalogue = load_catalogue(config.catalogue_path)
     retriever = LexicalRetriever(catalogue) if catalogue else None
     client = httpx.AsyncClient(trust_env=False)
-    model = OllamaModel(client, config.ollama_url, config.model) if config.model else None
+    model = build_model(config, client) if service is None else None
     if service is None and retriever and catalogue and model:
         service = QueryService(
             retriever,

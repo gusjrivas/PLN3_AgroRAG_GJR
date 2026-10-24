@@ -58,3 +58,15 @@ def test_blank_pinecone_key_is_treated_as_unconfigured(monkeypatch, tmp_path) ->
     monkeypatch.setenv("PINECONE_API_KEY", "")
 
     assert Settings().pinecone_api_key is None
+
+
+def test_openai_key_is_loaded_from_process_environment_and_redacted(monkeypatch, tmp_path) -> None:
+    secret = "test-openai-process-only-123456789"
+    monkeypatch.chdir(tmp_path)
+    monkeypatch.setenv("OPENAI_API_KEY", secret)
+
+    settings = Settings()
+
+    assert isinstance(settings.openai_api_key, SecretStr)
+    assert settings.openai_api_key.get_secret_value() == secret
+    assert secret not in repr(settings)

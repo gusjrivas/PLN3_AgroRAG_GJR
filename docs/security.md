@@ -2,7 +2,7 @@
 
 ## Modelo de uso
 
-Demo local, un usuario, backend y UI publicados sólo en 127.0.0.1. Dos claves de rol reader/admin almacenadas en entorno o secret store local; la UI sólo posee reader en su servidor. Sin pretensión de multiusuario público ni exposición a Internet. CORS restringido si se habilita. Ingesta administrativa mediante CLI local.
+Demo local, un usuario, backend y UI publicados sólo en 127.0.0.1. Claves reader/admin y de proveedor almacenadas en entorno o secret store local; la UI sólo posee reader en su servidor. Sin pretensión de multiusuario público ni exposición a Internet. CORS restringido si se habilita. Ingesta administrativa mediante CLI local. Al seleccionar OpenAI, pregunta, contexto y pasajes de las fuentes públicas se transmiten a su API; no ingresar datos sensibles.
 
 ## Riesgos y controles comprobables
 
@@ -12,6 +12,7 @@ Demo local, un usuario, backend y UI publicados sólo en 127.0.0.1. Dos claves d
 | Cita inventada | Resolver cada evidence_id en catálogo de la versión activa y construir cita en backend | ID desconocido se rechaza; cita cruzada entre corpus se rechaza |
 | JSON válido pero afirmación falsa | Verificador sobre pasaje original + evaluación humana independiente | Casos con número/unidad alterados y afirmación sin soporte |
 | Filtración de claves | Secretos fuera de prompts/logs/UI, redacción de errores y configuración mínima | Clave centinela ausente en logs y respuestas |
+| Proveedor cloud involuntario | Selección explícita, sin fallback entre OpenAI/Ollama y `store=false` | Config incompleta queda not ready; request simulado comprueba destino y payload |
 | Traversal o acceso a archivos arbitrarios | Cliente sólo envía evidence_id; catálogo resuelve rutas controladas | ../../ no accede a archivos; 404/422 |
 | SSRF/ingesta arbitraria | Sin fetch de URL solicitado por usuario; admisión local curada | URL en consulta se trata como texto |
 | Consumo descontrolado | Límite de input, concurrencia, llamadas, tokens, deadline y reintentos | Proveedor lento/fallido no supera presupuesto |
