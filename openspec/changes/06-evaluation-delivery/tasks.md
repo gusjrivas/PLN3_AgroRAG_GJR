@@ -16,13 +16,13 @@ Responsable: Evaluador y coordinador. Dependencias: 05-frontend-hardening; anota
 - [x] 2.2.2 GREEN: implementar comparación pareada, procedencia y persistencia completa de EVA-02.
 - [x] 2.2.3 REFACTOR: mejorar diseño, ejecutar suite afectada/typing/imports y registrar evidencia del contrato EVA-02.
 - [ ] 2.2.4 Ejecutar E1/E2/E3 con benchmark humano congelado y proveedores reales; revisar soporte y publicar resultados completos, incluidos los negativos.
-- [ ] 2.3.1 Definir verificación observable de DEL-01; cualquier automatización comienza con prueba RED.
-- [ ] 2.3.2 Ejecutar procedimiento y registrar evidencia real; implementar GREEN/refactor de scripts si existen.
-- [ ] 2.3.3 Revisar todos los escenarios de DEL-01 y registrar limitaciones sin simular éxitos.
+- [x] 2.3.1 Definir verificación observable de DEL-01; generador PDF y verificador comenzaron con prueba RED.
+- [x] 2.3.2 Generar, renderizar e inspeccionar el PDF; validar offline comandos, secciones, guion y hashes.
+- [x] 2.3.3 Revisar los escenarios DEL-01 y registrar benchmark, evaluación, modalidad y fecha aún pendientes.
 
 ## 3. Cierre
 
-- [ ] 3.1 Ejecutar tests de integración/seguridad pertinentes y checks estáticos; distinguir mocks de proveedores reales.
-- [ ] 3.2 Actualizar documentación, trazabilidad y handoff; enlazar evidencia y commit.
+- [x] 3.1 Ejecutar tests offline/integración local y checks estáticos; los proveedores reales y qrels humanos siguen separados.
+- [x] 3.2 Actualizar documentación, trazabilidad, informe y handoff; enlazar evidencia y commit.
 - [ ] 3.3 Revisión del diff por revisor disponible, registrar autor y riesgos; integrar cuando Definition of Done esté satisfecha.
 - [ ] 3.4 Archivar el cambio y promover deltas a specs sólo después de verificar implementación real.
