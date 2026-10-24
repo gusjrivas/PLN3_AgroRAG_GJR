@@ -56,7 +56,9 @@ tablas, código y referencias legibles, sin superposición, recorte ni glifos ro
 - Regresión con el entrypoint real `uv run pytest`: exit 0, `144 passed, 2 deselected in 5.36s`.
 - Repetición final en segundo worktree limpio sobre `8b4f974`: instalación de 94 paquetes,
   regeneración PDF y 8 artefactos válidos; suite exit 0, `144 passed, 2 deselected in 7.88s`.
-- CI: pendiente de registrar antes de integrar.
+- Commits funcionales: `76adeba` y corrección limpia `8b4f974`; evidencia de reproducción:
+  `9f09990`. PR [#14](https://github.com/gusjrivas/PLN3_AgroRAG_GJR/pull/14).
+- CI inicial del PR: `specs`, `offline` y `browser` aprobados.
 - Revisión del diff y PDF: misma sesión; revisión humana pendiente.
 
 ## Limitaciones abiertas
