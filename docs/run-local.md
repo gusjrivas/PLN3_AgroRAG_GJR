@@ -63,6 +63,11 @@ pregunta normalizada con igual cultivo y corpus evita otra búsqueda y devuelve
 `usage.cache_hit=true`. Cambiar cultivo, corpus o reiniciar el proceso produce miss. Los errores del
 proveedor nunca se guardan en caché; las respuestas generadas tampoco se cachean.
 
+Las consultas configuradas por bootstrap emiten un evento JSON al logger `agro_rag.audit`. El
+evento contiene sólo identificadores operativos, resultado, decisión, duración, uso y cache hit. No
+incluye pregunta, contexto, evidencia, prompt ni detalle de excepción. La configuración de logging
+del proceso anfitrión determina destino, rotación y retención.
+
 El modelo no se descargó ni ejecutó en esta entrega. Las pruebas guionadas del flujo no prueban calidad factual de un LLM real. Una cita válida tampoco garantiza que la afirmación sea correcta: falta evaluación semántica y agronómica.
 
 ## Credencial local de Pinecone

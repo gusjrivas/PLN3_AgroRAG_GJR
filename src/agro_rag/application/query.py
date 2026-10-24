@@ -9,6 +9,7 @@ from dataclasses import dataclass
 from typing import Any, Protocol
 from uuid import uuid4
 
+from agro_rag.application.audit import AuditOutcome, AuditSink, QueryAuditEvent
 from agro_rag.application.retrieval import Retriever
 from agro_rag.domain.evidence import Evidence
 
@@ -50,6 +51,7 @@ class QueryService:
         version: str,
         deadline_seconds: float = 60.0,
         retrieval_cache_size: int = 128,
+        audit_sink: AuditSink | None = None,
     ) -> None:
         if retrieval_cache_size <= 0:
             raise ValueError("El tamaño de caché debe ser positivo")
@@ -58,18 +60,61 @@ class QueryService:
         self.version = version
         self.deadline_seconds = deadline_seconds
         self.retrieval_cache_size = retrieval_cache_size
+        self.audit_sink = audit_sink
         self._retrieval_cache: OrderedDict[tuple[str, str, str | None], tuple[Evidence, ...]] = (
             OrderedDict()
         )
 
     async def run(self, question: str, crop: str | None, context: dict[str, Any]) -> dict[str, Any]:
-        async with asyncio.timeout(self.deadline_seconds):
-            return await self._run(question, crop, context)
+        request_id = str(uuid4())
+        started = time.monotonic()
+        try:
+            async with asyncio.timeout(self.deadline_seconds):
+                return await self._run(question, crop, context, request_id, started)
+        except Exception as exc:
+            exc.request_id = request_id  # type: ignore[attr-defined]
+            self._record_audit(
+                QueryAuditEvent(
+                    request_id=request_id,
+                    corpus_version=self.version,
+                    outcome="operational_error",
+                    decision="error",
+                    revision_count=0,
+                    total_ms=int((time.monotonic() - started) * 1000),
+                    llm_calls=0,
+                    input_tokens=0,
+                    output_tokens=0,
+                    estimated=False,
+                    cache_hit=False,
+                    error_type=self._safe_error_type(exc),
+                )
+            )
+            raise
+
+    def _record_audit(self, event: QueryAuditEvent) -> None:
+        if self.audit_sink is not None:
+            self.audit_sink.record(event)
+
+    @staticmethod
+    def _safe_error_type(exc: Exception) -> str:
+        allowed = {
+            "BudgetExceeded",
+            "RetrievalContractError",
+            "RetrievalUnavailable",
+            "TimeoutError",
+            "UpstreamError",
+        }
+        name = type(exc).__name__
+        return name if name in allowed else "InternalError"
 
     async def _run(
-        self, question: str, crop: str | None, context: dict[str, Any]
+        self,
+        question: str,
+        crop: str | None,
+        context: dict[str, Any],
+        request_id: str,
+        started: float,
     ) -> dict[str, Any]:
-        started = time.monotonic()
         normalized = normalize_question(question)
         cache_key = (self.version, normalized, crop)
         try:
@@ -95,7 +140,7 @@ class QueryService:
         decision = "abstain"
 
         def finish(
-            status: str,
+            status: AuditOutcome,
             claims: list[dict[str, Any]] | None = None,
             missing: list[str] | None = None,
         ) -> dict[str, Any]:
@@ -118,8 +163,8 @@ class QueryService:
                     }
                 )
             usage["total_ms"] = int((time.monotonic() - started) * 1000)
-            return {
-                "request_id": str(uuid4()),
+            result = {
+                "request_id": request_id,
                 "status": status,
                 "answer": "\n\n".join(c["text"] for c in claims)
                 if claims
@@ -143,6 +188,22 @@ class QueryService:
                 },
                 "usage": usage,
             }
+            self._record_audit(
+                QueryAuditEvent(
+                    request_id=request_id,
+                    corpus_version=self.version,
+                    outcome=status,
+                    decision=decision,
+                    revision_count=revision,
+                    total_ms=int(usage["total_ms"]),
+                    llm_calls=int(usage["llm_calls"]),
+                    input_tokens=int(usage["input_tokens"]),
+                    output_tokens=int(usage["output_tokens"]),
+                    estimated=bool(usage["estimated"]),
+                    cache_hit=bool(usage["cache_hit"]),
+                )
+            )
+            return result
 
         async def generate(role: str, payload: dict[str, Any]) -> dict[str, Any]:
             # Byte count is a conservative upper estimate for UTF-8 BPE input;

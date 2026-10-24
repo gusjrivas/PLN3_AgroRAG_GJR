@@ -17,6 +17,22 @@ del PR #10, cuyo merge quedó en una rama intermedia.
 Este corte satisface `OPS-01-hit` e `OPS-01-invalidate`. `OPS-01-redaccion` permanece abierto hasta
 incorporar y verificar el sink de auditoría; la redacción HTTP de retrieval ya está cubierta por #10.
 
+## Corte de auditoría estructurada y redacción
+
+Responsable: coordinador/backend, misma sesión. Rama: `feat/05-retrieval-cache`, ampliación del PR
+#11. Propiedad: `src/agro_rag/application/audit.py`, `src/agro_rag/infrastructure/audit.py`,
+`src/agro_rag/application/query.py`, bootstrap, pruebas y evidencia
+`docs/evidence/tdd/05-audit-redaction.md`.
+
+- [x] A.1 RED: evento de negocio seguro, error centinela redactado y salida JSON de esquema cerrado.
+- [x] A.2 GREEN: puerto `AuditSink`, evento inmutable sin texto y adaptador logging ensamblado desde
+  bootstrap.
+- [x] A.3 REFACTOR local: suite, typing, arquitectura, OpenSpec y revisión. CI remota se registra
+  al actualizar el PR #11.
+
+Con este corte quedan cubiertos los tres escenarios observables de OPS-01; las tareas generales de
+05 permanecen abiertas hasta cerrar UI/SEC y la evidencia integral del cambio.
+
 ## 1. Preparación
 
 - [ ] 1.1 Leer ADR aplicables, fijar archivos de propiedad y comprobar dependencias.
