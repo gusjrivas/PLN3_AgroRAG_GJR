@@ -5,7 +5,7 @@ Autor y responsable académico: Gustavo Julián Rivas. Fecha del plan: 21/10/202
 
 Repositorio independiente: https://github.com/gusjrivas/PLN3_AgroRAG_GJR
 
-**Estado: primera versión local implementada: corpus piloto, búsqueda, API, interfaz y flujo investigador/verificador. Pinecone/E5 y el reranker tienen un smoke real dev documentado; la API pública conserva el baseline lexical porque faltan qrels humanos, evaluación completa y resolver la latencia CPU del reranker.**
+**Estado: primera versión local y paquete de entrega técnica implementados: corpus piloto, búsqueda, API, interfaz, flujo investigador/verificador, informe PDF reproducible y guion de demo. Pinecone/E5 y el reranker tienen un smoke real dev documentado; la API pública conserva el baseline lexical porque faltan qrels humanos, evaluación completa y resolver la latencia CPU del reranker.**
 Engram 3.5.2 está instalado y verificado en el entorno de trabajo remoto; `.engram/config.json` identifica este proyecto. La instalación en la notebook y la activación de los clientes permanecen pendientes. Ver [evidencia](docs/evidence/engram-setup.md). Los ADR son propuestas técnicas; TDD y Python son requisitos expresos del usuario.
 
 ## Empezar aquí
@@ -53,6 +53,10 @@ Las carpetas de runtime contienen la primera implementación. Algunas capacidade
 TDD obligatorio; ningún test no ejecutado se informa como aprobado. Las evaluaciones con LLM reales se distinguen de pruebas con dobles. La exposición dura 15 minutos; informe PDF y código se entregan a más tardar en Teoría 7. Falta confirmar la fecha calendario de esa clase.
 
 Ver [fuentes](docs/sources.md), [protocolo de evaluación](docs/evaluation.md) y [estado de validación](docs/validation.md).
+
+Informe técnico: [PDF](output/pdf/agro-rag-report.pdf) y [fuente versionada](docs/report.md).
+Exposición: [guion reproducible de 15 minutos](docs/demo.md). Verificación offline:
+`uv run agro-rag verify-delivery --root .`.
 
 ## Ejecutar la base
 

@@ -1,5 +1,9 @@
 # Entrega académica y demo
 
+Estado técnico al 24/10/2026: informe reproducible y guion implementados. La entrega académica
+definitiva no está cerrada: faltan benchmark humano, E1/E2/E3 reales, confirmación de modalidad y
+fecha calendario de Teoría 7. No se envió correo ni se publicó fuera del repositorio.
+
 La cátedra solicita repositorio funcional, informe técnico PDF y exposición final de 15 minutos. Fecha máxima: clase Teoría 7; fecha calendario aún por confirmar. Entrega por correo a ambos docentes cuando el usuario lo autorice. El plan no envía mensajes.
 
 ## Informe
@@ -14,12 +18,19 @@ La cátedra solicita repositorio funcional, informe técnico PDF y exposición f
 8. Si es grupal: tareas, responsables humanos y estado. Agentes de programación no sustituyen responsables humanos.
 9. Referencias y declaración de asistencia de IA utilizada.
 
-Sin límite de páginas inventado. Priorizar evidencia y legibilidad. Exportar y revisar el PDF antes de entregar.
+La fuente está en `docs/report.md`; `scripts/build_report.py` genera
+`output/pdf/agro-rag-report.pdf`. El PDF de 7 páginas fue renderizado e inspeccionado completo. No
+se inventó límite de páginas ni se ocultaron resultados pendientes.
 
 ## Exposición de 15 minutos
 
-2 min problema/corpus; 3 min arquitectura/reuso; 4 min demo (consulta, corrección, abstención); 4 min evaluación comparativa y costo; 2 min conclusiones/limitaciones. Preparar grabación de respaldo identificada como grabación; no presentar fixtures como inferencia en vivo.
+El guion ejecutable está en `docs/demo.md`: 2 min problema/corpus; 3 min arquitectura/reuso; 4 min
+demo; 4 min evaluación/costo; 2 min conclusiones/limitaciones. El respaldo debe identificarse como
+grabación; no se presentan fixtures como inferencia en vivo.
 
 ## Reproducción
 
-README final con requisitos, instalación uv sync --frozen, configuración sin secretos, obtención de corpus permitida, construcción del índice, arranque API/UI, tests rápidos, evaluación y costos estimados. Comandos se incorporan al quedar implementados y probados. Release tag con commit, manifiestos y lockfile; evitar rutas absolutas de una notebook en instrucciones portables.
+README y `docs/run-local.md` contienen requisitos, `uv sync --frozen`, configuración sin secretos,
+obtención del corpus, ingesta, arranque API/UI y pruebas. `agro-rag verify-delivery --root .`
+comprueba offline ocho artefactos y emite sus hashes. El release tag queda pendiente hasta completar
+la evaluación científica; las instrucciones no dependen de rutas absolutas de una notebook.

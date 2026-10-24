@@ -7,6 +7,7 @@ from pathlib import Path
 import httpx
 
 from agro_rag.bootstrap.settings import Settings
+from agro_rag.evaluation.delivery import validate_delivery
 from agro_rag.infrastructure.corpus import Manifest, build_catalogue, load_catalogue
 from agro_rag.infrastructure.download import download_file
 from agro_rag.infrastructure.pinecone import E5Embedder, connect_pinecone, index_catalogue
@@ -22,7 +23,28 @@ def main(argv: list[str] | None = None, *, settings: Settings | None = None) -> 
     download.add_argument("manifest", type=Path)
     pinecone = commands.add_parser("index-pinecone")
     pinecone.add_argument("--create-index", action="store_true")
+    delivery = commands.add_parser("verify-delivery")
+    delivery.add_argument("--root", type=Path, default=Path("."))
     args = parser.parse_args(argv)
+    if args.command == "verify-delivery":
+        validation = validate_delivery(args.root)
+        print(
+            json.dumps(
+                {
+                    "artifact_count": validation.artifact_count,
+                    "artifacts": [
+                        {
+                            "path": artifact.path,
+                            "sha256": artifact.sha256,
+                            "size_bytes": artifact.size_bytes,
+                        }
+                        for artifact in validation.artifacts
+                    ],
+                },
+                sort_keys=True,
+            )
+        )
+        return 0
     if args.command == "download":
         manifest = Manifest.model_validate_json(args.manifest.read_text())
         with httpx.Client(timeout=60.0) as client:

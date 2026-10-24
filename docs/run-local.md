@@ -136,3 +136,16 @@ uv run pytest -m e2e tests/e2e -q
 ```
 
 La suite normal excluye E2E porque el navegador se instala aparte; CI ejecuta ambos jobs obligatorios. E2E usa un PDF sintético, procesos HTTP reales y Chromium. No consulta proveedores pagos. `uv run pip-audit --local --skip-editable` audita dependencias con acceso a Internet; los hallazgos requieren resolución o excepción justificada explícita.
+
+## Verificar la entrega
+
+Regenerar el informe y comprobar offline que el paquete contiene runbook, manifiesto, guion,
+fuente y PDF, con hashes imprimibles y sin leer `.env`:
+
+```powershell
+uv run python scripts/build_report.py
+uv run agro-rag verify-delivery --root .
+```
+
+El comando no instala dependencias, descarga corpus ni llama proveedores. Los resultados
+científicos definitivos siguen sujetos al benchmark humano y a las ejecuciones reales E1/E2/E3.

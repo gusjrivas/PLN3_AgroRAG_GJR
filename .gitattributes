@@ -1,1 +1,2 @@
 data/evaluation/*.jsonl text eol=lf
+*.pdf binary
