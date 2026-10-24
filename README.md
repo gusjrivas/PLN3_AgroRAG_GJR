@@ -67,4 +67,4 @@ uv run uvicorn agro_rag.bootstrap.app:create_app --factory --host 127.0.0.1 --po
 
 `GET /health/live` devuelve `{"status":"ok"}`. Pruebas: `uv run pytest --cov`.
 
-Descargar e ingerir el corpus piloto: [docs/corpus.md](docs/corpus.md). La primera selección contiene 12 fragmentos revisados; no equivale a una evaluación científica completa.
+Descargar e ingerir el corpus piloto: [docs/corpus.md](docs/corpus.md). La selección vigente contiene 27 fragmentos revisados de cinco fuentes institucionales; no equivale a una evaluación científica completa.

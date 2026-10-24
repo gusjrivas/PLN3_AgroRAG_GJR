@@ -7,7 +7,11 @@ from pathlib import Path
 
 import httpx
 
-ALLOWED_HOSTS = {"www.argentina.gob.ar", "www.wcc.nrcs.usda.gov"}
+ALLOWED_HOSTS = {
+    "repositorio.inta.gob.ar",
+    "www.argentina.gob.ar",
+    "www.wcc.nrcs.usda.gov",
+}
 
 
 def download_file(url: str, target: Path, expected: str, client: httpx.Client) -> None:

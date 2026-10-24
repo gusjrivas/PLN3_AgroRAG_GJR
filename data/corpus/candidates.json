@@ -1,26 +1,40 @@
 {
-  "status": "candidates_not_ingested",
+  "status": "curated_sources_ingested",
   "sources": [
     {
       "source_id": "INTA-HUERTA-2008",
       "url": "https://www.argentina.gob.ar/sites/default/files/2023/08/script-tmp-manual_de_cultivos_para_la_huerta_organica_familiar_-.pdf",
-      "sha256": null,
-      "rights_status": "pending_review",
-      "availability": "pdf_verified_in_research"
+      "sha256": "b46eed913543dabc8b4bc3e00b4ce1ec8d8deb2b0810516e426c769181c7d5b7",
+      "rights_status": "public_access_no_redistribution",
+      "availability": "curated_in_manifest"
     },
     {
       "source_id": "FAO56-1998",
-      "url": "https://www.fao.org/4/X0490E/X0490E00.htm",
-      "sha256": null,
-      "rights_status": "pending_review",
-      "availability": "official_html_verified_pdf_pending"
+      "url": "https://www.wcc.nrcs.usda.gov/ftpref/wntsc/waterMgt/irrigation/fao56.pdf",
+      "sha256": "bba2b84e839336453556ebe8422dc862f10831deda1a8ab46bfd3a9092d8665a",
+      "rights_status": "public_access_no_redistribution",
+      "availability": "curated_in_manifest"
     },
     {
-      "source_id": "INTA-RIEGO-2009",
-      "url": "https://www.fao.org/family-farming/detail/es/c/292401/",
-      "sha256": null,
-      "rights_status": "pending_review",
-      "availability": "catalog_verified_download_pending"
+      "source_id": "INTA-RIEGO-HORTICOLAS-2024",
+      "url": "https://repositorio.inta.gob.ar/bitstream/handle/20.500.12123/19216/INTA_CRMendoza-SanJuan_EEAMendoza_Ferrari_F_Riego_cultivos_horticolas_guia_programacion_planificacion.pdf?isAllowed=y&sequence=3",
+      "sha256": "f8df19fe730b0e45a64bb2b0a17343b7584fbe803a6aa83d1524dad4d86dd1be",
+      "rights_status": "public_access_no_redistribution",
+      "availability": "curated_in_manifest"
+    },
+    {
+      "source_id": "INTA-LECHUGA-2022",
+      "url": "https://repositorio.inta.gob.ar/xmlui/bitstream/handle/20.500.12123/13040/INTA_CICVyA_InstitutodeBiotecnologia_LopezBilbao_Lechuga.pdf?isAllowed=y&sequence=1",
+      "sha256": "680b21d67b74a658be1c34f0c48502906a4a2ca4f33e84754b508e2f346679f9",
+      "rights_status": "public_access_no_redistribution",
+      "availability": "curated_in_manifest"
+    },
+    {
+      "source_id": "INTA-TOMATE-2020",
+      "url": "https://repositorio.inta.gob.ar/bitstream/handle/20.500.12123/17260/INTA_CRCatamarca-LaRioja_EEAChilecito_Gaitan_JO_Recomendaciones_cultivar_hortalizas_Tomate.pdf?isAllowed=y&sequence=1",
+      "sha256": "13639481884578ab7215da55fa5810e034595d811cff859420e7f879e97eff36",
+      "rights_status": "public_access_no_redistribution",
+      "availability": "curated_in_manifest"
     }
   ]
 }

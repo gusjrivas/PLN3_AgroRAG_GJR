@@ -23,6 +23,26 @@ def test_verified_download_and_idempotence(tmp_path):
     assert len(calls) == 1
 
 
+def test_inta_repository_is_an_allowed_institutional_source(tmp_path):
+    from agro_rag.infrastructure.download import download_file
+
+    payload = b"%PDF-1.4\ncurated INTA source"
+    expected = hashlib.sha256(payload).hexdigest()
+
+    with httpx.Client(
+        transport=httpx.MockTransport(lambda request: httpx.Response(200, content=payload))
+    ) as client:
+        target = tmp_path / "inta.pdf"
+        download_file(
+            "https://repositorio.inta.gob.ar/bitstream/handle/example/document.pdf",
+            target,
+            expected,
+            client,
+        )
+
+    assert target.read_bytes() == payload
+
+
 @pytest.mark.parametrize(
     "url,body,status",
     [

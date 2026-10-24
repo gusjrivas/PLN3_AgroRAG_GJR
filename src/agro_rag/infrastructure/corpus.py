@@ -96,7 +96,7 @@ def excerpts(text: str, page: Page) -> list[tuple[str, int, int, str]]:
 
 
 def build_catalogue(manifest_path: Path, output: Path) -> Catalogue:
-    manifest = Manifest.model_validate_json(manifest_path.read_text())
+    manifest = Manifest.model_validate_json(manifest_path.read_text(encoding="utf-8"))
     ids = [source.source_id for source in manifest.sources]
     if len(ids) != len(set(ids)):
         raise ValueError("source_id duplicado")
@@ -179,7 +179,7 @@ def build_catalogue(manifest_path: Path, output: Path) -> Catalogue:
 
 def read_snapshot(path: Path, version: str) -> Catalogue:
     try:
-        with closing(sqlite3.connect(path.as_uri() + "?mode=ro", uri=True)) as db:
+        with closing(sqlite3.connect(path.resolve().as_uri() + "?mode=ro", uri=True)) as db:
             items = tuple(
                 Evidence(**json.loads(row[0]))
                 for row in db.execute("SELECT payload FROM evidence ORDER BY rowid")

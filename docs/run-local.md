@@ -2,7 +2,7 @@
 
 ## Qué funciona
 
-Descarga institucional con hashes fijados, ingesta PDF curada, catálogo SQLite inmutable, búsqueda BM25 con filtro de cultivo, API con clave reader y frontend Streamlit. Dos roles de generación (investigador/verificador) intercambian JSON y admiten una corrección. Ollama se conecta por HTTP sólo si se configura un modelo instalado.
+Descarga institucional con hashes fijados, ingesta PDF curada, catálogo SQLite inmutable, búsqueda BM25 con filtro de cultivo, API con clave reader y frontend Streamlit. Dos roles de generación (investigador/verificador) intercambian JSON y admiten una corrección. OpenAI u Ollama se conectan por HTTP sólo cuando se configura el proveedor correspondiente.
 
 La búsqueda pública sigue siendo un baseline lexical. Existe un adaptador administrativo para
 indexar el catálogo con E5 en Pinecone y un adaptador CrossEncoder, pero todavía no están
@@ -25,7 +25,7 @@ uv run agro-rag download data/manifest.json
 uv run agro-rag ingest data/manifest.json --output data/processed/catalogue
 ```
 
-La primera descarga requiere Internet. Hash distinto, redirect inesperado o falta de texto bloquean admisión; no reemplazar hashes automáticamente. Los PDFs y SQLite quedan fuera de Git. La selección piloto actual produce 12 fragmentos de dos fuentes, con página PDF e impresa separadas.
+La primera descarga requiere Internet. Hash distinto, redirect inesperado o falta de texto bloquean admisión; no reemplazar hashes automáticamente. Los PDFs y SQLite quedan fuera de Git. La selección piloto actual produce 27 fragmentos de cinco fuentes institucionales, con página PDF e impresa separadas.
 
 ## Dos terminales en la raíz
 

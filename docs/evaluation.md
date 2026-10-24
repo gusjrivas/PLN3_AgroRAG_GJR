@@ -9,6 +9,12 @@ en `docs/evidence/tdd/03-live-eval.md`. Sus qrels están marcados `pending_human
 verificar el pipeline y detectar costos/fallos, pero no sustituyen el conjunto de 60 casos ni
 autorizan elegir configuración final. La API permanece en BM25.
 
+Ese smoke y `data/evaluation/retrieval-dev-draft.jsonl` pertenecen a la versión anterior de 12
+fragmentos. La ampliación del corpus produce 27 evidencias y versión
+`e9929440f552b1c7be1349118a1ee98c6cdba41fbd2e2ce05343247c918dfb7d`; por lo tanto, las métricas
+históricas no se trasladan a la versión nueva. Los qrels deben regenerarse y revisarse humanamente
+antes de comparar configuraciones o presentar resultados de calidad.
+
 EVA-01 cuenta además con un cargador contractual automatizado: exige exactamente 60 casos
 revisados, conserva la proporción 18/6/6 en cada split, impide que una familia cruce dev/test,
 resuelve los `evidence_id` contra la versión del catálogo y congela el archivo por SHA-256. Los

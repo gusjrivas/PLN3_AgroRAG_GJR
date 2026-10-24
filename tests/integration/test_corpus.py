@@ -97,6 +97,18 @@ def test_metadata_changes_create_new_version(tmp_path):
     assert second.evidence[0].evidence_id != first.evidence[0].evidence_id
 
 
+def test_utf8_manifest_markers_are_preserved_on_windows(tmp_path):
+    manifest, source = fixture_source(tmp_path)
+    source["pages"][0]["start_marker"] = "Lechuga: humedad"
+    source["pages"][0]["section"] = "Relación hídrica"
+    manifest.write_text(json.dumps({"sources": [source]}, ensure_ascii=False), encoding="utf-8")
+
+    catalogue = build(manifest, tmp_path / "catalogues")
+
+    assert "Lechuga: humedad" in catalogue.evidence[0].text
+    assert catalogue.evidence[0].section == "Relación hídrica"
+
+
 def test_table_rows_preserve_headers_and_only_selected_crops(tmp_path):
     manifest, source = fixture_source(tmp_path)
     source["pages"][0]["table"] = {
@@ -122,6 +134,16 @@ def test_corrupt_existing_snapshot_is_never_activated(tmp_path):
     (output / (first.version + ".sqlite")).write_bytes(b"broken")
     with pytest.raises(ValueError, match="Catálogo"):
         build(manifest, output)
+
+
+def test_repeated_ingest_accepts_documented_relative_output(tmp_path, monkeypatch):
+    manifest, _ = fixture_source(tmp_path)
+    monkeypatch.chdir(tmp_path)
+
+    first = build(manifest, Path("catalogues"))
+    second = build(manifest, Path("catalogues"))
+
+    assert second == first
 
 
 def test_cli_ingest_and_read_snapshot(tmp_path, capsys):
@@ -155,3 +177,24 @@ def test_download_cli_uses_existing_verified_files(tmp_path, capsys):
     manifest.write_text(json.dumps({"sources": [source]}))
     assert main(["download", str(manifest)]) == 0
     assert json.loads(capsys.readouterr().out) == {"sources": 1}
+
+
+def test_curated_manifest_expands_irrigation_coverage():
+    from agro_rag.infrastructure.corpus import Manifest
+
+    manifest = Manifest.model_validate_json(Path("data/manifest.json").read_text(encoding="utf-8"))
+    sources = {source.source_id: source for source in manifest.sources}
+
+    assert {
+        "INTA-RIEGO-HORTICOLAS-2024",
+        "INTA-LECHUGA-2022",
+        "INTA-TOMATE-2020",
+    } <= sources.keys()
+    assert {page.section for page in sources["INTA-LECHUGA-2022"].pages} >= {
+        "Lechuga: suelo, agua y salinidad",
+        "Lechuga: programación del riego",
+    }
+    assert {page.section for page in sources["INTA-TOMATE-2020"].pages} >= {
+        "Tomate: frecuencia y período crítico",
+        "Tomate: humedad en floración y cuajado",
+    }
