@@ -47,4 +47,6 @@ Resultado: exit code 0, `7 passed in 2.39s`.
   pendiente. El análisis confirmó que el cambio funcional queda en el frontend HTTP; no se
   agregaron dependencias hacia dominio, modelos ni proveedores.
 
-Commit, PR y CI se agregan al cerrar la rama.
+Commit funcional: `dab7b3b`. PR directo a `main`:
+[#15](https://github.com/gusjrivas/PLN3_AgroRAG_GJR/pull/15). CI pendiente al registrar esta
+evidencia final.
