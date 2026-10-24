@@ -115,3 +115,5 @@ resultado negativo.
 La credencial se leyó desde `.env` ignorado y nunca se imprimió. No se modificó el índice heredado
 `grivas` de 1536 dimensiones.
 Commit de implementación y evidencia: `e9b20c5`.
+PR apilado: https://github.com/gusjrivas/PLN3_AgroRAG_GJR/pull/8, dependiente del PR #7.
+Los checks remotos `offline`, `specs` y `browser` finalizaron en estado `pass`.
