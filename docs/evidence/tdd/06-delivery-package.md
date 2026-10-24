@@ -54,7 +54,9 @@ tablas, código y referencias legibles, sin superposición, recorte ni glifos ro
   109 pruebas habían pasado. Segunda: `143 passed` y un fallo real, el test importaba `scripts`
   como paquete aunque no se instala. Se cambió a carga por ruta versionada.
 - Regresión con el entrypoint real `uv run pytest`: exit 0, `144 passed, 2 deselected in 5.36s`.
-- Repetición final en un checkout limpio y CI: pendientes de registrar.
+- Repetición final en segundo worktree limpio sobre `8b4f974`: instalación de 94 paquetes,
+  regeneración PDF y 8 artefactos válidos; suite exit 0, `144 passed, 2 deselected in 7.88s`.
+- CI: pendiente de registrar antes de integrar.
 - Revisión del diff y PDF: misma sesión; revisión humana pendiente.
 
 ## Limitaciones abiertas
