@@ -27,8 +27,7 @@ Responsable: coordinador/backend, misma sesión. Rama: `feat/05-retrieval-cache`
 - [x] A.1 RED: evento de negocio seguro, error centinela redactado y salida JSON de esquema cerrado.
 - [x] A.2 GREEN: puerto `AuditSink`, evento inmutable sin texto y adaptador logging ensamblado desde
   bootstrap.
-- [x] A.3 REFACTOR local: suite, typing, arquitectura, OpenSpec y revisión. CI remota se registra
-  al actualizar el PR #11.
+- [x] A.3 REFACTOR: suite, typing, arquitectura, OpenSpec, revisión y CI remota.
 
 Con este corte quedan cubiertos los tres escenarios observables de OPS-01; las tareas generales de
 05 permanecen abiertas hasta cerrar UI/SEC y la evidencia integral del cambio.
