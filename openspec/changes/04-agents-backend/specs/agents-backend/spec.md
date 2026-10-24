@@ -58,3 +58,17 @@ La orquestación MUST respetar límites globales de llamadas, búsquedas, tokens
 - **GIVEN** proveedor devuelve JSON inválido.
 - **WHEN** se procesa salida.
 - **THEN** se aplica como máximo reparación permitida dentro de presupuesto o 502, sin filtrar stacktrace.
+
+### Requirement: AGT-04 Selección explícita de proveedor
+El backend MUST seleccionar OpenAI u Ollama por configuración completa, mantener el mismo contrato
+estructurado y no degradar silenciosamente entre proveedores.
+
+#### Scenario: AGT-04-openai
+- **GIVEN** proveedor OpenAI, key y modelo configurados.
+- **WHEN** investigador o verificador genera una salida.
+- **THEN** usa Responses API con JSON Schema estricto, `store=false` y métricas de tokens.
+
+#### Scenario: AGT-04-incompleto
+- **GIVEN** proveedor seleccionado sin key o modelo.
+- **WHEN** se construye el backend.
+- **THEN** generación queda no disponible y no usa Ollama como fallback.

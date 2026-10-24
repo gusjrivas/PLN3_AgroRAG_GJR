@@ -10,11 +10,9 @@ class ApiError(Exception):
 
 
 SAFE_API_ERRORS = {
-    "NOT_READY": (
-        "Respuesta verificada no disponible: el corpus o modelo local no está configurado."
-    ),
-    "DEADLINE": "El modelo local tardó demasiado. Volvé a intentar la consulta.",
-    "MODEL_INVALID": "El modelo local no produjo una respuesta válida. Reformulá la consulta.",
+    "NOT_READY": ("Respuesta verificada no disponible: el corpus o modelo no está configurado."),
+    "DEADLINE": "El modelo tardó demasiado. Volvé a intentar la consulta.",
+    "MODEL_INVALID": "El modelo no produjo una respuesta válida. Reformulá la consulta.",
     "RETRIEVAL_UNAVAILABLE": "La recuperación de fuentes no está disponible temporalmente.",
     "BUSY": "Hay dos consultas en curso. Esperá un momento y volvé a intentar.",
     "BUDGET": "La consulta superó el presupuesto permitido. Probá con una pregunta más breve.",
