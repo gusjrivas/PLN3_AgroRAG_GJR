@@ -32,6 +32,19 @@ Responsable: coordinador/backend, misma sesión. Rama: `feat/05-retrieval-cache`
 Con este corte quedan cubiertos los tres escenarios observables de OPS-01; las tareas generales de
 05 permanecen abiertas hasta cerrar UI/SEC y la evidencia integral del cambio.
 
+## Corte independiente: consultas sucesivas y guía de uso
+
+Responsable y revisor disponible: coordinador/frontend, misma sesión. Rama:
+`fix/ui-repeat-guidance`. Propiedad: `src/agro_rag_ui/app.py`, `tests/ui/test_ui.py`, documentación
+operativa y evidencia `docs/evidence/tdd/UI-02-repeat-guidance.md`.
+
+- [x] U.1 RED: guía previa ausente, reinicio inexistente y resultado obsoleto al cambiar de modo.
+- [x] U.2 GREEN: instrucciones por modo, pregunta asociada, nueva consulta y limpieza al cambiar.
+- [x] U.3 REFACTOR: AppTest, suite, typing, arquitectura, OpenSpec y revisión del impacto.
+
+Este corte amplía `UI-01-respuesta` y `UI-02-rerun`; no cierra por sí solo los demás escenarios
+generales del cambio.
+
 ## 1. Preparación
 
 - [ ] 1.1 Leer ADR aplicables, fijar archivos de propiedad y comprobar dependencias.

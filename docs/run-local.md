@@ -41,7 +41,7 @@ Frontend:
 uv run streamlit run src/agro_rag_ui/app.py --server.address 127.0.0.1 --server.port 8501 --browser.gatherUsageStats false
 ```
 
-Abrir http://127.0.0.1:8501. En **Explorar fuentes** probar: “¿Cuándo es crítico evitar la falta de agua en tomate?”. Expandir la fuente para ver página, edición y pasaje. No se utiliza un LLM en este modo.
+Abrir http://127.0.0.1:8501. En **Explorar fuentes** probar: “¿Cuándo es crítico evitar la falta de agua en tomate?”. Este modo devuelve fragmentos, no una respuesta redactada. Expandir la fuente para ver página, edición y pasaje. Para empezar con el formulario vacío usar **Nueva consulta**; también se puede editar la pregunta y presionar **Consultar** otra vez. No se utiliza un LLM en este modo.
 
 OpenAPI: http://127.0.0.1:8000/docs. Los endpoints de datos requieren header `X-API-Key`. `GET /health/live` verifica sólo el proceso. `GET /health/ready` requiere corpus y modelo disponible. La API no descarga URLs recibidas en consultas.
 
