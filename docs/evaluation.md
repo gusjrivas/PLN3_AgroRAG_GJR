@@ -16,6 +16,14 @@ resuelve los `evidence_id` contra la versión del catálogo y congela el archivo
 abstención. El artefacto humano de 60 casos aún está pendiente, por lo que este control no se
 presenta como resultado científico ni habilita seleccionar la configuración final.
 
+El reporte EVA-02 también tiene un contrato automatizado. Exige las variantes completas de E1,
+E2 o E3, consultas pareadas, configuración y procedencia explícitas, resultados y errores por
+pregunta, tokens, latencia p50/p95 y métricas separadas por recuperación, generación, agentes y
+operación. Una ejecución `real` no puede mezclarse con `test_double` y exige revisión humana. El
+comparador conserva deltas negativos y publica el denominador y los IDs excluidos. Todavía no se
+ejecutó E1/E2/E3 definitivo porque depende del benchmark humano congelado; las pruebas actuales
+validan el mecanismo con datos sintéticos y no son resultados de calidad.
+
 ## Conjunto
 
 60 casos únicos: 36 respondibles (incluye 12 que integran más de un pasaje), 12 ambiguos/sin soporte y 12 adversariales/fuera de alcance. Dividir por grupos de intención/familias de paráfrasis: 30 dev y 30 test, con 18/6/6 de cada categoría en cada split. Las paráfrasis de la misma pregunta no cruzan splits. Semilla 42, lista de IDs congelada y hash. El corpus completo sigue disponible en RAG; lo retenido son las preguntas/etiquetas de test, no necesariamente documentos.
