@@ -4,14 +4,14 @@ Responsable: Evaluador y coordinador. Dependencias: 05-frontend-hardening; anota
 
 ## 1. Preparación
 
-- [ ] 1.1 Leer ADR aplicables, fijar archivos de propiedad y comprobar dependencias.
-- [ ] 1.2 Preparar fixtures/contratos sin servicios pagos; identificar qué checks requieren integración real.
+- [x] 1.1 Leer ADR aplicables, fijar archivos de propiedad y comprobar dependencias para EVA-01.
+- [x] 1.2 Preparar fixtures/contratos EVA-01 sin servicios pagos; la anotación y las métricas de calidad requieren revisión/ejecución real.
 
 ## 2. Implementación mediante TDD
 
-- [ ] 2.1.1 RED: escribir y ejecutar pruebas de los escenarios de EVA-01; guardar fallo funcional esperado.
-- [ ] 2.1.2 GREEN: implementar mínimo comportamiento de EVA-01 y ejecutar las mismas pruebas.
-- [ ] 2.1.3 REFACTOR: mejorar diseño, ejecutar suite afectada/typing/imports y registrar evidencia de EVA-01.
+- [x] 2.1.1 RED: escribir y ejecutar pruebas de los escenarios de EVA-01; guardar fallo funcional esperado.
+- [x] 2.1.2 GREEN: implementar mínimo comportamiento automatizable de EVA-01 y ejecutar las mismas pruebas.
+- [x] 2.1.3 REFACTOR: validar diseño, suite afectada/typing/imports y registrar evidencia del contrato EVA-01.
 - [ ] 2.2.1 RED: escribir y ejecutar pruebas de los escenarios de EVA-02; guardar fallo funcional esperado.
 - [ ] 2.2.2 GREEN: implementar mínimo comportamiento de EVA-02 y ejecutar las mismas pruebas.
 - [ ] 2.2.3 REFACTOR: mejorar diseño, ejecutar suite afectada/typing/imports y registrar evidencia de EVA-02.
