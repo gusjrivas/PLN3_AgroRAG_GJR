@@ -82,6 +82,10 @@ iniciar FastAPI en otro puerto, por ejemplo 8010, y establecer
 
 Elegir **Respuesta verificada**. El investigador recibe la pregunta y los pasajes; el verificador puede aprobar, pedir revisión, aclarar o abstenerse. Una segunda solicitud de revisión termina en abstención. No se expone razonamiento privado. Se rechazan IDs inventados. El texto final se construye con los claims aprobados, y las citas se resuelven desde el catálogo.
 
+Al completar la consulta, el resultado verificado se muestra por encima del formulario con una
+confirmación visible de OpenAI, seguido de la respuesta y sus fuentes. El formulario permanece
+debajo para permitir otra consulta sin perder la asociación entre pregunta y resultado.
+
 Sin modelo configurado se devuelve 503. Una falla del modelo devuelve 502/504, no una respuesta agronómica. El presupuesto máximo es 12.000 tokens, hasta cuatro llamadas en este flujo y 60 s globales. El recuento se estima conservadoramente si Ollama no devuelve usage. El transporte es cancelable al vencer el deadline; no se realizan reintentos en esta versión. La API admite como máximo dos consultas concurrentes.
 
 Una caída del proveedor de recuperación devuelve `503 RETRIEVAL_UNAVAILABLE`; una respuesta que

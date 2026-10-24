@@ -63,7 +63,7 @@ def test_preview_explains_mode_and_allows_a_second_query(monkeypatch):
     app.text_area[0].set_value("primera consulta")
     app.button[0].click().run()
     app.text_area[0].set_value("segunda consulta")
-    app.button[0].click().run()
+    next(button for button in app.button if button.label == "Consultar").click().run()
 
     assert calls == ["primera consulta", "segunda consulta"]
     assert any("segunda consulta" in value.value for value in app.caption)
@@ -160,7 +160,32 @@ def test_clarification_keeps_original_question(monkeypatch):
     app.text_area[0].set_value("¿Cuánto riego?")
     app.button[0].click().run()
     assert len(app.text_area) == 2
-    app.text_area[1].set_value("Cuajado de frutos")
-    app.button[1].click().run()
+    next(
+        area for area in app.text_area if area.label == "Completá el contexto solicitado"
+    ).set_value("Cuajado de frutos")
+    next(button for button in app.button if button.label == "Enviar aclaración").click().run()
     assert calls[1][0] == "¿Cuánto riego?"
     assert calls[1][1]["answers"] == ["Cuajado de frutos"]
+
+
+def test_verified_answer_is_prominent_and_identifies_openai(monkeypatch):
+    from agro_rag_ui.client import ApiClient
+
+    monkeypatch.setenv("AGRO_READER_KEY", "test-reader-token-123456")
+
+    def query(self, question, crop, context, clarification=None):
+        return {
+            "status": "answered",
+            "answer": "Evitá el déficit durante el cuajado de frutos.",
+            "citations": [],
+            "limitations": [],
+        }
+
+    monkeypatch.setattr(ApiClient, "query", query)
+    app = AppTest.from_file(str(Path("src/agro_rag_ui/app.py").resolve())).run()
+    app.sidebar.radio[0].set_value("Respuesta verificada").run()
+    app.text_area[0].set_value("¿Cuándo es crítico el riego del tomate?")
+    app.button[0].click().run()
+
+    assert any("OpenAI" in message.value for message in app.success)
+    assert any("cuajado de frutos" in text.value for text in app.text)

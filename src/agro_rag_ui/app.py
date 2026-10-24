@@ -64,6 +64,7 @@ def main() -> None:
         "1. Elegí el modo. 2. Escribí la pregunta y, si corresponde, el contexto. "
         "3. Presioná Consultar."
     )
+    result_area = st.container()
     form_version = st.session_state.get("query_form_version", 0)
     with st.form(f"query-{form_version}"):
         question = st.text_area(
@@ -112,55 +113,57 @@ def main() -> None:
         st.error(st.session_state.api_error)
     if "result" not in st.session_state:
         return
-    result = st.session_state.result
-    st.caption(f"Resultado para: “{st.session_state.submitted_query}”")
-    if result.get("mode") == "lexical_preview":
-        st.info("Fragmentos recuperados de las fuentes. Este modo no genera una respuesta.")
-        if not result.get("evidence"):
-            st.warning("No se encontraron fragmentos para esa consulta.")
-        show_evidence(result.get("evidence", []))
-    else:
-        status = result.get("status")
-        if status == "answered":
-            st.subheader("Respuesta verificada automáticamente")
-            st.text(result["answer"])
-        elif status == "needs_clarification":
-            st.info("Falta contexto para responder:")
-            for value in result.get("missing_information", []):
-                st.text(value)
-            previous = st.session_state.get("clarification_answers", [])
-            if len(previous) < 3:
-                with st.form("clarification"):
-                    extra = st.text_area("Completá el contexto solicitado", max_chars=500)
-                    clarify = st.form_submit_button("Enviar aclaración")
-                if clarify and extra.strip():
-                    answers = [*previous, extra.strip()]
-                    try:
-                        with st.spinner("Revisando con el contexto adicional…"):
-                            st.session_state.result = client.query(
-                                st.session_state.submitted_query,
-                                st.session_state.submitted_crop,
-                                st.session_state.submitted_context,
-                                {
-                                    "original_question": st.session_state.submitted_query,
-                                    "answers": answers,
-                                },
-                            )
-                        st.session_state.clarification_answers = answers
-                        st.rerun()
-                    except ApiError as exc:
-                        st.error(str(exc))
-            else:
-                st.info("Reformulá la consulta incluyendo el contexto reunido.")
+    with result_area:
+        result = st.session_state.result
+        st.caption(f"Resultado para: “{st.session_state.submitted_query}”")
+        if result.get("mode") == "lexical_preview":
+            st.info("Fragmentos recuperados de las fuentes. Este modo no genera una respuesta.")
+            if not result.get("evidence"):
+                st.warning("No se encontraron fragmentos para esa consulta.")
+            show_evidence(result.get("evidence", []))
         else:
-            st.warning("No hay evidencia suficiente para una respuesta verificada.")
-        show_evidence(result.get("citations", []))
-        for limit in result.get("limitations", []):
-            st.caption(limit)
-    if st.button("Nueva consulta"):
-        clear_result_state()
-        st.session_state.query_form_version = form_version + 1
-        st.rerun()
+            status = result.get("status")
+            if status == "answered":
+                st.success("Respuesta lista: generada y verificada con OpenAI.")
+                st.subheader("Respuesta verificada automáticamente")
+                st.text(result["answer"])
+            elif status == "needs_clarification":
+                st.info("Falta contexto para responder:")
+                for value in result.get("missing_information", []):
+                    st.text(value)
+                previous = st.session_state.get("clarification_answers", [])
+                if len(previous) < 3:
+                    with st.form("clarification"):
+                        extra = st.text_area("Completá el contexto solicitado", max_chars=500)
+                        clarify = st.form_submit_button("Enviar aclaración")
+                    if clarify and extra.strip():
+                        answers = [*previous, extra.strip()]
+                        try:
+                            with st.spinner("Revisando con el contexto adicional…"):
+                                st.session_state.result = client.query(
+                                    st.session_state.submitted_query,
+                                    st.session_state.submitted_crop,
+                                    st.session_state.submitted_context,
+                                    {
+                                        "original_question": st.session_state.submitted_query,
+                                        "answers": answers,
+                                    },
+                                )
+                            st.session_state.clarification_answers = answers
+                            st.rerun()
+                        except ApiError as exc:
+                            st.error(str(exc))
+                else:
+                    st.info("Reformulá la consulta incluyendo el contexto reunido.")
+            else:
+                st.warning("No hay evidencia suficiente para una respuesta verificada.")
+            show_evidence(result.get("citations", []))
+            for limit in result.get("limitations", []):
+                st.caption(limit)
+        if st.button("Nueva consulta"):
+            clear_result_state()
+            st.session_state.query_form_version = form_version + 1
+            st.rerun()
 
 
 if __name__ == "__main__":
