@@ -2,6 +2,21 @@
 
 Responsable: RAG/datos. Dependencias: 00-foundation y 01-engram; puede continuar desde Git si memoria tiene bloqueo documentado. Implementación piloto y evidencia en docs/evidence/tdd/02-corpus.md. Admisión, tablas revisadas y catálogo local implementados. COR-03 remoto y ampliación de corpus pendientes; no archivar.
 
+## Corte de portabilidad Windows para snapshots SQLite
+
+Responsable: coordinador/RAG, misma sesión. Rama: `fix/windows-sqlite-snapshot`.
+Propiedad: `src/agro_rag/infrastructure/corpus.py`, pruebas de integración de corpus,
+`tests/contract/test_health.py`, documentación y evidencia del corte. Motivo: desbloquear la
+reconstrucción y los gates locales en Windows requeridos por `03-retrieval/P.6`, sin cambiar el
+contrato inmutable de ADR-006 ni la semántica de liveness.
+Evidencia: `docs/evidence/tdd/WIN-SQLITE-SNAPSHOT.md`.
+
+- [x] W.1 RED: reproducir `WinError 32` al activar el snapshot desde el CLI.
+- [x] W.2 GREEN: cerrar explícitamente conexiones SQLite antes de mover o eliminar archivos.
+- [x] W.2b RED: reproducir el falso positivo de red al bloquear el socket interno de AnyIO.
+- [x] W.2c GREEN: interceptar sólo el transporte HTTP de proveedores en el test de liveness.
+- [x] W.3 REFACTOR: suite completa, calidad, evidencia y validación local; CI/revisión remota en PR.
+
 ## 1. Preparación
 
 - [ ] 1.1 Leer ADR aplicables, fijar archivos de propiedad y comprobar dependencias.
