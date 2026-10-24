@@ -54,3 +54,5 @@ usó OpenAI; no se incluyeron secretos ni el cuerpo de la respuesta en los regis
 - UI y liveness local: HTTP 200 en `127.0.0.1:8501` y `127.0.0.1:8010`.
 - Revisión funcional y visual: misma sesión; revisión humana pendiente.
 
+Commit funcional: `99fe511`.
+
