@@ -13,7 +13,7 @@ def test_frozen_dev_dataset_has_expected_bytes() -> None:
     content = Path("data/evaluation/retrieval-dev-draft.jsonl").read_bytes()
 
     assert hashlib.sha256(content).hexdigest() == (
-        "bfe832f33b8683f0680953bba2b215c3e981b05867c30f29a8a7f30d1807d34f"
+        "037b27219c3772f4d4ff3381860d11ddb43799f2b85762686994590d0b8c8933"
     )
 
 

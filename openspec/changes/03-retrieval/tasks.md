@@ -47,6 +47,17 @@ Evidencia: `docs/evidence/tdd/03-live-eval.md`.
 - [x] L.5 Ejecutar BM25/vector/hybrid/rerank, registrar latencia y métricas por consulta.
 - [x] L.6 Revisar gates de activación; mantener BM25 público por qrels pendientes y latencia.
 
+## Corte de sincronización con el corpus ampliado
+
+Responsable: coordinador/RAG, misma sesión. Rama: `fix/corpus-runtime-sync`. Propiedad:
+`data/evaluation/retrieval-dev-draft.jsonl`, smoke Pinecone, documentación y evidencia del corte.
+Evidencia: `docs/evidence/tdd/RET-CORPUS-SYNC.md`.
+
+- [x] R.1 RED: demostrar que los qrels de la versión anterior son rechazados por el catálogo nuevo.
+- [x] R.2 GREEN: migrar por correspondencia de pasajes, conservar `pending_human` y fijar el hash.
+- [x] R.3 RED/GREEN: medir el desplazamiento de ranking y validar Recall@20 en Pinecone real.
+- [x] R.4 REFACTOR: suite, calidad, OpenSpec y evidencia; CI y revisión remota pendientes en el PR.
+
 ## Corte de hardening: límite async entre API y retrieval
 
 Responsable: coordinador/backend, misma sesión. Rama: `feat/03-retrieval-api-activation`.
