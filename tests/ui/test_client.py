@@ -27,3 +27,33 @@ def test_backend_error_does_not_leak_body():
         with pytest.raises(ApiError) as exc:
             ApiClient("http://localhost:8000", "key", http).search("riego", None)
     assert "SECRET" not in str(exc.value)
+
+
+@pytest.mark.parametrize(
+    ("status", "code", "expected"),
+    [
+        (503, "NOT_READY", "modelo no está configurado"),
+        (504, "DEADLINE", "tardó demasiado"),
+        (502, "MODEL_INVALID", "no produjo una respuesta válida"),
+        (503, "MODEL_UNAVAILABLE", "cuota o acceso"),
+    ],
+)
+def test_backend_typed_errors_have_safe_actionable_messages(status, code, expected):
+    from agro_rag_ui.client import ApiClient, ApiError
+
+    body = {
+        "error": {
+            "code": code,
+            "message": "SECRET provider detail",
+            "request_id": "request-id",
+            "retryable": True,
+        }
+    }
+    with httpx.Client(
+        transport=httpx.MockTransport(lambda r: httpx.Response(status, json=body))
+    ) as http:
+        with pytest.raises(ApiError) as exc:
+            ApiClient("http://localhost:8000", "key", http).query("riego", None, {})
+
+    assert expected in str(exc.value)
+    assert "SECRET" not in str(exc.value)

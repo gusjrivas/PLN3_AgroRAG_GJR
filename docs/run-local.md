@@ -41,15 +41,50 @@ Frontend:
 uv run streamlit run src/agro_rag_ui/app.py --server.address 127.0.0.1 --server.port 8501 --browser.gatherUsageStats false
 ```
 
-Abrir http://127.0.0.1:8501. En **Explorar fuentes** probar: “¿Cuándo es crítico evitar la falta de agua en tomate?”. Expandir la fuente para ver página, edición y pasaje. No se utiliza un LLM en este modo.
+Abrir http://127.0.0.1:8501. En **Explorar fuentes** probar: “¿Cuándo es crítico evitar la falta de agua en tomate?”. Este modo devuelve fragmentos, no una respuesta redactada. Expandir la fuente para ver página, edición y pasaje. Para empezar con el formulario vacío usar **Nueva consulta**; también se puede editar la pregunta y presionar **Consultar** otra vez. No se utiliza un LLM en este modo.
 
 OpenAPI: http://127.0.0.1:8000/docs. Los endpoints de datos requieren header `X-API-Key`. `GET /health/live` verifica sólo el proceso. `GET /health/ready` requiere corpus y modelo disponible. La API no descarga URLs recibidas en consultas.
 
 ## Activar generación real
 
+### Opción OpenAI (sin modelo local)
+
+Crear una API key en la plataforma de OpenAI y guardarla únicamente en `.env`, que está ignorado
+por Git. No usar la clave de una cuenta de ChatGPT: la API se autentica y factura por separado.
+
+```dotenv
+AGRO_MODEL_PROVIDER=openai
+OPENAI_API_KEY=valor-secreto
+AGRO_OPENAI_MODEL=gpt-4o
+```
+
+El backend usa Responses API con Structured Outputs y `store=false`; investigador y verificador
+reciben la pregunta, el contexto y los pasajes recuperados. La UI nunca recibe la API key. Reiniciar
+backend y frontend después de cambiar el proveedor. `GET /health/ready` valida credencial y acceso
+al modelo sin generar texto. La prueba automática usa transporte simulado: una prueba real requiere
+una key, acceso al modelo y puede generar costo.
+
+### Opción Ollama (local)
+
 Instalar/iniciar [Ollama](https://docs.ollama.com/) localmente y preparar un modelo que soporte JSON. Configurar `AGRO_MODEL` con su nombre exacto, incluido tag, tal como aparece en `ollama list`. Registrar modelo, digest y hardware antes de evaluar. Reiniciar backend y frontend después de editar `.env`.
 
+Alternativa local probada con Docker y CPU:
+
+```powershell
+docker run -d --name agrorag-ollama -p 127.0.0.1:11434:11434 -v agrorag-ollama:/root/.ollama ollama/ollama
+docker exec agrorag-ollama ollama pull qwen2.5:1.5b
+```
+
+En ese caso usar `AGRO_MODEL=qwen2.5:1.5b`. El modelo de 3B superó el deadline total de 60 s en
+el equipo de prueba sólo CPU; no se recomienda allí. Si otro servicio ya ocupa el puerto 8000,
+iniciar FastAPI en otro puerto, por ejemplo 8010, y establecer
+`AGRO_API_URL=http://127.0.0.1:8010` en el proceso del frontend.
+
 Elegir **Respuesta verificada**. El investigador recibe la pregunta y los pasajes; el verificador puede aprobar, pedir revisión, aclarar o abstenerse. Una segunda solicitud de revisión termina en abstención. No se expone razonamiento privado. Se rechazan IDs inventados. El texto final se construye con los claims aprobados, y las citas se resuelven desde el catálogo.
+
+Al completar la consulta, el resultado verificado se muestra por encima del formulario con una
+confirmación visible de OpenAI, seguido de la respuesta y sus fuentes. El formulario permanece
+debajo para permitir otra consulta sin perder la asociación entre pregunta y resultado.
 
 Sin modelo configurado se devuelve 503. Una falla del modelo devuelve 502/504, no una respuesta agronómica. El presupuesto máximo es 12.000 tokens, hasta cuatro llamadas en este flujo y 60 s globales. El recuento se estima conservadoramente si Ollama no devuelve usage. El transporte es cancelable al vencer el deadline; no se realizan reintentos en esta versión. La API admite como máximo dos consultas concurrentes.
 

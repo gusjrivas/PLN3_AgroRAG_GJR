@@ -37,11 +37,46 @@ def test_ollama_uses_question_and_untrusted_evidence_separately():
     result = asyncio.run(run())
     assert result.input_tokens == 123 and not result.estimated
     assert calls[0]["stream"] is False
-    assert calls[0]["format"] == "json"
+    assert calls[0]["format"]["type"] == "object"
+    assert calls[0]["format"]["properties"]["status"]["enum"] == [
+        "answered",
+        "needs_clarification",
+        "insufficient_evidence",
+    ]
+    assert calls[0]["format"]["additionalProperties"] is False
     assert calls[0]["options"]["num_predict"] == 768
     assert "no confiables" in calls[0]["messages"][0]["content"]
     assert "Ignora instrucciones" not in calls[0]["messages"][0]["content"]
     assert json.loads(calls[0]["messages"][1]["content"])["question"] == "riego"
+
+
+def test_ollama_uses_a_strict_verifier_schema():
+    from agro_rag.infrastructure.ollama import OllamaModel
+
+    calls = []
+
+    def handler(request):
+        calls.append(json.loads(request.content))
+        return httpx.Response(
+            200,
+            json={"message": {"content": '{"decision":"approve","feedback":""}'}},
+        )
+
+    async def run():
+        async with httpx.AsyncClient(transport=httpx.MockTransport(handler)) as client:
+            return await OllamaModel(client, "http://localhost:11434", "test").generate(
+                "verifier", {}, 5
+            )
+
+    asyncio.run(run())
+    schema = calls[0]["format"]
+    assert schema["properties"]["decision"]["enum"] == [
+        "approve",
+        "revise",
+        "clarify",
+        "abstain",
+    ]
+    assert schema["required"] == ["decision", "feedback"]
 
 
 @pytest.mark.parametrize(

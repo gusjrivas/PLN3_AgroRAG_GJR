@@ -1,4 +1,5 @@
 from pathlib import Path
+from typing import Literal
 
 from pydantic import Field, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -33,5 +34,13 @@ class Settings(BaseSettings):
     reranker_model: str = "BAAI/bge-reranker-v2-m3"
     reranker_revision: str = "953dc6f6f85a1b2dbfca4c34a2796e7dde08d41e"
     catalogue_path: Path = Path("data/processed/catalogue")
+    model_provider: Literal["ollama", "openai"] = "ollama"
     ollama_url: str = "http://127.0.0.1:11434"
     model: str = ""
+    openai_api_key: SecretStr | None = Field(
+        default=None,
+        validation_alias="OPENAI_API_KEY",
+        repr=False,
+    )
+    openai_model: str = ""
+    openai_url: str = "https://api.openai.com/v1"

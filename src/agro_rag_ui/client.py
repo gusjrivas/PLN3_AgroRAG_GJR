@@ -9,6 +9,32 @@ class ApiError(Exception):
     pass
 
 
+SAFE_API_ERRORS = {
+    "NOT_READY": ("Respuesta verificada no disponible: el corpus o modelo no está configurado."),
+    "DEADLINE": "El modelo tardó demasiado. Volvé a intentar la consulta.",
+    "MODEL_INVALID": "El modelo no produjo una respuesta válida. Reformulá la consulta.",
+    "MODEL_UNAVAILABLE": (
+        "El proveedor del modelo no tiene disponibilidad, cuota o acceso. "
+        "Revisá la configuración de la API."
+    ),
+    "RETRIEVAL_UNAVAILABLE": "La recuperación de fuentes no está disponible temporalmente.",
+    "BUSY": "Hay dos consultas en curso. Esperá un momento y volvé a intentar.",
+    "BUDGET": "La consulta superó el presupuesto permitido. Probá con una pregunta más breve.",
+}
+
+
+def safe_api_error(response: httpx.Response) -> str:
+    try:
+        body = response.json()
+        error_body = body.get("error", body.get("detail", {}).get("error"))
+        code = error_body.get("code")
+    except (AttributeError, ValueError, TypeError):
+        code = None
+    if isinstance(code, str) and code in SAFE_API_ERRORS:
+        return SAFE_API_ERRORS[code]
+    return f"Servicio no disponible o solicitud rechazada ({response.status_code})."
+
+
 class ApiClient:
     def __init__(self, base_url: str, key: str, http: httpx.Client | None = None) -> None:
         self.base_url, self.key, self.http = base_url.rstrip("/"), key, http
@@ -30,9 +56,7 @@ class ApiClient:
                 raise ValueError("Expected object")
             return body
         except httpx.HTTPStatusError as exc:
-            raise ApiError(
-                f"Servicio no disponible o solicitud rechazada ({exc.response.status_code})."
-            ) from exc
+            raise ApiError(safe_api_error(exc.response)) from exc
         except (httpx.HTTPError, ValueError) as exc:
             raise ApiError("No se pudo obtener una respuesta válida del servicio.") from exc
 

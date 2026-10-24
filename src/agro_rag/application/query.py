@@ -18,6 +18,10 @@ class UpstreamError(Exception):
     pass
 
 
+class ProviderUnavailable(UpstreamError):
+    pass
+
+
 class BudgetExceeded(Exception):
     pass
 
@@ -99,6 +103,7 @@ class QueryService:
     def _safe_error_type(exc: Exception) -> str:
         allowed = {
             "BudgetExceeded",
+            "ProviderUnavailable",
             "RetrievalContractError",
             "RetrievalUnavailable",
             "TimeoutError",
@@ -261,13 +266,18 @@ class QueryService:
             if status == "needs_clarification":
                 missing = draft.get("missing_information")
                 if (
-                    not isinstance(missing, list)
-                    or not missing
-                    or any(not isinstance(x, str) or not x.strip() or len(x) > 500 for x in missing)
+                    isinstance(missing, list)
+                    and missing
+                    and not any(
+                        not isinstance(x, str) or not x.strip() or len(x) > 500 for x in missing
+                    )
                 ):
+                    decision = "clarify"
+                    return finish(status, missing=missing)
+                if missing == [] and isinstance(draft.get("claims"), list) and draft["claims"]:
+                    status = "answered"
+                else:
                     raise UpstreamError("Aclaración inválida")
-                decision = "clarify"
-                return finish(status, missing=missing)
             if status == "insufficient_evidence":
                 return finish(status)
             raw_claims = draft.get("claims")

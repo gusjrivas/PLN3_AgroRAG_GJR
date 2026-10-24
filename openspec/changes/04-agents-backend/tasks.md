@@ -2,6 +2,17 @@
 
 Responsable: Backend/agentes. Dependencias: 03-retrieval. Primera implementación parcial en PR #4. Evidencia: docs/evidence/tdd/03-05-first-version.md. Mantener casillas abiertas hasta cubrir todos los escenarios, incluidos proveedores reales, índice híbrido y hardening pendientes.
 
+## Corte independiente: proveedor OpenAI
+
+Responsable y revisor disponible: coordinador/backend, misma sesión. Rama `feat/openai-provider`.
+Propiedad: configuración/bootstrap, contratos compartidos de generación, adaptador OpenAI, pruebas,
+ADR-014 y evidencia `docs/evidence/tdd/AGT-04-openai-provider.md`.
+
+- [x] O.1 RED: adaptador y selección de proveedor inexistentes (`7 failed`).
+- [x] O.2 GREEN: Responses API estructurada, readiness sin generación y Ollama preservado.
+- [x] O.3 REFACTOR: suite, typing, arquitectura, OpenSpec y revisión local.
+- [ ] O.4 LIVE: ejecutar una consulta real sólo con key, acceso y costo autorizados.
+
 ## 1. Preparación
 
 - [ ] 1.1 Leer ADR aplicables, fijar archivos de propiedad y comprobar dependencias.
