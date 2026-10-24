@@ -114,3 +114,4 @@ resultado negativo.
 
 La credencial se leyó desde `.env` ignorado y nunca se imprimió. No se modificó el índice heredado
 `grivas` de 1536 dimensiones.
+Commit de implementación y evidencia: `e9b20c5`.
