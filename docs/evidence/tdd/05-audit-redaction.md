@@ -51,8 +51,9 @@ Resultados locales:
 - import-linter: exit 0, 2 contratos mantenidos.
 - OpenSpec 05 estricto: válido, exit 0.
 
-La revisión fue realizada por la misma sesión. Pendiente registrar commit, actualización del PR #11
-y CI remota.
+La revisión fue realizada por la misma sesión. Commit funcional: `2157f07`. PR actualizado:
+[#11](https://github.com/gusjrivas/PLN3_AgroRAG_GJR/pull/11). CI inicial del commit funcional:
+`specs`, `offline` y `browser` aprobados.
 
 ## Límites
 
