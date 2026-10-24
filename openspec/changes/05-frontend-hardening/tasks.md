@@ -12,8 +12,7 @@ del PR #10, cuyo merge quedó en una rama intermedia.
 - [x] R.1 RED: hit normalizado observable, invalidación por cultivo/versión y errores no cacheados.
 - [x] R.2 GREEN: LRU acotado por instancia, clave versión+consulta normalizada+cultivo y escritura
   sólo después de retrieval exitoso.
-- [x] R.3 REFACTOR local: suite, typing, arquitectura, OpenSpec y revisión del diff. CI remota se
-  registra al abrir el PR.
+- [x] R.3 REFACTOR: suite, typing, arquitectura, OpenSpec, revisión del diff y CI remota.
 
 Este corte satisface `OPS-01-hit` e `OPS-01-invalidate`. `OPS-01-redaccion` permanece abierto hasta
 incorporar y verificar el sink de auditoría; la redacción HTTP de retrieval ya está cubierta por #10.

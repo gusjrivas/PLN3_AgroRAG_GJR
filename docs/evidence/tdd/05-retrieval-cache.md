@@ -46,7 +46,9 @@ Resultados locales finales:
 
 La revisión del impacto fue realizada por la misma sesión. El grafo identificó `QueryService`, su
 bootstrap y pruebas como consumidores directos; los documentos excluidos del índice se revisaron
-desde el diff. Pendiente añadir commit, PR y CI remota.
+desde el diff. Commit funcional: `a86c97a`. PR directo a `main`:
+[#11](https://github.com/gusjrivas/PLN3_AgroRAG_GJR/pull/11). CI inicial del commit funcional:
+`specs`, `offline` y `browser` aprobados.
 
 ## Límites
 
