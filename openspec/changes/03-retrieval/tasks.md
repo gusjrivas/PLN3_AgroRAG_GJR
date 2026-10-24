@@ -58,8 +58,7 @@ activación sin cambiar el modo público BM25.
   indisponibilidad llega como 500.
 - [x] A.2 GREEN: ejecutar retrieval síncrono en worker y traducir fallos tipados a 502/503 sin
   exponer el mensaje interno.
-- [x] A.3 REFACTOR local: suite completa, tipos, arquitectura, OpenSpec y revisión del diff.
-  CI remota se registra al abrir el PR.
+- [x] A.3 REFACTOR: suite completa, tipos, arquitectura, OpenSpec, revisión del diff y CI remota.
 
 ## Corte de seguridad local: credencial Pinecone
 

@@ -48,7 +48,9 @@ Resultados locales:
 - `.venv\Scripts\lint-imports.exe`: exit 0, 2 contratos mantenidos.
 - `npx --yes @fission-ai/openspec@latest validate 03-retrieval --strict`: exit 0.
 
-La revisión fue realizada por la misma sesión. Pendiente añadir commit, PR y CI remota.
+La revisión fue realizada por la misma sesión. Commit funcional: `180d19b`. PR apilado sobre #9:
+[#10](https://github.com/gusjrivas/PLN3_AgroRAG_GJR/pull/10). CI inicial del commit funcional:
+`specs`, `offline` y `browser` aprobados.
 
 ## Riesgos restantes
 
