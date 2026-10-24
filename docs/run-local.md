@@ -47,6 +47,25 @@ OpenAPI: http://127.0.0.1:8000/docs. Los endpoints de datos requieren header `X-
 
 ## Activar generación real
 
+### Opción OpenAI (sin modelo local)
+
+Crear una API key en la plataforma de OpenAI y guardarla únicamente en `.env`, que está ignorado
+por Git. No usar la clave de una cuenta de ChatGPT: la API se autentica y factura por separado.
+
+```dotenv
+AGRO_MODEL_PROVIDER=openai
+OPENAI_API_KEY=valor-secreto
+AGRO_OPENAI_MODEL=gpt-4o
+```
+
+El backend usa Responses API con Structured Outputs y `store=false`; investigador y verificador
+reciben la pregunta, el contexto y los pasajes recuperados. La UI nunca recibe la API key. Reiniciar
+backend y frontend después de cambiar el proveedor. `GET /health/ready` valida credencial y acceso
+al modelo sin generar texto. La prueba automática usa transporte simulado: una prueba real requiere
+una key, acceso al modelo y puede generar costo.
+
+### Opción Ollama (local)
+
 Instalar/iniciar [Ollama](https://docs.ollama.com/) localmente y preparar un modelo que soporte JSON. Configurar `AGRO_MODEL` con su nombre exacto, incluido tag, tal como aparece en `ollama list`. Registrar modelo, digest y hardware antes de evaluar. Reiniciar backend y frontend después de editar `.env`.
 
 Alternativa local probada con Docker y CPU:

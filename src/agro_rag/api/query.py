@@ -6,7 +6,12 @@ from uuid import uuid4
 from fastapi import APIRouter, Header, HTTPException, Query
 
 from agro_rag.api.schemas import QueryRequest, QueryResponse
-from agro_rag.application.query import BudgetExceeded, QueryService, UpstreamError
+from agro_rag.application.query import (
+    BudgetExceeded,
+    ProviderUnavailable,
+    QueryService,
+    UpstreamError,
+)
 from agro_rag.application.retrieval import Retriever
 from agro_rag.application.retrieval_pipeline import (
     RetrievalContractError,
@@ -120,6 +125,14 @@ def query_router(
                 "BUDGET",
                 "Presupuesto de consulta agotado",
                 request_id=getattr(exc, "request_id", None),
+            ) from exc
+        except ProviderUnavailable as exc:
+            raise error(
+                503,
+                "MODEL_UNAVAILABLE",
+                "Proveedor de modelo sin disponibilidad, cuota o acceso",
+                True,
+                getattr(exc, "request_id", None),
             ) from exc
         except UpstreamError as exc:
             raise error(

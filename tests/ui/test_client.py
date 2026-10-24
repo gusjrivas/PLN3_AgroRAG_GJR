@@ -32,9 +32,10 @@ def test_backend_error_does_not_leak_body():
 @pytest.mark.parametrize(
     ("status", "code", "expected"),
     [
-        (503, "NOT_READY", "modelo local no está configurado"),
+        (503, "NOT_READY", "modelo no está configurado"),
         (504, "DEADLINE", "tardó demasiado"),
         (502, "MODEL_INVALID", "no produjo una respuesta válida"),
+        (503, "MODEL_UNAVAILABLE", "cuota o acceso"),
     ],
 )
 def test_backend_typed_errors_have_safe_actionable_messages(status, code, expected):

@@ -4,7 +4,7 @@ Streamlit como cliente de FastAPI, con httpx y timeout explícito. UI no carga m
 
 ## Pantalla y comportamiento
 
-Consulta en español, selector opcional tomate/lechuga, contexto opcional. La pantalla explica antes del envío que **Explorar fuentes** recupera fragmentos pero no redacta una respuesta, y que **Respuesta verificada** requiere un modelo configurado en el backend. Botón Consultar dispara una única llamada por envío; reruns no repiten inferencia. Cada resultado muestra la pregunta que lo originó. **Nueva consulta** descarta el resultado y limpia el formulario sin llamar a la API; cambiar de modo también descarta el resultado anterior para no atribuirlo al modo nuevo.
+Consulta en español, selector opcional tomate/lechuga, contexto opcional. La pantalla explica antes del envío que **Explorar fuentes** recupera fragmentos pero no redacta una respuesta, y que **Respuesta verificada** requiere un modelo configurado en el backend (OpenAI u Ollama). Botón Consultar dispara una única llamada por envío; reruns no repiten inferencia. Cada resultado muestra la pregunta que lo originó. **Nueva consulta** descarta el resultado y limpia el formulario sin llamar a la API; cambiar de modo también descarta el resultado anterior para no atribuirlo al modo nuevo.
 
 Estados: bienvenida, validación, procesando, answered, needs_clarification, insufficient_evidence y error operativo. Aclaraciones conservan pregunta/contexto y piden sólo lo faltante; la nueva llamada usa clarification_context explícito. No inventar estado backend ni usar una conversación global.
 
