@@ -12,6 +12,7 @@ from agro_rag.api.query import error, query_router
 from agro_rag.application.query import QueryService
 from agro_rag.bootstrap.settings import Settings
 from agro_rag.domain.evidence import Catalogue
+from agro_rag.infrastructure.audit import LoggingAuditSink
 from agro_rag.infrastructure.corpus import load_catalogue
 from agro_rag.infrastructure.ollama import OllamaModel
 from agro_rag.infrastructure.retrieval import LexicalRetriever
@@ -30,7 +31,12 @@ def create_app(
     client = httpx.AsyncClient(trust_env=False)
     model = OllamaModel(client, config.ollama_url, config.model) if config.model else None
     if service is None and retriever and catalogue and model:
-        service = QueryService(retriever, model, catalogue.version)
+        service = QueryService(
+            retriever,
+            model,
+            catalogue.version,
+            audit_sink=LoggingAuditSink(),
+        )
 
     @asynccontextmanager
     async def lifespan(app: FastAPI) -> AsyncIterator[None]:

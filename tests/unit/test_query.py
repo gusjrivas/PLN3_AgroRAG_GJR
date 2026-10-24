@@ -1,4 +1,6 @@
 import asyncio
+import threading
+import time
 
 import pytest
 from test_retrieval import evidence, retriever
@@ -122,6 +124,122 @@ def test_deadline_cancels_slow_model():
     r = retriever([evidence("a", "riego")])
     with pytest.raises(TimeoutError):
         asyncio.run(QueryService(r, Slow(), "v1", deadline_seconds=0.01).run("riego", None, {}))
+
+
+def test_retrieval_runs_outside_the_event_loop_thread():
+    from agro_rag.application.query import QueryService
+
+    class RecordingRetriever:
+        thread_id = 0
+
+        def search(self, question, crop):
+            self.thread_id = threading.get_ident()
+            return ()
+
+    async def exercise():
+        retriever = RecordingRetriever()
+        event_loop_thread = threading.get_ident()
+        result = await QueryService(retriever, FakeModel([]), "v1").run("riego", None, {})
+        assert result["status"] == "insufficient_evidence"
+        assert retriever.thread_id != event_loop_thread
+
+    asyncio.run(exercise())
+
+
+def test_deadline_covers_blocking_retrieval():
+    from agro_rag.application.query import QueryService
+
+    class SlowRetriever:
+        def search(self, question, crop):
+            time.sleep(0.05)
+            return ()
+
+    with pytest.raises(TimeoutError):
+        asyncio.run(
+            QueryService(SlowRetriever(), FakeModel([]), "v1", deadline_seconds=0.01).run(
+                "riego", None, {}
+            )
+        )
+
+
+def test_ops_01_retrieval_cache_hit_is_normalized_and_observable():
+    from agro_rag.application.query import QueryService
+
+    class CountingRetriever:
+        calls = 0
+
+        def search(self, question, crop):
+            self.calls += 1
+            return ()
+
+    async def exercise():
+        retriever = CountingRetriever()
+        service = QueryService(retriever, FakeModel([]), "v1")
+
+        first = await service.run("  RÍEGO   TOMATE  ", "tomato", {})
+        second = await service.run("riego tomate", "tomato", {})
+
+        assert retriever.calls == 1
+        assert first["usage"]["cache_hit"] is False
+        assert second["usage"]["cache_hit"] is True
+
+    asyncio.run(exercise())
+
+
+def test_ops_01_retrieval_cache_invalidates_on_filter_and_version():
+    from agro_rag.application.query import QueryService
+
+    class CountingRetriever:
+        calls = 0
+
+        def search(self, question, crop):
+            self.calls += 1
+            return ()
+
+    async def exercise():
+        retriever = CountingRetriever()
+        v1 = QueryService(retriever, FakeModel([]), "v1")
+        v2 = QueryService(retriever, FakeModel([]), "v2")
+
+        first = await v1.run("riego", "tomato", {})
+        changed_filter = await v1.run("riego", "lettuce", {})
+        changed_version = await v2.run("riego", "tomato", {})
+
+        assert retriever.calls == 3
+        assert first["usage"]["cache_hit"] is False
+        assert changed_filter["usage"]["cache_hit"] is False
+        assert changed_version["usage"]["cache_hit"] is False
+
+    asyncio.run(exercise())
+
+
+def test_ops_01_retrieval_errors_are_never_cached():
+    from agro_rag.application.query import QueryService
+    from agro_rag.application.retrieval_pipeline import RetrievalUnavailable
+
+    class FlakyRetriever:
+        calls = 0
+
+        def search(self, question, crop):
+            self.calls += 1
+            if self.calls == 1:
+                raise RetrievalUnavailable("sentinel-secret")
+            return ()
+
+    async def exercise():
+        retriever = FlakyRetriever()
+        service = QueryService(retriever, FakeModel([]), "v1")
+
+        with pytest.raises(RetrievalUnavailable):
+            await service.run("riego", "tomato", {})
+        recovered = await service.run("riego", "tomato", {})
+        cached = await service.run("riego", "tomato", {})
+
+        assert retriever.calls == 2
+        assert recovered["usage"]["cache_hit"] is False
+        assert cached["usage"]["cache_hit"] is True
+
+    asyncio.run(exercise())
 
 
 def test_token_limit_fails_before_extra_calls():

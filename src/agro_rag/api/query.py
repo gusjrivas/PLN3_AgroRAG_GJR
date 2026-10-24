@@ -8,6 +8,10 @@ from fastapi import APIRouter, Header, HTTPException, Query
 from agro_rag.api.schemas import QueryRequest, QueryResponse
 from agro_rag.application.query import BudgetExceeded, QueryService, UpstreamError
 from agro_rag.application.retrieval import Retriever
+from agro_rag.application.retrieval_pipeline import (
+    RetrievalContractError,
+    RetrievalUnavailable,
+)
 from agro_rag.domain.evidence import Catalogue, Evidence
 
 
@@ -17,14 +21,20 @@ def public_evidence(evidence: Evidence) -> dict[str, Any]:
     return result
 
 
-def error(status: int, code: str, message: str, retryable: bool = False) -> HTTPException:
+def error(
+    status: int,
+    code: str,
+    message: str,
+    retryable: bool = False,
+    request_id: str | None = None,
+) -> HTTPException:
     return HTTPException(
         status,
         detail={
             "error": {
                 "code": code,
                 "message": message,
-                "request_id": str(uuid4()),
+                "request_id": request_id or str(uuid4()),
                 "retryable": retryable,
             }
         },
@@ -97,12 +107,43 @@ def query_router(
                 context["clarification_context"] = request.clarification_context.model_dump()
             return await service.run(request.question, request.crop, context)
         except TimeoutError as exc:
-            raise error(504, "DEADLINE", "Tiempo de consulta agotado", True) from exc
+            raise error(
+                504,
+                "DEADLINE",
+                "Tiempo de consulta agotado",
+                True,
+                getattr(exc, "request_id", None),
+            ) from exc
         except BudgetExceeded as exc:
-            raise error(429, "BUDGET", "Presupuesto de consulta agotado") from exc
+            raise error(
+                429,
+                "BUDGET",
+                "Presupuesto de consulta agotado",
+                request_id=getattr(exc, "request_id", None),
+            ) from exc
         except UpstreamError as exc:
             raise error(
-                502, "MODEL_INVALID", "El modelo no produjo una salida válida", True
+                502,
+                "MODEL_INVALID",
+                "El modelo no produjo una salida válida",
+                True,
+                getattr(exc, "request_id", None),
+            ) from exc
+        except RetrievalUnavailable as exc:
+            raise error(
+                503,
+                "RETRIEVAL_UNAVAILABLE",
+                "El servicio de recuperación no está disponible",
+                True,
+                getattr(exc, "request_id", None),
+            ) from exc
+        except RetrievalContractError as exc:
+            raise error(
+                502,
+                "RETRIEVAL_INVALID",
+                "El servicio de recuperación produjo una salida inválida",
+                True,
+                getattr(exc, "request_id", None),
             ) from exc
         finally:
             active -= 1

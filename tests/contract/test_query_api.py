@@ -164,6 +164,45 @@ def test_provider_failures_are_typed_and_redacted(failure, status):
         assert c.get("/health/ready", headers={"X-API-Key": KEY}).status_code == 200
 
 
+def test_retrieval_failure_is_503_and_redacted():
+    from agro_rag.application.retrieval_pipeline import RetrievalUnavailable
+    from agro_rag.bootstrap.app import create_app
+    from agro_rag.bootstrap.settings import Settings
+
+    class FailedService:
+        async def run(self, *args):
+            raise RetrievalUnavailable("PINECONE_API_KEY=never-expose")
+
+    app = create_app(Settings(reader_key=KEY), service=FailedService())
+    with TestClient(app, raise_server_exceptions=False) as c:
+        response = c.post("/v1/query", headers={"X-API-Key": KEY}, json={"question": "riego"})
+
+    assert response.status_code == 503
+    assert response.json()["error"]["code"] == "RETRIEVAL_UNAVAILABLE"
+    assert response.json()["error"]["retryable"] is True
+    assert "PINECONE_API_KEY" not in response.text
+
+
+def test_operational_error_preserves_audit_request_id():
+    from agro_rag.application.retrieval_pipeline import RetrievalUnavailable
+    from agro_rag.bootstrap.app import create_app
+    from agro_rag.bootstrap.settings import Settings
+
+    failure = RetrievalUnavailable("private-provider-detail")
+    failure.request_id = "audit-request-id"
+
+    class FailedService:
+        async def run(self, *args):
+            raise failure
+
+    app = create_app(Settings(reader_key=KEY), service=FailedService())
+    with TestClient(app, raise_server_exceptions=False) as c:
+        response = c.post("/v1/query", headers={"X-API-Key": KEY}, json={"question": "riego"})
+
+    assert response.status_code == 503
+    assert response.json()["error"]["request_id"] == "audit-request-id"
+
+
 def test_only_two_queries_can_run_at_once():
     import asyncio
 

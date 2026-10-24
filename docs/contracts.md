@@ -28,6 +28,10 @@ Invariantes: answered exige claims no vacíos y evidencia por cada claim; IDs se
 
 `error: {code, message, request_id, retryable}`. 401 auth inválida; 422 input; 429 saturación; 502 salida/proveedor inválido; 503 índice/modelo/corpus no disponible; 504 deadline. UI distingue todos estos casos de insufficient_evidence.
 
+Cuando el error ocurre dentro del caso de uso, `request_id` MUST coincidir con el evento de
+auditoría de esa ejecución. El mensaje interno y el texto de la excepción no forman parte del
+contrato HTTP ni del evento.
+
 ## Puertos Python y datos internos
 
 - Retriever.search(query, filters, budget) → list[EvidenceHit]; scores identifican su etapa, nunca se llaman probabilidad de verdad.

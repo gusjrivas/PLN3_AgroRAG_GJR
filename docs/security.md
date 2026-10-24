@@ -23,3 +23,9 @@ Las regex de sanitización no constituyen una defensa completa contra prompt inj
 ## Auditoría
 
 Eventos estructurados con request_id, etapa, decisión breve, corpus_version y uso. Sin credenciales, prompts completos ni razonamiento privado. Rotación local configurable y política de retención inicial 7 días para logs de operación; artefactos científicos seleccionados se conservan con datos revisados y hashes. Separar errores operativos de rechazo por falta de evidencia.
+
+El evento implementado tiene esquema cerrado: resultado/decisión, revisiones, duración, llamadas,
+tokens, estimación y cache hit. No contiene pregunta, contexto, evidencia, URLs ni mensajes de
+excepción. Los errores tempranos registran contadores en cero y un tipo allowlisted; no se infiere
+uso parcial que no pudo medirse. La rotación/retención del proceso anfitrión sigue siendo una tarea
+operacional de despliegue local, no una garantía del adaptador.
