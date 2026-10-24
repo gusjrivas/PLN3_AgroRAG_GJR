@@ -88,6 +88,17 @@ def test_ret_01_no_silent_lexical_fallback_on_vector_failure():
     assert build("bm25", vector=Ranking([], failure=True)).search("riego", None)
 
 
+def test_candidate_ranking_can_be_benchmarked_without_tokenizer_or_context_selection():
+    class ForbiddenCounter:
+        def count(self, text):
+            raise AssertionError("ranking benchmark must not tokenize context")
+
+    pipeline = build("hybrid", token_counter=ForbiddenCounter())
+
+    assert pipeline.corpus_version == "v1"
+    assert [row.evidence_id for row in pipeline.rank("riego", None)] == ["a", "b"]
+
+
 @pytest.mark.parametrize(
     "field,value",
     [
