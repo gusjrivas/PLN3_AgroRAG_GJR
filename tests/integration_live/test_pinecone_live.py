@@ -42,7 +42,7 @@ def test_versioned_pinecone_namespace_matches_manifest_and_dev_qrels() -> None:
             namespace=settings.pinecone_namespace,
             embedder=embedder,
             expected_identity=expected,
-            top_k=5,
+            top_k=20,
         )
         for case in dataset.cases:
             returned = {row.evidence_id for row in ranker.rank(case.question, case.crop)}
