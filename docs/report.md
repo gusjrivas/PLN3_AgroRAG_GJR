@@ -37,7 +37,7 @@ la totalidad de recomendaciones aplicables a una finca, región o campaña.
 
 ## 2. Corpus y procedencia
 
-El corpus piloto efectivo contiene 12 fragmentos revisados de dos fuentes públicas. El repositorio
+El corpus piloto efectivo contiene 27 fragmentos revisados de cinco fuentes públicas. El repositorio
 versiona el manifiesto, las páginas seleccionadas, los hashes esperados y el procedimiento de
 descarga, pero no redistribuye los PDF. Una descarga cuyo hash no coincide se rechaza para evitar
 que una edición cambie silenciosamente el corpus.
@@ -46,6 +46,9 @@ que una edición cambie silenciosamente el corpus.
 |---|---|---|---|
 | INTA Huerta 2008 | Lechuga, tomate y períodos críticos | Recomendaciones específicas de cultivo | Cobertura acotada y edición histórica |
 | FAO56 1998 | Evaporación, transpiración y agua disponible | Fundamentos técnicos | Texto en inglés y no específico de toda situación local |
+| INTA Riego en cultivos hortícolas 2024 | Agua disponible, programación y establecimiento | Fundamentos y operación de riego por goteo | Referencia regional del Oasis Norte de Mendoza |
+| INTA Lechuga 2022 | Suelo, salinidad, exceso de agua y programación | Cobertura específica de lechuga | Requiere interpretar cada recomendación en su contexto productivo |
+| INTA Tomate 2020 | Frecuencia, floración y cuajado | Cobertura específica de tomate | Hoja informativa breve y regional |
 
 Cada pasaje mantiene `source_id`, edición, URL, página física PDF, página impresa, sección,
 cultivo, texto original, texto adaptado y offsets. `corpus_version` deriva del manifiesto y de la
@@ -77,7 +80,7 @@ investigador, verificador y respuesta tipada. La UI sólo conoce JSON por HTTP.
 |---|---|---|
 | domain | Evidencia y reglas puras | Sin frameworks ni proveedores |
 | application | Casos de uso y puertos | Sin infraestructura, FastAPI o Streamlit |
-| infrastructure | SQLite, BM25, Ollama, Pinecone, E5 y reranker | Implementa puertos, no reglas HTTP |
+| infrastructure | SQLite, BM25, OpenAI, Ollama, Pinecone, E5 y reranker | Implementa puertos, no reglas HTTP |
 | api | Esquemas, autenticación y errores | Sin lógica agronómica |
 | bootstrap | Configuración e inyección | Único ensamblaje de adaptadores |
 | agro_rag_ui | Cliente HTTP y estado visual | No importa `agro_rag` |
@@ -98,7 +101,8 @@ respuestas generadas.
 El backend y el frontend están implementados en Python 3.12. FastAPI expone salud, catálogo,
 evidencia y consultas; Streamlit presenta exploración de fuentes y respuesta verificada. Pydantic
 valida settings y contratos HTTP. SQLite conserva el catálogo; BM25 es el modo público vigente.
-Ollama es opcional y se conecta por HTTP cuando el operador configura un modelo local.
+OpenAI y Ollama son proveedores opcionales y se conectan por HTTP cuando el operador configura
+uno de ellos.
 
 El trabajo reutiliza como referencia el código de `Teoria1/Codigo/RAG` del repositorio docente en
 el commit `1f4cdbb37f59a049ef9b35c482ccb1de850fbc43`. Se adaptaron los patrones de configuración,
@@ -190,9 +194,10 @@ La auditoría registra request ID, versión del corpus, decisión, revisiones, d
 tokens, estimación y cache hit. No registra pregunta, prompt, evidencia, URL, clave o mensaje de
 excepción. El request ID del error HTTP coincide con el evento interno sin exponer detalles.
 
-No se informa un costo económico final porque Ollama es local y las corridas definitivas no se
-realizaron. El reporte EVA-02 admite `estimated_cost` separado y obliga a fechar cualquier tarifa.
-Pinecone y descargas pueden generar uso externo; el operador debe revisar su cuenta y presupuesto.
+No se informa un costo económico final porque las corridas definitivas no se realizaron. OpenAI,
+Pinecone y las descargas pueden generar uso externo; el operador debe revisar su cuenta y
+presupuesto. Ollama se ejecuta localmente. El reporte EVA-02 admite `estimated_cost` separado y
+obliga a fechar cualquier tarifa.
 
 ## 8. Reproducción
 
@@ -207,8 +212,9 @@ uv run pytest -q
 ```
 
 Luego se inician backend y frontend en terminales separadas con los comandos de `docs/run-local.md`.
-La exploración de fuentes funciona sin LLM. La respuesta verificada requiere Ollama y un modelo
-configurado. Pinecone y el extra semántico son opcionales y no forman parte del arranque público.
+La exploración de fuentes funciona sin LLM. La respuesta verificada requiere OpenAI u Ollama y un
+modelo configurado. Pinecone y el extra semántico son opcionales y no forman parte del arranque
+público.
 
 El informe se regenera con:
 
@@ -225,9 +231,9 @@ instalación en un checkout limpio.
 
 El guion versionado divide la exposición en problema/corpus, arquitectura/reuso, demo, evaluación
 y conclusiones. La demo muestra liveness, exploración de fuentes, una respuesta verificada cuando
-Ollama está disponible y un caso de aclaración o abstención. No se presenta un fixture como salida
-en vivo. Si un proveedor externo falla, se muestra el error real y se continúa con evidencia
-capturada e identificada como respaldo.
+el proveedor configurado está disponible y un caso de aclaración o abstención. No se presenta un
+fixture como salida en vivo. Si un proveedor externo falla, se muestra el error real y se continúa
+con evidencia capturada e identificada como respaldo.
 
 La secuencia exacta, preguntas, comandos, criterios de éxito y plan de contingencia están en
 `docs/demo.md`. Se recomienda ensayar con cronómetro y registrar hardware, modelo y commit antes de

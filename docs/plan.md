@@ -2,7 +2,7 @@
 
 ## Estado al 22/10/2026
 
-PR #1: setup operativo de Engram; PR #2: base y CI; PR #3: corpus; PR #4: primera versión de API, UI y consulta. Los cuatro están integrados. El corpus descargado es INTA Huerta 2008 y FAO56 1998, con selección revisada de 12 fragmentos; ver docs/corpus.md y data/manifest.json. El runbook vigente es docs/run-local.md.
+PR #1: setup operativo de Engram; PR #2: base y CI; PR #3: corpus; PR #4: primera versión de API, UI y consulta. Los cuatro están integrados. El corpus vigente reúne cinco fuentes de INTA y FAO, con selección revisada de 27 fragmentos sobre fundamentos, programación de riego, tomate y lechuga; ver docs/corpus.md y data/manifest.json. El runbook vigente es docs/run-local.md.
 
 Siguiente corte: `feat/03-retrieval-contracts`, responsable coordinador/RAG, implementación por esta sesión. Propiedad: application/retrieval_pipeline.py, infrastructure/retrieval.py, tests/unit/test_retrieval_pipeline.py y documentación/evidencia de 03. Implementa contratos de modos y selección de contexto mediante TDD; no activa proveedores semánticos ficticios. ADR-013 fija límites y siguientes puertas. La secuencia original de abajo es planificación histórica, ajustada por ADR-012 para entregar un corte vertical temprano.
 

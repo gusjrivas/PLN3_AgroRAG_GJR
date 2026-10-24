@@ -1,6 +1,18 @@
 # Tasks: Corpus versionado con evidencia
 
-Responsable: RAG/datos. Dependencias: 00-foundation y 01-engram; puede continuar desde Git si memoria tiene bloqueo documentado. Implementación piloto y evidencia en docs/evidence/tdd/02-corpus.md. Admisión, tablas revisadas y catálogo local implementados. COR-03 remoto y ampliación de corpus pendientes; no archivar.
+Responsable: RAG/datos. Dependencias: 00-foundation y 01-engram; puede continuar desde Git si memoria tiene bloqueo documentado. Implementación piloto y evidencia en docs/evidence/tdd/02-corpus.md. Admisión, tablas revisadas, catálogo local y ampliación institucional implementados. COR-03 remoto permanece pendiente; no archivar.
+
+## Corte COR-EXP-01: ampliación institucional
+
+Responsable: coordinador/RAG, misma sesión. Rama: `feat/corpus-expansion`. Propiedad:
+`data/manifest.json`, admisión/ingesta de corpus, pruebas de integración y documentación/evidencia
+del corte. Se agregan tres publicaciones oficiales de INTA sin redistribuir los PDF.
+Evidencia: `docs/evidence/tdd/COR-EXP-01.md`.
+
+- [x] E.1 RED: rechazar inicialmente el host institucional nuevo y exigir cobertura curada.
+- [x] E.2 GREEN: admitir el repositorio INTA y construir 27 evidencias desde cinco fuentes.
+- [x] E.3 RED/GREEN: reproducir y corregir la pérdida de marcadores UTF-8 en Windows.
+- [x] E.4 REFACTOR: suite completa, calidad, OpenSpec, evidencia y revisión de la misma sesión; revisión remota pendiente en el PR.
 
 ## Corte de portabilidad Windows para snapshots SQLite
 

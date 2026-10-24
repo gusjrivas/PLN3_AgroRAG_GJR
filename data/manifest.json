@@ -121,6 +121,138 @@
           "start_marker": "SOIL WATER AVAILABILITY"
         }
       ]
+    },
+    {
+      "source_id": "INTA-RIEGO-HORTICOLAS-2024",
+      "title": "Riego en cultivos hortícolas: guía de programación y planificación de riego por goteo en el Oasis Norte de Mendoza",
+      "authors": [
+        "Florencia N. Ferrari",
+        "Germán D. Aguado"
+      ],
+      "institution": "INTA EEA Mendoza",
+      "edition": "Documento técnico; metadata del PDF 2024, sin fecha editorial visible",
+      "language": "es",
+      "source_url": "https://repositorio.inta.gob.ar/bitstream/handle/20.500.12123/19216/INTA_CRMendoza-SanJuan_EEAMendoza_Ferrari_F_Riego_cultivos_horticolas_guia_programacion_planificacion.pdf?isAllowed=y&sequence=3",
+      "access_date": "2026-10-24",
+      "local_file": "raw/inta-riego-horticolas-2024.pdf",
+      "sha256": "f8df19fe730b0e45a64bb2b0a17343b7584fbe803a6aa83d1524dad4d86dd1be",
+      "rights_status": "public_access_no_redistribution",
+      "review_status": "reviewed",
+      "pages": [
+        {
+          "pdf_page": 3,
+          "printed_page": "3",
+          "section": "Fundamentos: evapotranspiración",
+          "crop": null,
+          "start_marker": "Relación agua-suelo-planta-atmósfera"
+        },
+        {
+          "pdf_page": 6,
+          "printed_page": "6",
+          "section": "Fundamentos: agua disponible en el suelo",
+          "crop": null,
+          "start_marker": "La dinámica del agua en el suelo"
+        },
+        {
+          "pdf_page": 12,
+          "printed_page": "12",
+          "section": "Programación y monitoreo del riego",
+          "crop": null,
+          "start_marker": "Operación del riego"
+        },
+        {
+          "pdf_page": 13,
+          "printed_page": "13",
+          "section": "Riego durante el establecimiento",
+          "crop": null,
+          "start_marker": "Además, se consideró que en los primeros 30 días",
+          "end_marker": "Resultados de la programación del riego por zona"
+        }
+      ]
+    },
+    {
+      "source_id": "INTA-LECHUGA-2022",
+      "title": "Lechuga",
+      "authors": [
+        "Marisa Lopez Bilbao",
+        "Diana Frezza"
+      ],
+      "institution": "Ediciones INTA; Asociación Argentina de Horticultura",
+      "edition": "1ra edición, septiembre de 2022",
+      "language": "es",
+      "source_url": "https://repositorio.inta.gob.ar/xmlui/bitstream/handle/20.500.12123/13040/INTA_CICVyA_InstitutodeBiotecnologia_LopezBilbao_Lechuga.pdf?isAllowed=y&sequence=1",
+      "access_date": "2026-10-24",
+      "local_file": "raw/inta-lechuga-2022.pdf",
+      "sha256": "680b21d67b74a658be1c34f0c48502906a4a2ca4f33e84754b508e2f346679f9",
+      "rights_status": "public_access_no_redistribution",
+      "review_status": "reviewed",
+      "pages": [
+        {
+          "pdf_page": 28,
+          "printed_page": "28",
+          "section": "Lechuga: suelo, agua y salinidad",
+          "crop": "lettuce",
+          "start_marker": "Humedades relativas bajas"
+        },
+        {
+          "pdf_page": 34,
+          "printed_page": "34",
+          "section": "Lechuga: cobertura y conservación de humedad",
+          "crop": "lettuce",
+          "start_marker": "En zonas lluviosas",
+          "end_marker": "Mantas flotantes"
+        },
+        {
+          "pdf_page": 40,
+          "printed_page": "40",
+          "section": "Lechuga: exceso de agua y sistemas de riego",
+          "crop": "lettuce",
+          "start_marker": "El aumento de las cantidades de agua",
+          "end_marker": "Manejo de la nutrición"
+        },
+        {
+          "pdf_page": 45,
+          "printed_page": "45",
+          "section": "Lechuga: programación del riego",
+          "crop": "lettuce",
+          "start_marker": "Riego"
+        }
+      ]
+    },
+    {
+      "source_id": "INTA-TOMATE-2020",
+      "title": "Recomendaciones generales para cultivar hortalizas: tomate",
+      "authors": [
+        "Jorge O. Gaitán",
+        "José E. Carrizo"
+      ],
+      "institution": "INTA EEA Chilecito; Centro Regional Catamarca-La Rioja",
+      "edition": "Hoja informativa N.º 10, octubre de 2020",
+      "language": "es",
+      "source_url": "https://repositorio.inta.gob.ar/bitstream/handle/20.500.12123/17260/INTA_CRCatamarca-LaRioja_EEAChilecito_Gaitan_JO_Recomendaciones_cultivar_hortalizas_Tomate.pdf?isAllowed=y&sequence=1",
+      "access_date": "2026-10-24",
+      "local_file": "raw/inta-tomate-2020.pdf",
+      "sha256": "13639481884578ab7215da55fa5810e034595d811cff859420e7f879e97eff36",
+      "rights_status": "public_access_no_redistribution",
+      "review_status": "reviewed",
+      "pages": [
+        {
+          "pdf_page": 3,
+          "printed_page": "3",
+          "section": "Tomate: frecuencia y período crítico",
+          "crop": "tomato",
+          "start_marker": "Riego",
+          "end_marker": "Plagas y enfermedades"
+        },
+        {
+          "pdf_page": 4,
+          "printed_page": "4",
+          "section": "Tomate: humedad en floración y cuajado",
+          "crop": "tomato",
+          "start_marker": "Mantener suficiente humedad de suelo",
+          "end_marker": "Tomate tipo perita"
+        }
+      ]
     }
   ]
 }

@@ -6,11 +6,16 @@ Tomate, lechuga y fundamentos de agua/suelo/riego. Admitir secciones generales n
 
 | ID | Fuente | Estado de investigación | Selección inicial |
 |---|---|---|---|
-| INTA-HUERTA-2008 | Manual de cultivos para la huerta orgánica familiar, Enrique Goites | PDF accesible verificado en investigación; no descargado/indexado para este TP | Lechuga p. impresa 67, tomate p.97 y anexo p.129; confirmar páginas físicas al ingerir |
-| FAO56-1998 | Crop evapotranspiration, Allen et al. | Contenido oficial web verificado; seleccionar PDF con edición/correcciones documentadas | Conceptos y capítulos 5, 6 y 8, otras secciones sólo si aportan a preguntas del alcance |
-| INTA-RIEGO-2009 | Riego en horticultura, Villafáfila y Wyss | Ficha FAO identificada; descarga pendiente | Diseño/instalación de pequeños sistemas de riego |
+| INTA-HUERTA-2008 | Manual de cultivos para la huerta orgánica familiar, Enrique Goites | Ingerido con hash fijado | Lechuga, tomate y períodos críticos |
+| FAO56-1998 | Crop evapotranspiration, Allen et al. | Ingerido con hash fijado | Evaporación, transpiración y agua disponible |
+| INTA-RIEGO-HORTICOLAS-2024 | Riego en cultivos hortícolas, Ferrari y Aguado | Ingerido con hash fijado | Agua disponible, programación y establecimiento |
+| INTA-LECHUGA-2022 | Lechuga, Lopez Bilbao y Frezza | Ingerido con hash fijado | Suelo, salinidad, exceso de agua y programación |
+| INTA-TOMATE-2020 | Recomendaciones generales para cultivar hortalizas: tomate, Gaitán y Carrizo | Ingerido con hash fijado | Frecuencia, floración y cuajado |
 
-URLs y estado machine-readable en data/corpus/candidates.json. No son tres PDFs ya disponibles en el repositorio. Si la tercera fuente no se obtiene, el MVP puede funcionar con dos fuentes y declarar la limitación. Revisar licencias antes de redistribuir; acceso público no equivale a permiso para subir copias a Git.
+URLs, hashes y estado machine-readable están en `data/manifest.json`; `data/corpus/candidates.json`
+conserva el resultado de la investigación de fuentes. Los cinco PDF se descargan desde repositorios
+institucionales, pero no se versionan. Revisar derechos antes de redistribuir: acceso público no
+equivale a permiso para subir copias a Git.
 
 ## Manifiesto de ingesta
 
@@ -30,9 +35,15 @@ Chunking inicial: ventanas de ~200 tokens léxicos y overlap ~60 como baseline d
 
 Fuente de código: Teoria1/Codigo/RAG al commit 1f4cdbb37f59a049ef9b35c482ccb1de850fbc43. Conservar atribución y registrar qué módulos se adaptaron. No mezclar sus papers de RAG y qrels de muestra con el corpus/evaluación agronómicos.
 
-## Primer corpus descargado e implementado
+## Corpus descargado e implementado
 
-La selección piloto efectiva está en `data/manifest.json`; reemplaza el estado de investigación de la tabla anterior para las dos fuentes descargadas. INTA: PDF 69, 72, 103 y dos filas de 131. FAO: PDF 27, 29 y sección final de 187. Resultado inicial: 12 fragmentos. Página física e impresa son campos diferentes. Ver docs/evidence/tdd/02-corpus.md.
+La selección efectiva está en `data/manifest.json`. El primer corte incluía INTA Huerta y FAO56,
+con 12 fragmentos. La ampliación agrega tres publicaciones INTA y produce 27 fragmentos en total:
+fundamentos de agua disponible y evapotranspiración, programación y monitoreo, establecimiento,
+salinidad y exceso de agua en lechuga, y períodos críticos de tomate. Página física e impresa son
+campos diferentes. La versión resultante es
+`e9929440f552b1c7be1349118a1ee98c6cdba41fbd2e2ce05343247c918dfb7d`. Ver
+`docs/evidence/tdd/02-corpus.md` y `docs/evidence/tdd/COR-EXP-01.md`.
 
 ```bash
 uv run agro-rag download data/manifest.json
