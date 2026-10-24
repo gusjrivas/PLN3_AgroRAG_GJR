@@ -42,7 +42,8 @@ Resultado: exit code 0, `3 passed in 0.10s`.
 - mypy: exit 0, 30 archivos sin errores.
 - import-linter: exit 0, 2 contratos mantenidos.
 - OpenSpec 06 estricto: válido, exit 0.
-- CI: pendiente de registrar antes de integrar.
+- Commit funcional: `55c825a`. PR [#12](https://github.com/gusjrivas/PLN3_AgroRAG_GJR/pull/12).
+- CI del commit funcional: `specs`, `offline` y `browser` aprobados.
 - Revisión del diff: misma sesión; revisión humana pendiente.
 
 ## Limitaciones
