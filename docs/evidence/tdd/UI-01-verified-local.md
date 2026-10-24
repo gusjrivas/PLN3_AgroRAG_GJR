@@ -54,4 +54,6 @@ local es evidencia de integración operativa, no una evaluación agronómica ni 
 - La suite inicialmente alcanzó el modelo real porque un helper construía `Settings` parciales y
   heredaba `.env`; se fijó `model=""` explícitamente en ese cliente contractual offline.
 
-Commit y CI se registran al actualizar el PR #15.
+Commit funcional: `b38083b`. PR
+[#15](https://github.com/gusjrivas/PLN3_AgroRAG_GJR/pull/15). CI del commit funcional:
+`specs`, `offline` y `browser` aprobados.
