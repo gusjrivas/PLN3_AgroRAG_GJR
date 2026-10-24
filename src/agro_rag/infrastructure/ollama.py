@@ -30,6 +30,44 @@ PROMPTS = {
         'Devolvé {"decision":"approve|revise|clarify|abstain","feedback":"corrección breve"}.'
     ),
 }
+FORMATS = {
+    "researcher": {
+        "type": "object",
+        "properties": {
+            "status": {
+                "type": "string",
+                "enum": ["answered", "needs_clarification", "insufficient_evidence"],
+            },
+            "claims": {
+                "type": "array",
+                "items": {
+                    "type": "object",
+                    "properties": {
+                        "text": {"type": "string"},
+                        "evidence_ids": {"type": "array", "items": {"type": "string"}},
+                    },
+                    "required": ["text", "evidence_ids"],
+                    "additionalProperties": False,
+                },
+            },
+            "missing_information": {"type": "array", "items": {"type": "string"}},
+        },
+        "required": ["status", "claims", "missing_information"],
+        "additionalProperties": False,
+    },
+    "verifier": {
+        "type": "object",
+        "properties": {
+            "decision": {
+                "type": "string",
+                "enum": ["approve", "revise", "clarify", "abstain"],
+            },
+            "feedback": {"type": "string"},
+        },
+        "required": ["decision", "feedback"],
+        "additionalProperties": False,
+    },
+}
 
 
 class OllamaModel:
@@ -57,7 +95,7 @@ class OllamaModel:
                 json={
                     "model": self.model,
                     "stream": False,
-                    "format": "json",
+                    "format": FORMATS[role],
                     "options": {"temperature": 0, "num_predict": 768},
                     "messages": [
                         {"role": "system", "content": PROMPTS[role]},

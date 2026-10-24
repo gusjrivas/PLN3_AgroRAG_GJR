@@ -45,6 +45,16 @@ operativa y evidencia `docs/evidence/tdd/UI-02-repeat-guidance.md`.
 Este corte amplía `UI-01-respuesta` y `UI-02-rerun`; no cierra por sí solo los demás escenarios
 generales del cambio.
 
+## Corte independiente: proveedor local y errores accionables
+
+Responsable y revisor disponible: coordinador, misma sesión. Rama `fix/ui-repeat-guidance`.
+Propiedad: adaptador Ollama, normalización controlada del agente, cliente UI, pruebas y evidencia
+`docs/evidence/tdd/UI-01-verified-local.md`.
+
+- [x] V.1 RED: formato JSON no restringido, mensajes HTTP genéricos e inconsistencia observable.
+- [x] V.2 GREEN: esquemas por rol, reparación acotada antes del verificador y mensajes seguros.
+- [x] V.3 LIVE: Ollama local `qwen2.5:1.5b`, readiness y consulta real con respuesta y dos citas.
+
 ## 1. Preparación
 
 - [ ] 1.1 Leer ADR aplicables, fijar archivos de propiedad y comprobar dependencias.

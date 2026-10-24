@@ -10,7 +10,7 @@ def client():
     from agro_rag.bootstrap.app import create_app
     from agro_rag.bootstrap.settings import Settings
 
-    return TestClient(create_app(Settings(reader_key=KEY)))
+    return TestClient(create_app(Settings(reader_key=KEY, model="")))
 
 
 def test_auth_and_unavailable_are_distinct():
