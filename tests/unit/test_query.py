@@ -89,6 +89,17 @@ def test_clarification_requires_missing_information():
         execute(FakeModel([{"status": "needs_clarification", "missing_information": []}]))
 
 
+def test_empty_clarification_with_supported_claims_is_sent_to_verifier():
+    inconsistent = draft()
+    inconsistent["status"] = "needs_clarification"
+    model = FakeModel([inconsistent, {"decision": "approve", "feedback": ""}])
+
+    result = execute(model)
+
+    assert result["status"] == "answered"
+    assert model.roles == ["researcher", "verifier"]
+
+
 def test_abstention_and_approved_revision():
     assert (
         execute(FakeModel([{"status": "insufficient_evidence"}]))["status"]

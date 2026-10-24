@@ -12,6 +12,18 @@ class UISettings(BaseSettings):
     api_url: str = "http://127.0.0.1:8000"
 
 
+def clear_result_state() -> None:
+    for key in (
+        "result",
+        "api_error",
+        "submitted_query",
+        "submitted_crop",
+        "submitted_context",
+        "clarification_answers",
+    ):
+        st.session_state.pop(key, None)
+
+
 def show_evidence(items: list[dict[str, Any]]) -> None:
     for item in items:
         with st.expander(item["title"]):
@@ -32,17 +44,45 @@ def main() -> None:
         st.warning("Configurá la clave de lectura para conectar con el servicio.")
         st.stop()
     client = ApiClient(config.api_url, config.reader_key)
-    mode = st.sidebar.radio("Cómo consultar", ["Explorar fuentes", "Respuesta verificada"])
+    mode = st.sidebar.radio(
+        "Cómo consultar",
+        ["Explorar fuentes", "Respuesta verificada"],
+        on_change=clear_result_state,
+    )
     st.sidebar.caption("Corpus piloto: consultar la edición y las condiciones de cada fuente.")
-    with st.form("query"):
+    if mode == "Explorar fuentes":
+        st.info(
+            "Explorá fragmentos de los documentos disponibles. "
+            "Este modo no genera una respuesta redactada."
+        )
+    else:
+        st.info(
+            "Generá una respuesta con citas y verificación automática. "
+            "Este modo requiere que el servicio tenga un modelo configurado."
+        )
+    st.caption(
+        "1. Elegí el modo. 2. Escribí la pregunta y, si corresponde, el contexto. "
+        "3. Presioná Consultar."
+    )
+    form_version = st.session_state.get("query_form_version", 0)
+    with st.form(f"query-{form_version}"):
         question = st.text_area(
             "¿Qué querés saber?",
             max_chars=2000,
             placeholder="¿Cuándo es crítico evitar la falta de agua en tomate?",
+            key=f"question-{form_version}",
         )
-        crop_name = st.selectbox("Cultivo", ["Sin especificar", "Tomate", "Lechuga"])
-        stage = st.text_input("Etapa del cultivo (opcional)", max_chars=500)
-        soil = st.text_input("Descripción del suelo (opcional)", max_chars=500)
+        crop_name = st.selectbox(
+            "Cultivo",
+            ["Sin especificar", "Tomate", "Lechuga"],
+            key=f"crop-{form_version}",
+        )
+        stage = st.text_input(
+            "Etapa del cultivo (opcional)", max_chars=500, key=f"stage-{form_version}"
+        )
+        soil = st.text_input(
+            "Descripción del suelo (opcional)", max_chars=500, key=f"soil-{form_version}"
+        )
         submitted = st.form_submit_button("Consultar", type="primary")
     if submitted:
         st.session_state.pop("result", None)
@@ -73,6 +113,7 @@ def main() -> None:
     if "result" not in st.session_state:
         return
     result = st.session_state.result
+    st.caption(f"Resultado para: “{st.session_state.submitted_query}”")
     if result.get("mode") == "lexical_preview":
         st.info("Fragmentos recuperados de las fuentes. Este modo no genera una respuesta.")
         if not result.get("evidence"):
@@ -116,6 +157,10 @@ def main() -> None:
         show_evidence(result.get("citations", []))
         for limit in result.get("limitations", []):
             st.caption(limit)
+    if st.button("Nueva consulta"):
+        clear_result_state()
+        st.session_state.query_form_version = form_version + 1
+        st.rerun()
 
 
 if __name__ == "__main__":
