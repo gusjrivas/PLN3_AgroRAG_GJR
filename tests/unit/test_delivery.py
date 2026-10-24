@@ -1,3 +1,4 @@
+import runpy
 from pathlib import Path
 
 import pdfplumber
@@ -39,7 +40,7 @@ def test_del_01_reproduccion_rejects_incomplete_or_placeholder_package(tmp_path)
 
 
 def test_del_01_informe_builds_a_readable_pdf(tmp_path):
-    from scripts.build_report import build_pdf
+    build_pdf = runpy.run_path(str(ROOT / "scripts" / "build_report.py"))["build_pdf"]
 
     target = tmp_path / "agro-rag-report.pdf"
     build_pdf(ROOT / "docs" / "report.md", target)

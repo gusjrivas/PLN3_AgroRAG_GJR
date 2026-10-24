@@ -48,7 +48,13 @@ tablas, código y referencias legibles, sin superposición, recorte ni glifos ro
 - mypy: exit 0, 32 archivos sin errores.
 - import-linter: exit 0, 2 contratos mantenidos.
 - OpenSpec estricto completo: exit 0, 7 cambios válidos.
-- Instalación limpia y CI: pendientes de registrar.
+- `uv sync --frozen --python 3.12` en worktree limpio: exit 0, 94 paquetes instalados.
+- Regeneración PDF y `verify-delivery` en worktree limpio: exit 0, 8 artefactos.
+- Primera suite limpia: error de harness porque el comando no creó el padre de `--basetemp`;
+  109 pruebas habían pasado. Segunda: `143 passed` y un fallo real, el test importaba `scripts`
+  como paquete aunque no se instala. Se cambió a carga por ruta versionada.
+- Regresión con el entrypoint real `uv run pytest`: exit 0, `144 passed, 2 deselected in 5.36s`.
+- Repetición final en un checkout limpio y CI: pendientes de registrar.
 - Revisión del diff y PDF: misma sesión; revisión humana pendiente.
 
 ## Limitaciones abiertas
