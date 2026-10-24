@@ -53,6 +53,11 @@ Elegir **Respuesta verificada**. El investigador recibe la pregunta y los pasaje
 
 Sin modelo configurado se devuelve 503. Una falla del modelo devuelve 502/504, no una respuesta agronómica. El presupuesto máximo es 12.000 tokens, hasta cuatro llamadas en este flujo y 60 s globales. El recuento se estima conservadoramente si Ollama no devuelve usage. El transporte es cancelable al vencer el deadline; no se realizan reintentos en esta versión. La API admite como máximo dos consultas concurrentes.
 
+Una caída del proveedor de recuperación devuelve `503 RETRIEVAL_UNAVAILABLE`; una respuesta que
+viola su contrato devuelve `502 RETRIEVAL_INVALID`. El detalle interno se conserva como causa del
+error en el proceso pero no se expone por HTTP. Retrieval síncrono se ejecuta fuera del event loop y
+queda incluido en el deadline global de la consulta.
+
 El modelo no se descargó ni ejecutó en esta entrega. Las pruebas guionadas del flujo no prueban calidad factual de un LLM real. Una cita válida tampoco garantiza que la afirmación sea correcta: falta evaluación semántica y agronómica.
 
 ## Credencial local de Pinecone

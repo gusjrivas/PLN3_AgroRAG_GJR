@@ -48,7 +48,7 @@ class QueryService:
         self, question: str, crop: str | None, context: dict[str, Any]
     ) -> dict[str, Any]:
         started = time.monotonic()
-        hits = self.retriever.search(question, crop)
+        hits = await asyncio.to_thread(self.retriever.search, question, crop)
         available = {item.evidence_id: item for item in hits}
         usage = {
             "llm_calls": 0,

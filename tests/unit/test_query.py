@@ -1,4 +1,6 @@
 import asyncio
+import threading
+import time
 
 import pytest
 from test_retrieval import evidence, retriever
@@ -122,6 +124,42 @@ def test_deadline_cancels_slow_model():
     r = retriever([evidence("a", "riego")])
     with pytest.raises(TimeoutError):
         asyncio.run(QueryService(r, Slow(), "v1", deadline_seconds=0.01).run("riego", None, {}))
+
+
+def test_retrieval_runs_outside_the_event_loop_thread():
+    from agro_rag.application.query import QueryService
+
+    class RecordingRetriever:
+        thread_id = 0
+
+        def search(self, question, crop):
+            self.thread_id = threading.get_ident()
+            return ()
+
+    async def exercise():
+        retriever = RecordingRetriever()
+        event_loop_thread = threading.get_ident()
+        result = await QueryService(retriever, FakeModel([]), "v1").run("riego", None, {})
+        assert result["status"] == "insufficient_evidence"
+        assert retriever.thread_id != event_loop_thread
+
+    asyncio.run(exercise())
+
+
+def test_deadline_covers_blocking_retrieval():
+    from agro_rag.application.query import QueryService
+
+    class SlowRetriever:
+        def search(self, question, crop):
+            time.sleep(0.05)
+            return ()
+
+    with pytest.raises(TimeoutError):
+        asyncio.run(
+            QueryService(SlowRetriever(), FakeModel([]), "v1", deadline_seconds=0.01).run(
+                "riego", None, {}
+            )
+        )
 
 
 def test_token_limit_fails_before_extra_calls():
