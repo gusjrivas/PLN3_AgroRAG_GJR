@@ -48,5 +48,5 @@ Resultado: exit code 0, `7 passed in 2.39s`.
   agregaron dependencias hacia dominio, modelos ni proveedores.
 
 Commit funcional: `dab7b3b`. PR directo a `main`:
-[#15](https://github.com/gusjrivas/PLN3_AgroRAG_GJR/pull/15). CI pendiente al registrar esta
-evidencia final.
+[#15](https://github.com/gusjrivas/PLN3_AgroRAG_GJR/pull/15). CI del commit de cierre `73e8714`:
+`specs`, `offline` y `browser` aprobados.
