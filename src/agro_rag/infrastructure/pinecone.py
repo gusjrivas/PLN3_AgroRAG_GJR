@@ -21,8 +21,6 @@ MANIFEST_ID = "__agro_index_manifest__"
 
 
 class SentenceEmbeddingModel(Protocol):
-    def get_sentence_embedding_dimension(self) -> int | None: ...
-
     def encode(self, texts: Sequence[str], **kwargs: object) -> object: ...
 
 
@@ -53,6 +51,13 @@ def _vector(values: object, dimension: int) -> tuple[float, ...]:
     return vector
 
 
+def _embedding_dimension(model: SentenceEmbeddingModel) -> object:
+    getter = getattr(model, "get_embedding_dimension", None)
+    if not callable(getter):
+        getter = getattr(model, "get_sentence_embedding_dimension", None)
+    return getter() if callable(getter) else None
+
+
 @dataclass(frozen=True)
 class E5Embedder:
     """Sentence Transformer adapter with the prefixes required by multilingual E5."""
@@ -62,7 +67,7 @@ class E5Embedder:
     revision: str
 
     def __post_init__(self) -> None:
-        dimension = self.model.get_sentence_embedding_dimension()
+        dimension = _embedding_dimension(self.model)
         if (
             not self.model_name
             or not self.revision
@@ -73,7 +78,7 @@ class E5Embedder:
 
     @property
     def dimension(self) -> int:
-        dimension = self.model.get_sentence_embedding_dimension()
+        dimension = _embedding_dimension(self.model)
         assert isinstance(dimension, int) and dimension > 0
         return dimension
 
@@ -332,7 +337,9 @@ def index_catalogue(
         vectors=[
             {
                 "id": MANIFEST_ID,
-                "values": [0.0] * embedder.dimension,
+                # Pinecone rejects all-zero dense vectors. Metadata filters keep this sentinel
+                # out of retrieval queries, so a deterministic unit vector is safe here.
+                "values": [1.0, *([0.0] * (embedder.dimension - 1))],
                 "metadata": {
                     "kind": "manifest",
                     "corpus_version": identity.corpus_version,

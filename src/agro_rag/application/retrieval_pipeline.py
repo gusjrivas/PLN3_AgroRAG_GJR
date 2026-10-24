@@ -138,6 +138,10 @@ class RetrievalPipeline:
     def search(self, question: str, crop: str | None) -> tuple[Evidence, ...]:
         return self.retrieve(question, crop).evidence
 
+    @property
+    def corpus_version(self) -> str:
+        return self.version
+
     def _normalize(self, rows: tuple[ScoredId, ...]) -> tuple[ScoredId, ...]:
         if any(not row.evidence_id or not math.isfinite(row.score) for row in rows):
             raise RetrievalContractError("Ranking con ID o score inválido")
@@ -150,11 +154,11 @@ class RetrievalPipeline:
             for id, score in sorted(best.items(), key=lambda item: (-item[1], item[0]))
         )
 
-    def retrieve(self, question: str, crop: str | None) -> RetrievalResult:
+    def _rank_candidates(
+        self, question: str, crop: str | None
+    ) -> tuple[tuple[ScoredId, ...], tuple[StageRanking, ...], tuple[str, ...]]:
         stages: list[StageRanking] = []
         excluded: set[str] = set()
-        selected: list[Evidence] = []
-        count = 0
         rankings: list[tuple[ScoredId, ...]] = []
         providers: list[tuple[str, CandidateRanker | None]] = []
         if self.mode != "vector":
@@ -197,6 +201,16 @@ class RetrievalPipeline:
             if {r.evidence_id for r in ordered} != {e.evidence_id for e in candidates}:
                 raise RetrievalContractError("El reranker debe puntuar exactamente los candidatos")
             stages.append(StageRanking("reranker", ordered))
+        return ordered, tuple(stages), tuple(sorted(excluded))
+
+    def rank(self, question: str, crop: str | None) -> tuple[ScoredId, ...]:
+        """Return final candidates for evaluation without invoking context tokenization."""
+        return self._rank_candidates(question, crop)[0]
+
+    def retrieve(self, question: str, crop: str | None) -> RetrievalResult:
+        ordered, stages, excluded = self._rank_candidates(question, crop)
+        selected: list[Evidence] = []
+        count = 0
         counts: Counter[str] = Counter()
         for row in ordered:
             item = self.items[row.evidence_id]
@@ -223,6 +237,6 @@ class RetrievalPipeline:
             evidence,
             serialize_context(evidence),
             count,
-            tuple(stages),
-            tuple(sorted(excluded)),
+            stages,
+            excluded,
         )

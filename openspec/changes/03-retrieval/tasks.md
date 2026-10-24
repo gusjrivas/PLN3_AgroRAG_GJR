@@ -29,7 +29,23 @@ Evidencia: `docs/evidence/tdd/03-pinecone-adapter.md`.
 - [x] P.3 GREEN: adaptar embeddings/Pinecone sin red, modelos o secretos al importar.
 - [x] P.4 Integrar comando administrativo con namespace nuevo; no activar consultas públicas aún.
 - [x] P.5 REFACTOR: suite, tipos, arquitectura, validación OpenSpec y evidencia.
-- [ ] P.6 Ejecutar `integration_live` aislada y benchmark antes de activar hybrid en bootstrap/API.
+- [x] P.6 Ejecutar `integration_live` aislada y benchmark antes de activar hybrid en bootstrap/API.
+
+## Corte de integración real y benchmark dev
+
+Responsable: coordinador/RAG, misma sesión. Rama: `feat/03-retrieval-live-eval`. Dependencia:
+PR #7 (`fix/windows-sqlite-snapshot`). Propiedad inicial:
+`src/agro_rag/evaluation/`, `data/evaluation/`, `tests/unit/test_retrieval_metrics.py`,
+`tests/integration_live/`, bootstrap administrativo y evidencia del corte. La API pública no cambia
+en este PR hasta que todos los gates de ADR-013 tengan resultados reproducibles.
+Evidencia: `docs/evidence/tdd/03-live-eval.md`.
+
+- [x] L.1 Reconstruir el catálogo fijado y confirmar 12 evidencias/versionado local.
+- [x] L.2 RED/GREEN: métricas IR puras y validación estricta de qrels/rankings.
+- [x] L.3 Congelar borrador dev trazable, marcado pendiente de revisión humana.
+- [x] L.4 Agregar y ejecutar integración Pinecone en namespace aislado; limpiar sólo intentos parciales.
+- [x] L.5 Ejecutar BM25/vector/hybrid/rerank, registrar latencia y métricas por consulta.
+- [x] L.6 Revisar gates de activación; mantener BM25 público por qrels pendientes y latencia.
 
 ## Corte de seguridad local: credencial Pinecone
 
