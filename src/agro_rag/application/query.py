@@ -18,6 +18,10 @@ class UpstreamError(Exception):
     pass
 
 
+class ProviderUnavailable(UpstreamError):
+    pass
+
+
 class BudgetExceeded(Exception):
     pass
 
@@ -99,6 +103,7 @@ class QueryService:
     def _safe_error_type(exc: Exception) -> str:
         allowed = {
             "BudgetExceeded",
+            "ProviderUnavailable",
             "RetrievalContractError",
             "RetrievalUnavailable",
             "TimeoutError",

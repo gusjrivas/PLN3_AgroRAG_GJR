@@ -13,6 +13,10 @@ SAFE_API_ERRORS = {
     "NOT_READY": ("Respuesta verificada no disponible: el corpus o modelo no está configurado."),
     "DEADLINE": "El modelo tardó demasiado. Volvé a intentar la consulta.",
     "MODEL_INVALID": "El modelo no produjo una respuesta válida. Reformulá la consulta.",
+    "MODEL_UNAVAILABLE": (
+        "El proveedor del modelo no tiene disponibilidad, cuota o acceso. "
+        "Revisá la configuración de la API."
+    ),
     "RETRIEVAL_UNAVAILABLE": "La recuperación de fuentes no está disponible temporalmente.",
     "BUSY": "Hay dos consultas en curso. Esperá un momento y volvé a intentar.",
     "BUDGET": "La consulta superó el presupuesto permitido. Probá con una pregunta más breve.",

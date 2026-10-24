@@ -49,10 +49,16 @@ acceso al mismo catálogo aprobó completa; no se modificó el dato ni se atribu
 
 ## Límite de integración
 
-`OPENAI_API_KEY` no está configurada en el entorno y no se ejecutaron llamadas reales ni se
-consumieron créditos. Los tests interceptan HTTP y comprueban destino, autorización, payload,
-schema, respuesta, uso y redacción. Una prueba live queda pendiente hasta que exista una key y
-acceso al modelo; no se presenta este GREEN offline como validación real del proveedor.
+Durante la implementación inicial `OPENAI_API_KEY` no estaba configurada. Los tests interceptan
+HTTP y comprueban destino, autorización, payload, schema, respuesta, uso y redacción; ese GREEN
+offline no se presenta como validación real del proveedor.
+
+La activación posterior confirmó autenticación y acceso a metadata de `gpt-4o`, pero la generación
+respondió `429` con código redactado `credit_balance_exhausted`. No hubo respuesta de negocio ni
+consumo acreditado. El RED focalizado del error tipado falló al importar `ProviderUnavailable`; el
+GREEN terminó `9 passed`. Se añadió esa excepción y el error público `MODEL_UNAVAILABLE` para
+distinguir cuota/acceso de JSON inválido. Suite final: `164 passed, 2 deselected in 7.11s`. El smoke
+real completo continúa pendiente de saldo API.
 
 Commit funcional: `1f2d1d4`. PR apilado sobre #15:
 [#16](https://github.com/gusjrivas/PLN3_AgroRAG_GJR/pull/16). CI del commit funcional:

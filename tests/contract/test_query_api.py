@@ -1,7 +1,7 @@
 import pytest
 from fastapi.testclient import TestClient
 
-from agro_rag.application.query import BudgetExceeded, UpstreamError
+from agro_rag.application.query import BudgetExceeded, ProviderUnavailable, UpstreamError
 
 KEY = "test-reader-token-123456"
 
@@ -146,7 +146,12 @@ def test_query_response_schema_and_end_to_end_fake_provider():
 
 @pytest.mark.parametrize(
     "failure,status",
-    [(TimeoutError(), 504), (UpstreamError("SECRET"), 502), (BudgetExceeded(), 429)],
+    [
+        (TimeoutError(), 504),
+        (UpstreamError("SECRET"), 502),
+        (ProviderUnavailable("SECRET"), 503),
+        (BudgetExceeded(), 429),
+    ],
 )
 def test_provider_failures_are_typed_and_redacted(failure, status):
     from agro_rag.bootstrap.app import create_app

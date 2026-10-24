@@ -123,3 +123,22 @@ def test_openai_http_error_is_redacted():
     with pytest.raises(UpstreamError) as exc:
         asyncio.run(run())
     assert "SECRET" not in str(exc.value)
+
+
+def test_openai_access_or_quota_error_is_typed_and_redacted():
+    from agro_rag.application.query import ProviderUnavailable
+    from agro_rag.infrastructure.openai import OpenAIModel
+
+    async def run():
+        async with httpx.AsyncClient(
+            transport=httpx.MockTransport(
+                lambda request: httpx.Response(429, text="SECRET quota detail")
+            )
+        ) as client:
+            return await OpenAIModel(
+                client, "https://api.openai.test/v1", "secret", "gpt-test"
+            ).generate("researcher", {}, 5)
+
+    with pytest.raises(ProviderUnavailable) as exc:
+        asyncio.run(run())
+    assert "SECRET" not in str(exc.value)

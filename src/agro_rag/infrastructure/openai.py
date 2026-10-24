@@ -6,7 +6,7 @@ from urllib.parse import quote
 
 import httpx
 
-from agro_rag.application.query import Generation, UpstreamError
+from agro_rag.application.query import Generation, ProviderUnavailable, UpstreamError
 from agro_rag.infrastructure.generation_contract import FORMATS, PROMPTS
 
 
@@ -70,6 +70,10 @@ class OpenAIModel:
             return Generation(data, input_tokens, output_tokens)
         except httpx.TimeoutException as exc:
             raise TimeoutError("Proveedor excedió el tiempo") from exc
+        except httpx.HTTPStatusError as exc:
+            if exc.response.status_code in {401, 403, 404, 429}:
+                raise ProviderUnavailable("Proveedor de modelo no disponible") from exc
+            raise UpstreamError("Salida o conexión del modelo inválida") from exc
         except (httpx.HTTPError, ValueError, KeyError, TypeError) as exc:
             raise UpstreamError("Salida o conexión del modelo inválida") from exc
 

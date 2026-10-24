@@ -55,7 +55,7 @@ por Git. No usar la clave de una cuenta de ChatGPT: la API se autentica y factur
 ```dotenv
 AGRO_MODEL_PROVIDER=openai
 OPENAI_API_KEY=valor-secreto
-AGRO_OPENAI_MODEL=gpt-4o-mini
+AGRO_OPENAI_MODEL=gpt-4o
 ```
 
 El backend usa Responses API con Structured Outputs y `store=false`; investigador y verificador
