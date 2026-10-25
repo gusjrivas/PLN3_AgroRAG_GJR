@@ -57,6 +57,8 @@ Evidencia: `docs/evidence/tdd/RET-CORPUS-SYNC.md`.
 - [x] R.2 GREEN: migrar por correspondencia de pasajes, conservar `pending_human` y fijar el hash.
 - [x] R.3 RED/GREEN: medir el desplazamiento de ranking y validar Recall@20 en Pinecone real.
 - [x] R.4 REFACTOR: suite, calidad, OpenSpec y evidencia; CI y revisión remota pendientes en el PR.
+- [x] R.5 RED/GREEN: ignorar numeración de lista inicial sin eliminar cantidades agronómicas y
+  verificar la consulta real en UI/OpenAI. Evidencia: `docs/evidence/tdd/RET-NUMBERED-QUERY.md`.
 
 ## Corte de hardening: límite async entre API y retrieval
 

@@ -12,6 +12,7 @@ STOP = set("a de del la las el los y o en un una que como cual para por es se su
 
 
 def tokens(text: str) -> list[str]:
+    text = re.sub(r"^\s*\d{1,3}\s*[.)]\s+", "", text)
     normalized = unicodedata.normalize("NFKD", text.casefold())
     plain = "".join(char for char in normalized if not unicodedata.combining(char))
     return [word for word in re.findall(r"\w+", plain) if word not in STOP]
