@@ -41,7 +41,7 @@ Frontend:
 uv run streamlit run src/agro_rag_ui/app.py --server.address 127.0.0.1 --server.port 8501 --browser.gatherUsageStats false
 ```
 
-Abrir http://127.0.0.1:8501. En **Explorar fuentes** probar: “¿Cuándo es crítico evitar la falta de agua en tomate?”. Este modo devuelve fragmentos, no una respuesta redactada. Expandir la fuente para ver página, edición y pasaje. Para empezar con el formulario vacío usar **Nueva consulta**; también se puede editar la pregunta y presionar **Consultar** otra vez. No se utiliza un LLM en este modo.
+Abrir http://127.0.0.1:8501. En **Explorar fuentes** probar: “¿Cuándo es crítico evitar la falta de agua en tomate?”. Este modo devuelve fragmentos, no una respuesta redactada. Expandir la fuente para ver página, edición y pasaje. Después de un resultado, usar **Nueva consulta** para descartarlo y mostrar un formulario vacío. No se utiliza un LLM en este modo.
 
 OpenAPI: http://127.0.0.1:8000/docs. Los endpoints de datos requieren header `X-API-Key`. `GET /health/live` verifica sólo el proceso. `GET /health/ready` requiere corpus y modelo disponible. La API no descarga URLs recibidas en consultas.
 
@@ -82,9 +82,9 @@ iniciar FastAPI en otro puerto, por ejemplo 8010, y establecer
 
 Elegir **Respuesta verificada**. El investigador recibe la pregunta y los pasajes; el verificador puede aprobar, pedir revisión, aclarar o abstenerse. Una segunda solicitud de revisión termina en abstención. No se expone razonamiento privado. Se rechazan IDs inventados. El texto final se construye con los claims aprobados, y las citas se resuelven desde el catálogo.
 
-Al completar la consulta, el resultado verificado se muestra por encima del formulario con una
-confirmación visible de OpenAI, seguido de la respuesta y sus fuentes. El formulario permanece
-debajo para permitir otra consulta sin perder la asociación entre pregunta y resultado.
+Al completar la consulta, el resultado verificado reemplaza al formulario y muestra una
+confirmación visible de OpenAI, seguida de la respuesta, sus fuentes y **Nueva consulta**. El
+formulario vacío reaparece sólo después de presionar ese botón.
 
 Sin modelo configurado se devuelve 503. Una falla del modelo devuelve 502/504, no una respuesta agronómica. El presupuesto máximo es 12.000 tokens, hasta cuatro llamadas en este flujo y 60 s globales. El recuento se estima conservadoramente si Ollama no devuelve usage. El transporte es cancelable al vencer el deadline; no se realizan reintentos en esta versión. La API admite como máximo dos consultas concurrentes.
 
