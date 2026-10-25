@@ -41,6 +41,14 @@ def test_search_crop_filter_empty_and_accent_normalization():
     assert r.search("humedad", "lettuce")[0] == b
 
 
+def test_leading_list_number_does_not_change_query_terms():
+    from agro_rag.infrastructure.retrieval import tokens
+
+    question = "¿Qué métodos de riego pueden utilizarse en lechuga?"
+
+    assert tokens("2. " + question) == tokens(question)
+
+
 def test_source_cap_and_cache_do_not_leak_versions():
     items = [evidence(str(i), "riego tomate", source="A") for i in range(5)]
     items.append(evidence("z", "riego tomate", source="B"))
