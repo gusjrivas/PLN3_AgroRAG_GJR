@@ -64,55 +64,55 @@ def main() -> None:
         "1. Elegí el modo. 2. Escribí la pregunta y, si corresponde, el contexto. "
         "3. Presioná Consultar."
     )
-    result_area = st.container()
     form_version = st.session_state.get("query_form_version", 0)
-    with st.form(f"query-{form_version}"):
-        question = st.text_area(
-            "¿Qué querés saber?",
-            max_chars=2000,
-            placeholder="¿Cuándo es crítico evitar la falta de agua en tomate?",
-            key=f"question-{form_version}",
-        )
-        crop_name = st.selectbox(
-            "Cultivo",
-            ["Sin especificar", "Tomate", "Lechuga"],
-            key=f"crop-{form_version}",
-        )
-        stage = st.text_input(
-            "Etapa del cultivo (opcional)", max_chars=500, key=f"stage-{form_version}"
-        )
-        soil = st.text_input(
-            "Descripción del suelo (opcional)", max_chars=500, key=f"soil-{form_version}"
-        )
-        submitted = st.form_submit_button("Consultar", type="primary")
-    if submitted:
-        st.session_state.pop("result", None)
-        st.session_state.pop("api_error", None)
-        if not question.strip():
-            st.session_state.api_error = "Escribí una pregunta antes de consultar."
-        else:
-            crop = {"Tomate": "tomato", "Lechuga": "lettuce"}.get(crop_name)
-            context = {
-                k: v for k, v in {"growth_stage": stage, "soil_description": soil}.items() if v
-            }
-            try:
-                with st.spinner("Consultando las fuentes…"):
-                    result = (
-                        client.search(question, crop)
-                        if mode == "Explorar fuentes"
-                        else (client.query(question, crop, context))
-                    )
-                st.session_state.result = result
-                st.session_state.submitted_query = question
-                st.session_state.submitted_crop = crop
-                st.session_state.submitted_context = context
-                st.session_state.clarification_answers = []
-            except ApiError as exc:
-                st.session_state.api_error = str(exc)
-    if "api_error" in st.session_state:
-        st.error(st.session_state.api_error)
     if "result" not in st.session_state:
+        with st.form(f"query-{form_version}"):
+            question = st.text_area(
+                "¿Qué querés saber?",
+                max_chars=2000,
+                placeholder="¿Cuándo es crítico evitar la falta de agua en tomate?",
+                key=f"question-{form_version}",
+            )
+            crop_name = st.selectbox(
+                "Cultivo",
+                ["Sin especificar", "Tomate", "Lechuga"],
+                key=f"crop-{form_version}",
+            )
+            stage = st.text_input(
+                "Etapa del cultivo (opcional)", max_chars=500, key=f"stage-{form_version}"
+            )
+            soil = st.text_input(
+                "Descripción del suelo (opcional)", max_chars=500, key=f"soil-{form_version}"
+            )
+            submitted = st.form_submit_button("Consultar", type="primary")
+        if submitted:
+            st.session_state.pop("api_error", None)
+            if not question.strip():
+                st.session_state.api_error = "Escribí una pregunta antes de consultar."
+            else:
+                crop = {"Tomate": "tomato", "Lechuga": "lettuce"}.get(crop_name)
+                context = {
+                    k: v for k, v in {"growth_stage": stage, "soil_description": soil}.items() if v
+                }
+                try:
+                    with st.spinner("Consultando las fuentes…"):
+                        result = (
+                            client.search(question, crop)
+                            if mode == "Explorar fuentes"
+                            else client.query(question, crop, context)
+                        )
+                    st.session_state.result = result
+                    st.session_state.submitted_query = question
+                    st.session_state.submitted_crop = crop
+                    st.session_state.submitted_context = context
+                    st.session_state.clarification_answers = []
+                    st.rerun()
+                except ApiError as exc:
+                    st.session_state.api_error = str(exc)
+        if "api_error" in st.session_state:
+            st.error(st.session_state.api_error)
         return
+    result_area = st.container()
     with result_area:
         result = st.session_state.result
         st.caption(f"Resultado para: “{st.session_state.submitted_query}”")

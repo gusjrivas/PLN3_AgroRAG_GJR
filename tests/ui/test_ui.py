@@ -62,6 +62,7 @@ def test_preview_explains_mode_and_allows_a_second_query(monkeypatch):
     assert any("no genera una respuesta" in value.value.lower() for value in app.info)
     app.text_area[0].set_value("primera consulta")
     app.button[0].click().run()
+    next(button for button in app.button if button.label == "Nueva consulta").click().run()
     app.text_area[0].set_value("segunda consulta")
     next(button for button in app.button if button.label == "Consultar").click().run()
 
@@ -92,6 +93,28 @@ def test_new_query_clears_result_without_calling_api_again(monkeypatch):
     assert calls == ["riego"]
     assert not any("Fragmentos recuperados" in value.value for value in app.info)
     assert app.text_area[0].value == ""
+
+
+def test_result_hides_query_form_until_new_query(monkeypatch):
+    from agro_rag_ui.client import ApiClient
+
+    monkeypatch.setenv("AGRO_READER_KEY", "test-reader-token-123456")
+    monkeypatch.setattr(
+        ApiClient,
+        "search",
+        lambda self, question, crop: {"mode": "lexical_preview", "evidence": []},
+    )
+    app = AppTest.from_file(str(Path("src/agro_rag_ui/app.py").resolve())).run()
+    app.text_area[0].set_value("riego")
+    next(button for button in app.button if button.label == "Consultar").click().run()
+
+    assert not any(button.label == "Consultar" for button in app.button)
+    assert not any(area.label == "¿Qué querés saber?" for area in app.text_area)
+
+    next(button for button in app.button if button.label == "Nueva consulta").click().run()
+
+    assert any(button.label == "Consultar" for button in app.button)
+    assert next(area for area in app.text_area if area.label == "¿Qué querés saber?").value == ""
 
 
 def test_changing_mode_clears_the_previous_result(monkeypatch):
@@ -159,7 +182,7 @@ def test_clarification_keeps_original_question(monkeypatch):
     app.sidebar.radio[0].set_value("Respuesta verificada").run()
     app.text_area[0].set_value("¿Cuánto riego?")
     app.button[0].click().run()
-    assert len(app.text_area) == 2
+    assert len(app.text_area) == 1
     next(
         area for area in app.text_area if area.label == "Completá el contexto solicitado"
     ).set_value("Cuajado de frutos")

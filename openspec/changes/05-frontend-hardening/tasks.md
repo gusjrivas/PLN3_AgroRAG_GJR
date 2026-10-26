@@ -45,6 +45,18 @@ operativa y evidencia `docs/evidence/tdd/UI-02-repeat-guidance.md`.
 Este corte amplía `UI-01-respuesta` y `UI-02-rerun`; no cierra por sí solo los demás escenarios
 generales del cambio.
 
+## Corte independiente: resultado primero
+
+Responsable: coordinador/frontend, misma sesión. Rama: `fix/result-first-ui`. Propiedad:
+`src/agro_rag_ui/app.py`, AppTest, documentación y evidencia
+`docs/evidence/tdd/UI-04-result-first.md`.
+
+- [x] F.1 RED: demostrar que el formulario permanece visible después de obtener un resultado.
+- [x] F.2 GREEN: ocultar el formulario mientras existe un resultado y restaurarlo vacío sólo con
+  **Nueva consulta**.
+- [x] F.3 REFACTOR: suite, typing, arquitectura, OpenSpec y evidencia; CI y revisión remota
+  pendientes en el PR.
+
 ## Corte independiente: proveedor local y errores accionables
 
 Responsable y revisor disponible: coordinador, misma sesión. Rama `fix/ui-repeat-guidance`.
