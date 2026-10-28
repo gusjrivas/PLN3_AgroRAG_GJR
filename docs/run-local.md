@@ -229,6 +229,10 @@ veces; el runner preserva el orden original y falla ante un ID desconocido:
 uv run python scripts/run_benchmark_playwright.py --query-id dev-r-005 --query-id test-r-006
 ```
 
+Para medir estabilidad se puede agregar `--repeat 3`. Cada repetición consume nuevamente el
+proveedor configurado; no usarla en pruebas de desarrollo ni sin autorización de costo. El runner
+agrega `run_index` a cada fila y escribe un resumen `*.summary.json` junto al JSONL.
+
 Quitar `--limit 1` para recorrer los 60 casos. Cada consulta usa el proveedor configurado y puede
 tener costo y latencia reales. El resultado incremental se guarda en
 `output/evaluation/benchmark-live-results.jsonl`, incluso si un caso falla. Playwright compara el

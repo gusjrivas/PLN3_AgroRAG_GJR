@@ -28,6 +28,12 @@ La evaluación MUST separar recuperación, generación, agentes y operación, y 
 - **WHEN** se redacta conclusión.
 - **THEN** se informa el resultado completo sin seleccionar sólo casos favorables.
 
+#### Scenario: EVA-02-estabilidad
+- **GIVEN** un subconjunto y una cantidad explícita de repeticiones autorizadas.
+- **WHEN** se ejecuta la evaluación live.
+- **THEN** cada fila registra su repetición y el resumen informa conteos de estado, estabilidad y
+  pass rate por consulta sin ocultar errores operativos.
+
 ### Requirement: DEL-01 Entrega preproductiva
 La entrega MUST incluir código reproducible, informe PDF y demo de 15 minutos con limitaciones y atribución de asistencia de IA.
 

@@ -58,10 +58,17 @@ def classify_visible_status(text: str) -> str:
 
 
 def make_result(
-    case: BenchmarkCase, observed_status: str, elapsed_ms: int, visible_text: str, error: str = ""
+    case: BenchmarkCase,
+    observed_status: str,
+    elapsed_ms: int,
+    visible_text: str,
+    error: str = "",
+    *,
+    run_index: int = 1,
 ) -> dict[str, Any]:
     return {
         "query_id": case.query_id,
+        "run_index": run_index,
         "question": case.question,
         "crop": case.crop,
         "expected_status": case.expected_status,
@@ -77,7 +84,28 @@ def has_runtime_errors(results: list[dict[str, Any]]) -> bool:
     return any(result.get("observed_status") == "error" for result in results)
 
 
-def run_case(page: Page, case: BenchmarkCase, timeout_ms: int) -> dict[str, Any]:
+def summarize_stability(results: list[dict[str, Any]]) -> dict[str, dict[str, Any]]:
+    grouped: dict[str, list[dict[str, Any]]] = {}
+    for result in results:
+        grouped.setdefault(str(result["query_id"]), []).append(result)
+    summary = {}
+    for query_id, rows in grouped.items():
+        counts: dict[str, int] = {}
+        for row in rows:
+            status = str(row["observed_status"])
+            counts[status] = counts.get(status, 0) + 1
+        summary[query_id] = {
+            "runs": len(rows),
+            "status_counts": counts,
+            "stable": len(counts) == 1 and "error" not in counts,
+            "pass_rate": sum(bool(row["status_pass"]) for row in rows) / len(rows),
+        }
+    return summary
+
+
+def run_case(
+    page: Page, case: BenchmarkCase, timeout_ms: int, *, run_index: int = 1
+) -> dict[str, Any]:
     started = time.monotonic()
     try:
         page.get_by_text("Respuesta verificada", exact=True).click()
@@ -90,7 +118,11 @@ def run_case(page: Page, case: BenchmarkCase, timeout_ms: int) -> dict[str, Any]
         visible_text = page.locator("body").inner_text()
         observed = classify_visible_status(visible_text)
         result = make_result(
-            case, observed, round((time.monotonic() - started) * 1000), visible_text
+            case,
+            observed,
+            round((time.monotonic() - started) * 1000),
+            visible_text,
+            run_index=run_index,
         )
         page.get_by_role("button", name="Nueva consulta").click()
         page.get_by_role("button", name="Consultar", exact=True).wait_for(timeout=timeout_ms)
@@ -102,6 +134,7 @@ def run_case(page: Page, case: BenchmarkCase, timeout_ms: int) -> dict[str, Any]
             round((time.monotonic() - started) * 1000),
             page.locator("body").inner_text() if page.locator("body").count() else "",
             f"{type(exc).__name__}: {exc}",
+            run_index=run_index,
         )
 
 
@@ -112,27 +145,32 @@ def run_benchmark(
     *,
     limit: int | None,
     query_ids: list[str] | None,
+    repeat: int,
     headed: bool,
     timeout_seconds: int,
 ) -> list[dict[str, Any]]:
     cases = select_cases(load_cases(benchmark_path), query_ids, limit)
+    if repeat <= 0:
+        raise ValueError("repeat must be positive")
     output_path.parent.mkdir(parents=True, exist_ok=True)
     results: list[dict[str, Any]] = []
     with sync_playwright() as playwright:
         browser = playwright.chromium.launch(headless=not headed)
         page = browser.new_page()
         page.goto(url, wait_until="domcontentloaded")
-        for case in cases:
-            result = run_case(page, case, timeout_seconds * 1000)
-            results.append(result)
-            with output_path.open("a", encoding="utf-8") as stream:
-                stream.write(json.dumps(result, ensure_ascii=False) + "\n")
-            print(
-                f"{case.query_id}: {result['observed_status']} "
-                f"({'PASS' if result['status_pass'] else 'FAIL'})"
-            )
-            if result["observed_status"] == "error":
-                page.goto(url, wait_until="domcontentloaded")
+        for run_index in range(1, repeat + 1):
+            for case in cases:
+                result = run_case(page, case, timeout_seconds * 1000, run_index=run_index)
+                results.append(result)
+                with output_path.open("a", encoding="utf-8") as stream:
+                    stream.write(json.dumps(result, ensure_ascii=False) + "\n")
+                print(
+                    f"run {run_index}/{repeat} {case.query_id}: "
+                    f"{result['observed_status']} "
+                    f"({'PASS' if result['status_pass'] else 'FAIL'})"
+                )
+                if result["observed_status"] == "error":
+                    page.goto(url, wait_until="domcontentloaded")
         browser.close()
     return results
 
@@ -148,6 +186,7 @@ def main() -> None:
     )
     parser.add_argument("--limit", type=int)
     parser.add_argument("--query-id", action="append", dest="query_ids")
+    parser.add_argument("--repeat", type=int, default=1)
     parser.add_argument("--headed", action="store_true")
     parser.add_argument("--timeout-seconds", type=int, default=90)
     args = parser.parse_args()
@@ -159,8 +198,14 @@ def main() -> None:
         args.output,
         limit=args.limit,
         query_ids=args.query_ids,
+        repeat=args.repeat,
         headed=args.headed,
         timeout_seconds=args.timeout_seconds,
+    )
+    summary_path = args.output.with_suffix(".summary.json")
+    summary_path.write_text(
+        json.dumps(summarize_stability(results), ensure_ascii=False, indent=2),
+        encoding="utf-8",
     )
     if has_runtime_errors(results):
         raise SystemExit(1)

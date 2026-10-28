@@ -8,6 +8,7 @@ from scripts.run_benchmark_playwright import (
     load_cases,
     make_result,
     select_cases,
+    summarize_stability,
 )
 
 
@@ -77,3 +78,27 @@ def test_select_cases_filters_ids_in_benchmark_order_and_rejects_unknown() -> No
         assert "missing" in str(exc)
     else:
         raise AssertionError("An unknown query id must fail")
+
+
+def test_stability_summary_counts_repeated_statuses_per_query() -> None:
+    results = [
+        {"query_id": "stable", "observed_status": "answered", "status_pass": True},
+        {"query_id": "stable", "observed_status": "answered", "status_pass": True},
+        {"query_id": "variable", "observed_status": "answered", "status_pass": True},
+        {
+            "query_id": "variable",
+            "observed_status": "needs_clarification",
+            "status_pass": False,
+        },
+    ]
+
+    summary = summarize_stability(results)
+
+    assert summary["stable"] == {
+        "runs": 2,
+        "status_counts": {"answered": 2},
+        "stable": True,
+        "pass_rate": 1.0,
+    }
+    assert summary["variable"]["stable"] is False
+    assert summary["variable"]["pass_rate"] == 0.5

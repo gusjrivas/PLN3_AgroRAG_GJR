@@ -46,7 +46,7 @@ def execute_with_context(model, question, crop, context=None):
             ),
             evidence(
                 "b",
-                "Lechuga: riego, herbicida, dosis, precio de venta y suelo húmedo.",
+                "Lechuga: riego, herbicida, dosis, precio de venta, ciclo y suelo húmedo.",
                 crop="lettuce",
             ),
         ]
@@ -349,6 +349,7 @@ def test_out_of_scope_or_live_market_questions_abstain_without_model(question, c
         ("¿Ya debería aumentar la frecuencia?", "tomato"),
         ("¿El suelo está demasiado húmedo?", None),
         ("El sensor marca 20, ¿riego ahora?", None),
+        ("¿Es suficiente para completar el ciclo?", "lettuce"),
     ],
 )
 def test_context_dependent_decisions_request_clarification_without_model(question, crop):
@@ -359,6 +360,25 @@ def test_context_dependent_decisions_request_clarification_without_model(questio
     assert result["status"] == "needs_clarification"
     assert result["missing_information"]
     assert not model.roles
+
+
+def test_resolved_reference_can_continue_after_clarification():
+    model = FakeModel([draft(("b",)), {"decision": "approve", "feedback": ""}])
+
+    result = execute_with_context(
+        model,
+        "¿Es suficiente para completar el ciclo?",
+        "lettuce",
+        {
+            "clarification_context": {
+                "original_question": "¿Es suficiente para completar el ciclo?",
+                "answers": ["Me refiero a 140 mm disponibles durante el verano."],
+            }
+        },
+    )
+
+    assert result["status"] == "answered"
+    assert model.roles == ["researcher", "verifier"]
 
 
 def test_context_dependent_question_can_continue_when_context_is_complete():
