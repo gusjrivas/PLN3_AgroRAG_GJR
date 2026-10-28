@@ -2,6 +2,7 @@
 
 Fecha: 2026-10-28. Responsable y revisor: misma sesión; no hubo revisor independiente disponible.
 Rama: `fix/benchmark-status-gate`.
+Commit de implementación: `0ae744e`.
 
 ## Propiedad y alcance
 
