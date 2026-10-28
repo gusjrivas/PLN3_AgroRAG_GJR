@@ -64,4 +64,5 @@ git diff --check                                  -> sin errores
 ```
 
 Los 59 casos restantes y la calificación humana del PDF continúan pendientes; no se ejecutaron
-para evitar costo y latencia de proveedor sin una decisión explícita. Pendiente: commit y CI.
+para evitar costo y latencia de proveedor sin una decisión explícita. Commit funcional:
+`1335d1a`. CI queda registrada en el PR.
