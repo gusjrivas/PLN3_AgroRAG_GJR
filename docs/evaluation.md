@@ -2,7 +2,7 @@
 
 Objetivo: medir aporte de recuperación híbrida/reranking y del verificador en español. No se prometen mejoras. Todo valor de esta sección es diseño experimental u objetivo, no resultado obtenido.
 
-## Estado dev al 24/10/2026
+## Estado dev al 28/10/2026
 
 Se ejecutó un smoke real de retrieval sobre 8 consultas respondibles y 12 evidencias, documentado
 en `docs/evidence/tdd/03-live-eval.md`. Sus qrels están marcados `pending_human`: sirven para
@@ -21,8 +21,21 @@ EVA-01 cuenta además con un cargador contractual automatizado: exige exactament
 revisados, conserva la proporción 18/6/6 en cada split, impide que una familia cruce dev/test,
 resuelve los `evidence_id` contra la versión del catálogo y congela el archivo por SHA-256. Los
 36 casos respondibles forman el denominador IR; los otros 24 forman el denominador de
-abstención. El artefacto humano de 60 casos aún está pendiente, por lo que este control no se
-presenta como resultado científico ni habilita seleccionar la configuración final.
+abstención. `data/evaluation/benchmark-60-draft.jsonl` prepara esos 60 casos con referencias y
+evidencias candidatas: 30 dev/30 test y 18/6/6 por split. Sus 60 filas continúan
+`pending_human`; no son resultados científicos ni habilitan seleccionar la configuración final.
+
+Validar el paquete sin promoverlo:
+
+```bash
+uv run agro-rag validate-benchmark data/evaluation/benchmark-60-draft.jsonl --draft
+```
+
+La revisión humana debe contrastar cada pregunta, respuesta, claim, página e `evidence_id` con las
+fuentes; corregir lo necesario; reemplazar `annotator`; y cambiar a `reviewed` sólo los casos
+efectivamente revisados. El archivo final completo se valida sin `--draft`. El cargador final rechaza
+automáticamente paquetes pendientes o mixtos. Si sólo revisa una persona, se declara un anotador y
+no se informa acuerdo interanotador.
 
 El reporte EVA-02 también tiene un contrato automatizado. Exige las variantes completas de E1,
 E2 o E3, consultas pareadas, configuración y procedencia explícitas, resultados y errores por
@@ -38,7 +51,9 @@ validan el mecanismo con datos sintéticos y no son resultados de calidad.
 
 Cada caso: query_id, family_id, question, crop, category, expected_status, reference_answer, required_claims, relevant_evidence_ids, source_pages, split, annotator, review_status, corpus_version. Qrels binarios a nivel pasaje y, por separado, fuente; no mezclar denominadores. Anotación manual revisada; si sólo hay un anotador, declararlo y no inventar acuerdo interanotador. Idealmente segunda revisión en casos ambiguos y muestra del resto.
 
-No generar y aceptar etiquetas con el mismo LLM que se evalúa sin revisión. Guardar anotaciones y resultados por separado. Los 60 casos se construirán después de congelar el corpus; no inventar evidence_ids ahora.
+No generar y aceptar etiquetas con el mismo LLM que se evalúa sin revisión. Guardar anotaciones y
+resultados por separado. El corpus ya está congelado y el paquete candidato resuelve sus IDs, pero
+ninguna etiqueta pasa a aceptada hasta la revisión humana.
 
 ## Experimentos separados
 

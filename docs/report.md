@@ -3,7 +3,7 @@
 **Trabajo integrador - Procesamiento de Lenguaje Natural III**
 
 Autor y responsable académico: Gustavo Julián Rivas
-Versión técnica: 24/10/2026
+Versión técnica: 28/10/2026
 Repositorio: https://github.com/gusjrivas/PLN3_AgroRAG_GJR
 
 Estado del documento: entrega técnica reproducible con evaluación científica definitiva pendiente.
@@ -131,6 +131,11 @@ validador implementado exige exactamente esa distribución, qrels resolubles y S
 Los 36 casos respondibles integran promedios IR; los otros 24 se evalúan en abstención y
 aclaración, sin contaminar el denominador de recuperación.
 
+Existe un paquete candidato de 60 casos con ese balance y evidencias resolubles contra el corpus
+activo. Todas sus filas están marcadas `pending_human`. Un validador separado comprueba el borrador
+sin permitir que el cargador científico lo acepte como `reviewed`; cada respuesta, claim, página e
+ID todavía debe contrastarse manualmente con la fuente.
+
 | Experimento | Variantes congeladas | Dimensión principal |
 |---|---|---|
 | E1 | BM25, vector, hybrid, hybrid + reranker | Retrieval y latencia |
@@ -151,9 +156,9 @@ pero no sustituye el soporte factual.
 
 ### Verificación de ingeniería
 
-Antes de cerrar este paquete, la suite local obtuvo `144 passed, 2 deselected`. Ruff, formato,
-mypy sobre 32 archivos, dos contratos de importación y los siete cambios OpenSpec finalizaron con
-código 0. Los jobs remotos `offline`, `specs` y `browser` del PR 13 también aprobaron. Estos datos
+Antes de cerrar este paquete, la suite local obtuvo `188 passed, 2 deselected`. Ruff, formato,
+mypy sobre 36 archivos, dos contratos de importación y los siete cambios OpenSpec finalizaron con
+código 0. Los jobs remotos `offline`, `specs` y `browser` del PR 22 también aprobaron. Estos datos
 demuestran consistencia técnica del repositorio, no calidad agronómica.
 
 ### Smoke semántico preliminar
@@ -174,9 +179,9 @@ borrador. El reranker consumió aproximadamente 30,56 segundos p95 sólo en retr
 incompatible con el objetivo de 30 segundos para la respuesta completa. La perfección aparente del
 reranker sobre ocho preguntas pequeñas no se generaliza y no autoriza activarlo.
 
-No existen todavía resultados definitivos de E1, E2 o E3. El benchmark humano no está construido,
-no se midió soporte factual final y no se ejecutaron tres pasadas fría/caliente. Por eso la API
-pública permanece en BM25 y este informe no declara mejora científica.
+No existen todavía resultados definitivos de E1, E2 o E3. El paquete candidato de 60 casos no fue
+revisado por una persona, no se midió soporte factual final y no se ejecutaron tres pasadas
+fría/caliente. Por eso la API pública permanece en BM25 y este informe no declara mejora científica.
 
 ## 7. Seguridad, operación y costos
 
@@ -261,7 +266,7 @@ La principal conclusión técnica es que mayor score preliminar no implica una m
 producto. El reranker fue demasiado lento y los qrels no tienen revisión humana. Mantener BM25 en
 la API es una decisión conservadora sustentada por evidencia, no una omisión silenciosa.
 
-Para cerrar científicamente el trabajo faltan: anotar y revisar 60 casos, congelar dev/test,
+Para cerrar científicamente el trabajo faltan: revisar humanamente los 60 casos candidatos, congelar dev/test,
 ejecutar E1/E2/E3 con proveedores reales, revisar soporte factual y citas, repetir mediciones,
 registrar hardware/costo y actualizar este PDF con resultados definitivos. También debe confirmarse
 la fecha calendario de Teoría 7 y la modalidad académica.

@@ -7,6 +7,7 @@ from pathlib import Path
 import httpx
 
 from agro_rag.bootstrap.settings import Settings
+from agro_rag.evaluation.benchmark import load_benchmark, load_benchmark_draft
 from agro_rag.evaluation.delivery import validate_delivery
 from agro_rag.infrastructure.corpus import Manifest, build_catalogue, load_catalogue
 from agro_rag.infrastructure.download import download_file
@@ -25,6 +26,9 @@ def main(argv: list[str] | None = None, *, settings: Settings | None = None) -> 
     pinecone.add_argument("--create-index", action="store_true")
     delivery = commands.add_parser("verify-delivery")
     delivery.add_argument("--root", type=Path, default=Path("."))
+    benchmark = commands.add_parser("validate-benchmark")
+    benchmark.add_argument("path", type=Path)
+    benchmark.add_argument("--draft", action="store_true")
     args = parser.parse_args(argv)
     if args.command == "verify-delivery":
         validation = validate_delivery(args.root)
@@ -40,6 +44,29 @@ def main(argv: list[str] | None = None, *, settings: Settings | None = None) -> 
                         }
                         for artifact in validation.artifacts
                     ],
+                },
+                sort_keys=True,
+            )
+        )
+        return 0
+    if args.command == "validate-benchmark":
+        config = settings or Settings()
+        catalogue = load_catalogue(config.catalogue_path)
+        dataset = (
+            load_benchmark_draft(args.path, catalogue)
+            if args.draft
+            else load_benchmark(args.path, catalogue)
+        )
+        print(
+            json.dumps(
+                {
+                    "case_count": len(dataset.cases),
+                    "category_counts": dataset.category_counts,
+                    "corpus_version": dataset.corpus_version,
+                    "file_sha256": dataset.file_sha256,
+                    "pending_human_count": getattr(dataset, "pending_human_count", 0),
+                    "review_status": "pending_human" if args.draft else "reviewed",
+                    "split_counts": dataset.split_counts,
                 },
                 sort_keys=True,
             )
