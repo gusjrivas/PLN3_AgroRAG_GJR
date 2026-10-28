@@ -33,6 +33,20 @@ def load_cases(path: Path) -> list[BenchmarkCase]:
     ]
 
 
+def select_cases(
+    cases: list[BenchmarkCase], query_ids: list[str] | None, limit: int | None
+) -> list[BenchmarkCase]:
+    selected = cases
+    if query_ids:
+        requested = set(query_ids)
+        known = {case.query_id for case in cases}
+        missing = requested - known
+        if missing:
+            raise ValueError(f"Unknown query ids: {', '.join(sorted(missing))}")
+        selected = [case for case in cases if case.query_id in requested]
+    return selected if limit is None else selected[:limit]
+
+
 def classify_visible_status(text: str) -> str:
     if "Respuesta verificada automáticamente" in text:
         return "answered"
@@ -97,12 +111,11 @@ def run_benchmark(
     output_path: Path,
     *,
     limit: int | None,
+    query_ids: list[str] | None,
     headed: bool,
     timeout_seconds: int,
 ) -> list[dict[str, Any]]:
-    cases = load_cases(benchmark_path)
-    if limit is not None:
-        cases = cases[:limit]
+    cases = select_cases(load_cases(benchmark_path), query_ids, limit)
     output_path.parent.mkdir(parents=True, exist_ok=True)
     results: list[dict[str, Any]] = []
     with sync_playwright() as playwright:
@@ -134,6 +147,7 @@ def main() -> None:
         "--output", type=Path, default=Path("output/evaluation/benchmark-live-results.jsonl")
     )
     parser.add_argument("--limit", type=int)
+    parser.add_argument("--query-id", action="append", dest="query_ids")
     parser.add_argument("--headed", action="store_true")
     parser.add_argument("--timeout-seconds", type=int, default=90)
     args = parser.parse_args()
@@ -144,6 +158,7 @@ def main() -> None:
         args.benchmark,
         args.output,
         limit=args.limit,
+        query_ids=args.query_ids,
         headed=args.headed,
         timeout_seconds=args.timeout_seconds,
     )

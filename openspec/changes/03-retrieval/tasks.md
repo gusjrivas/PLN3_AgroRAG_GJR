@@ -100,6 +100,16 @@ No cambia BM25 como default ni acredita evaluación humana.
 - [x] T.3 REFACTOR: suite completa, calidad, OpenSpec, evidencia y revisión del diff.
 - [ ] T.4 LIVE: activar con namespace/modelos reales y repetir E1/E2/E3 tras qrels humanos.
 
+## Corte independiente: recuperación de los tres FAIL respondibles
+
+Responsable y revisor disponible: coordinador/RAG, misma sesión. Rama:
+`fix/benchmark-status-gate`. Propiedad: adaptador BM25, composición/configuración, pruebas,
+ADR-013 y evidencia `docs/evidence/tdd/RET-BENCHMARK-FAILS.md`.
+
+- [x] B.1 RED: reproducir ausencia bilingüe y límite BM25 ignorado (`3 failed, 10 passed`).
+- [x] B.2 GREEN: vocabulario agronómico bilingüe acotado y amplitud BM25 configurable.
+- [x] B.3 REFACTOR: suite, typing, arquitectura y repetición live de los tres casos.
+
 ## 1. Preparación
 
 - [ ] 1.1 Leer ADR aplicables, fijar archivos de propiedad y comprobar dependencias.

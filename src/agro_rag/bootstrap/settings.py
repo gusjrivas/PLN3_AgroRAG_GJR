@@ -38,7 +38,7 @@ class Settings(BaseSettings):
     retrieval_tokenizer_revision: str = ""
     retrieval_token_budget: int = Field(default=3000, gt=0)
     retrieval_source_cap: int = Field(default=2, gt=0)
-    retrieval_max_items: int = Field(default=4, gt=0)
+    retrieval_max_items: int = Field(default=6, gt=0)
     retrieval_candidate_limit: int = Field(default=20, gt=0)
     semantic_local_files_only: bool = True
     catalogue_path: Path = Path("data/processed/catalogue")

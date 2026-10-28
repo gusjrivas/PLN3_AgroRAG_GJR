@@ -13,6 +13,17 @@ ADR-014 y evidencia `docs/evidence/tdd/AGT-04-openai-provider.md`.
 - [x] O.3 REFACTOR: suite, typing, arquitectura, OpenSpec y revisión local.
 - [ ] O.4 LIVE: ejecutar una consulta real sólo con key, acceso y costo autorizados.
 
+## Corte independiente: decisión previa de estado
+
+Responsable y revisor disponible: coordinador/backend, misma sesión. Rama:
+`fix/benchmark-status-gate`. Propiedad: `src/agro_rag/application/query.py`,
+`tests/unit/test_query.py`, contratos, OpenSpec y evidencia
+`docs/evidence/tdd/AGT-02-status-preflight.md`.
+
+- [x] S.1 RED: reproducir los siete desacuerdos de estado aun con evidencia lexical disponible.
+- [x] S.2 GREEN: resolver alcance y contexto situacional antes de llamar al modelo.
+- [x] S.3 REFACTOR: suite, typing, arquitectura, corrida live dirigida y revisión del diff.
+
 ## 1. Preparación
 
 - [ ] 1.1 Leer ADR aplicables, fijar archivos de propiedad y comprobar dependencias.

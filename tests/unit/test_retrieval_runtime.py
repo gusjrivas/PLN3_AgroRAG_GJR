@@ -51,6 +51,29 @@ def test_bm25_runtime_does_not_initialize_semantic_providers() -> None:
     runtime.close()
 
 
+def test_bm25_runtime_applies_configured_context_breadth() -> None:
+    from dataclasses import replace
+
+    from agro_rag.bootstrap.retrieval import build_retrieval_runtime
+
+    items = tuple(
+        replace(
+            evidence(),
+            evidence_id=str(index),
+            source_id=f"S{index}",
+            text="Humedad constante",
+            original_text="Humedad constante",
+        )
+        for index in range(7)
+    )
+
+    runtime = build_retrieval_runtime(
+        Settings(retrieval_mode="bm25", retrieval_max_items=6), Catalogue("v1", items)
+    )
+
+    assert len(runtime.retriever.search("humedad", "tomato")) == 6
+
+
 @pytest.mark.parametrize("mode", ["vector", "hybrid", "hybrid_rerank"])
 def test_semantic_runtime_requires_explicit_secret_and_tokenizer(mode: str) -> None:
     from agro_rag.bootstrap.retrieval import build_retrieval_runtime

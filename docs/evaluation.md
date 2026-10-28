@@ -54,6 +54,15 @@ observado, coincidencia, latencia, texto visible y error. La salida automatizada
 operativa, no una calificación factual: una coincidencia de estado no demuestra que la respuesta,
 los claims o las fuentes sean correctos. Esa decisión queda en el checklist humano.
 
+### Regresión de estado del 28/10/2026
+
+La primera corrida Playwright obtuvo 50/60 coincidencias de estado. Tras corregir decisiones
+previas reproducibles y recuperación lexical, los diez desacuerdos originales pasaron en corridas
+dirigidas. Tres regresiones completas posteriores obtuvieron 57/60, 58/60 y 57/60, con desacuerdos
+en IDs diferentes entre pasadas. Por lo tanto, la mejora es observable pero no habilita declarar
+60/60 estable: queda pendiente acotar la variación del investigador/verificador y repetir con un
+protocolo de estabilidad, además de la revisión factual humana.
+
 ## Conjunto
 
 60 casos únicos: 36 respondibles (incluye 12 que integran más de un pasaje), 12 ambiguos/sin soporte y 12 adversariales/fuera de alcance. Dividir por grupos de intención/familias de paráfrasis: 30 dev y 30 test, con 18/6/6 de cada categoría en cada split. Las paráfrasis de la misma pregunta no cruzan splits. Semilla 42, lista de IDs congelada y hash. El corpus completo sigue disponible en RAG; lo retenido son las preguntas/etiquetas de test, no necesariamente documentos.

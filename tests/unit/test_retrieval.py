@@ -41,6 +41,57 @@ def test_search_crop_filter_empty_and_accent_normalization():
     assert r.search("humedad", "lettuce")[0] == b
 
 
+def test_spanish_water_loss_query_matches_english_fao_terms() -> None:
+    english = evidence(
+        "fao",
+        "Crops predominately lose their water through stomata, small openings in plant leaves.",
+        crop=None,
+    )
+    distractor = evidence(
+        "distractor",
+        "Los cultivos necesitan agua disponible para mantener el crecimiento.",
+        crop=None,
+    )
+
+    ranked = retriever([distractor, english]).rank(
+        "¿Por qué estructuras pierden principalmente agua los cultivos?", None
+    )
+
+    assert ranked[0].evidence_id == "fao"
+
+
+def test_recommended_humidity_query_prioritizes_retention_recommendation() -> None:
+    recommendation = evidence(
+        "recommendation",
+        "Lo ideal es mantener el suelo al 70 % de su capacidad de retención máxima.",
+    )
+    generic = evidence(
+        "generic",
+        "El cultivo requiere abundante humedad del suelo durante su desarrollo.",
+    )
+
+    ranked = retriever([generic, recommendation]).rank(
+        "¿Qué nivel de humedad del suelo se recomienda?", "tomato"
+    )
+
+    assert ranked[0].evidence_id == "recommendation"
+
+
+def test_lexical_search_honors_configured_context_breadth() -> None:
+    from agro_rag.infrastructure.retrieval import LexicalRetriever
+
+    items = [
+        evidence(str(index), "humedad del suelo recomendada", source=f"S{index}")
+        for index in range(7)
+    ]
+
+    result = LexicalRetriever(Catalogue("v1", tuple(items)), max_items=6).search(
+        "humedad suelo", None
+    )
+
+    assert len(result) == 6
+
+
 def test_leading_list_number_does_not_change_query_terms():
     from agro_rag.infrastructure.retrieval import tokens
 
