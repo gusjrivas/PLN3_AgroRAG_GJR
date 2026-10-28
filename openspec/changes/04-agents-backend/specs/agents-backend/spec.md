@@ -46,6 +46,19 @@ Una respuesta answered MUST respaldar cada claim con evidence_ids válidos; falt
 - **WHEN** se verifica.
 - **THEN** se rechaza la cita y no se presenta el draft como verificado.
 
+#### Scenario: AGT-02-contexto-situacional
+- **GIVEN** una recomendación situacional sobre cambiar riego, frecuencia o humedad actual sin
+  etapa y condiciones del suelo.
+- **WHEN** se analiza la consulta.
+- **THEN** se solicita contexto pertinente antes de llamar a los agentes y no se asume una
+  situación agronómica.
+
+#### Scenario: AGT-02-fuera-de-corpus
+- **GIVEN** una consulta sobre herbicidas, costos o precios futuros fuera del alcance documental.
+- **WHEN** se analiza la consulta.
+- **THEN** se devuelve evidencia insuficiente sin convertir la ausencia de corpus en una pregunta
+  aclaratoria ni llamar a los agentes.
+
 ### Requirement: AGT-03 Presupuesto y errores
 La orquestación MUST respetar límites globales de llamadas, búsquedas, tokens y deadline, incluidos reintentos.
 

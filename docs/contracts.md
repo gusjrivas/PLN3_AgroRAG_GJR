@@ -24,6 +24,14 @@ Campos: request_id (UUID), status (answered|needs_clarification|insufficient_evi
 
 Invariantes: answered exige claims no vacíos y evidencia por cada claim; IDs se resuelven en catálogo de la misma corpus_version. needs_clarification exige missing_information. insufficient_evidence explica el límite y no añade recomendaciones inventadas. No se expone chain-of-thought. Metadata administrativa como claves, rutas absolutas y stacktraces nunca forma parte de la respuesta.
 
+Antes de invocar modelos, el caso de uso aplica decisiones de alcance observables. Una recomendación
+situacional para cambiar riego, frecuencia o interpretar humedad actual sin etapa, unidad y
+condiciones del suelo produce `needs_clarification`. Temas fuera del corpus piloto - herbicidas,
+costos, precios y recomendaciones comerciales por marca/modelo - producen
+`insufficient_evidence`; aportar más contexto no convierte al corpus en una
+fuente de datos de mercado. Si el contexto agronómico requerido está completo, la consulta continúa
+al flujo normal de recuperación, investigación y verificación.
+
 ## ErrorResponse
 
 `error: {code, message, request_id, retryable}`. 401 auth inválida; 422 input; 429 saturación; 502 salida/proveedor inválido; 503 índice/modelo/corpus no disponible; 504 deadline. UI distingue todos estos casos de insufficient_evidence.

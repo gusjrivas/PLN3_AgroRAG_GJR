@@ -7,6 +7,7 @@ from scripts.run_benchmark_playwright import (
     has_runtime_errors,
     load_cases,
     make_result,
+    select_cases,
 )
 
 
@@ -60,3 +61,19 @@ def test_result_passes_only_when_observed_status_matches() -> None:
 def test_runtime_error_makes_the_run_unsuccessful() -> None:
     assert has_runtime_errors([{"observed_status": "error"}]) is True
     assert has_runtime_errors([{"observed_status": "answered"}]) is False
+
+
+def test_select_cases_filters_ids_in_benchmark_order_and_rejects_unknown() -> None:
+    cases = [
+        BenchmarkCase(f"case-{index}", f"Pregunta {index}", None, "answered") for index in range(3)
+    ]
+
+    selected = select_cases(cases, ["case-2", "case-0"], limit=None)
+
+    assert [case.query_id for case in selected] == ["case-0", "case-2"]
+    try:
+        select_cases(cases, ["missing"], limit=None)
+    except ValueError as exc:
+        assert "missing" in str(exc)
+    else:
+        raise AssertionError("An unknown query id must fail")

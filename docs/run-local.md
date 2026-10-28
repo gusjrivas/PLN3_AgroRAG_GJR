@@ -222,6 +222,13 @@ uv run playwright install chromium
 uv run python scripts/run_benchmark_playwright.py --url http://127.0.0.1:8501 --limit 1
 ```
 
+Para repetir regresiones concretas sin ejecutar todo el benchmark, usar `--query-id` una o más
+veces; el runner preserva el orden original y falla ante un ID desconocido:
+
+```powershell
+uv run python scripts/run_benchmark_playwright.py --query-id dev-r-005 --query-id test-r-006
+```
+
 Quitar `--limit 1` para recorrer los 60 casos. Cada consulta usa el proveedor configurado y puede
 tener costo y latencia reales. El resultado incremental se guarda en
 `output/evaluation/benchmark-live-results.jsonl`, incluso si un caso falla. Playwright compara el

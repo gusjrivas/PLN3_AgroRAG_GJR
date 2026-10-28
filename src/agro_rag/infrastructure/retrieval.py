@@ -9,21 +9,59 @@ from agro_rag.application.retrieval_pipeline import ScoredId
 from agro_rag.domain.evidence import Catalogue, Evidence
 
 STOP = set("a de del la las el los y o en un una que como cual para por es se su al".split())
+ALIASES = {
+    "complete": "completo",
+    "completa": "completo",
+    "cover": "cobertura",
+    "covers": "cobertura",
+    "crop": "cultivo",
+    "crops": "cultivo",
+    "cultivos": "cultivo",
+    "evaporation": "evaporacion",
+    "fraction": "fraccion",
+    "humidity": "retencion_hidrica",
+    "humedad": "retencion_hidrica",
+    "ideal": "recomendacion",
+    "leaf": "hoja",
+    "leaves": "hoja",
+    "lose": "perder",
+    "lost": "perder",
+    "openings": "abertura",
+    "pierden": "perder",
+    "plant": "planta",
+    "plants": "planta",
+    "predominately": "principal",
+    "predominantly": "principal",
+    "principalmente": "principal",
+    "recomienda": "recomendacion",
+    "recomendacion": "recomendacion",
+    "recomendado": "recomendacion",
+    "retencion": "retencion_hidrica",
+    "stomata": "estoma",
+    "stomatal": "estoma",
+    "estomas": "estoma",
+    "transpiration": "transpiracion",
+    "water": "agua",
+}
 
 
 def tokens(text: str) -> list[str]:
     text = re.sub(r"^\s*\d{1,3}\s*[.)]\s+", "", text)
     normalized = unicodedata.normalize("NFKD", text.casefold())
     plain = "".join(char for char in normalized if not unicodedata.combining(char))
-    return [word for word in re.findall(r"\w+", plain) if word not in STOP]
+    return [ALIASES.get(word, word) for word in re.findall(r"\w+", plain) if word not in STOP]
 
 
 class LexicalRetriever:
     """Explicit baseline, not a semantic index. Cache belongs to this snapshot only."""
 
-    def __init__(self, catalogue: Catalogue) -> None:
+    def __init__(self, catalogue: Catalogue, source_cap: int = 2, max_items: int = 4) -> None:
+        if source_cap <= 0 or max_items <= 0:
+            raise ValueError("Los límites lexicales deben ser positivos")
         self.corpus_version = catalogue.version
         self.items = catalogue.evidence
+        self.source_cap = source_cap
+        self.max_items = max_items
         self.terms = [tokens(item.section + " " + item.text) for item in self.items]
         self.index = BM25Plus(self.terms) if self.items else None
         self._cached = lru_cache(maxsize=128)(self._search)
@@ -55,10 +93,10 @@ class LexicalRetriever:
         counts: Counter[str] = Counter()
         for row in self.rank(question, crop):
             item = items[row.evidence_id]
-            if counts[item.source_id] >= 2:
+            if counts[item.source_id] >= self.source_cap:
                 continue
             selected.append(item)
             counts[item.source_id] += 1
-            if len(selected) == 4:
+            if len(selected) == self.max_items:
                 break
         return tuple(selected)

@@ -60,7 +60,11 @@ def build_retrieval_runtime(
     *,
     factories: RetrievalFactories | None = None,
 ) -> RetrievalRuntime:
-    lexical = LexicalRetriever(catalogue)
+    lexical = LexicalRetriever(
+        catalogue,
+        source_cap=config.retrieval_source_cap,
+        max_items=config.retrieval_max_items,
+    )
     mode = config.retrieval_mode
     if mode == "bm25":
         return RetrievalRuntime(lexical, mode)

@@ -35,6 +35,25 @@ def execute(model, question="riego lechuga"):
     return asyncio.run(QueryService(r, model, "v1").run(question, "lettuce", {}))
 
 
+def execute_with_context(model, question, crop, context=None):
+    from agro_rag.application.query import QueryService
+
+    r = retriever(
+        [
+            evidence(
+                "a",
+                "Tomate: riego, costo, calor, frecuencia, suelo húmedo y momento crítico.",
+            ),
+            evidence(
+                "b",
+                "Lechuga: riego, herbicida, dosis, precio de venta y suelo húmedo.",
+                crop="lettuce",
+            ),
+        ]
+    )
+    return asyncio.run(QueryService(r, model, "v1").run(question, crop, context or {}))
+
+
 def test_two_agents_approve_only_existing_evidence():
     model = FakeModel([draft(), {"decision": "approve", "feedback": ""}])
     result = execute(model)
@@ -300,3 +319,70 @@ def test_percentage_alone_never_becomes_litres():
     assert result["status"] == "needs_clarification"
     assert result["missing_information"]
     assert not model.roles
+
+
+@pytest.mark.parametrize(
+    ("question", "crop"),
+    [
+        ("¿Qué herbicida selectivo se recomienda para lechuga y en qué dosis?", "lettuce"),
+        ("¿Cuánto costará regar una hectárea de tomate este mes?", "tomato"),
+        ("¿Cuál será el precio de venta de la lechuga la semana próxima?", "lettuce"),
+        ("¿Qué marca y modelo de sensor de humedad debería comprar?", None),
+        ("¿Cuál es la salinidad actual de mi suelo sin medirla?", None),
+    ],
+)
+def test_out_of_scope_or_live_market_questions_abstain_without_model(question, crop):
+    model = FakeModel([])
+
+    result = execute_with_context(model, question, crop)
+
+    assert result["status"] == "insufficient_evidence"
+    assert result["missing_information"] == []
+    assert not model.roles
+
+
+@pytest.mark.parametrize(
+    ("question", "crop"),
+    [
+        ("¿Cuál es el momento crítico?", None),
+        ("Hace mucho calor, ¿cambio el riego?", None),
+        ("¿Ya debería aumentar la frecuencia?", "tomato"),
+        ("¿El suelo está demasiado húmedo?", None),
+        ("El sensor marca 20, ¿riego ahora?", None),
+    ],
+)
+def test_context_dependent_decisions_request_clarification_without_model(question, crop):
+    model = FakeModel([])
+
+    result = execute_with_context(model, question, crop)
+
+    assert result["status"] == "needs_clarification"
+    assert result["missing_information"]
+    assert not model.roles
+
+
+def test_context_dependent_question_can_continue_when_context_is_complete():
+    model = FakeModel([draft(), {"decision": "approve", "feedback": ""}])
+
+    result = execute_with_context(
+        model,
+        "Hace mucho calor, ¿cambio el riego?",
+        "tomato",
+        {"growth_stage": "floración", "soil_description": "franco, humedad medida 20 %"},
+    )
+
+    assert result["status"] == "answered"
+    assert model.roles == ["researcher", "verifier"]
+
+
+def test_factual_stage_question_is_not_treated_as_a_situational_decision():
+    model = FakeModel([draft(), {"decision": "approve", "feedback": ""}])
+
+    result = execute_with_context(
+        model,
+        "¿Desde qué etapa conviene aumentar la frecuencia de riego del tomate?",
+        "tomato",
+    )
+
+    assert result["status"] == "answered"
+    assert model.roles == ["researcher", "verifier"]

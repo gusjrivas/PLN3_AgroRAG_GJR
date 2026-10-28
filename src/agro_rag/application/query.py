@@ -47,6 +47,66 @@ def normalize_question(question: str) -> str:
     return " ".join(plain.split())
 
 
+def preflight_decision(
+    question: str, crop: str | None, context: dict[str, Any]
+) -> tuple[AuditOutcome, list[str]] | None:
+    """Resolve deterministic scope and missing-context cases before model calls."""
+    normalized = normalize_question(question)
+    unsupported_terms = ("herbicid", "precio", "costo", "costara", "cuesta")
+    product_recommendation = (
+        "marca" in normalized and any(term in normalized for term in ("modelo", "comprar"))
+    ) or "modelo de sensor" in normalized
+    unmeasured_current_value = "sin medir" in normalized and any(
+        term in normalized for term in ("salinidad", "humedad")
+    )
+    if (
+        any(term in normalized for term in unsupported_terms)
+        or product_recommendation
+        or unmeasured_current_value
+    ):
+        return "insufficient_evidence", []
+
+    sensor_reading_without_measurement = (
+        "sensor" in normalized
+        and any(character.isdigit() for character in normalized)
+        and not context.get("measurement")
+    )
+    if sensor_reading_without_measurement:
+        return (
+            "needs_clarification",
+            [
+                "Indicar cultivo, etapa y la medición completa del sensor, incluida su unidad y "
+                "tipo de medición."
+            ],
+        )
+
+    context_complete = all(context.get(key) for key in ("growth_stage", "soil_description"))
+    if context_complete:
+        return None
+
+    crop_is_known = crop is not None or any(
+        crop_name in normalized for crop_name in ("tomate", "lechuga")
+    )
+    vague_moment = "momento critico" in normalized and not crop_is_known
+    asks_current_decision = (
+        "cambio" in normalized
+        or "demasiado" in normalized
+        or ("ya" in normalized and any(term in normalized for term in ("deberia", "aumentar")))
+    )
+    situational_action = asks_current_decision and any(
+        term in normalized for term in ("riego", "frecuencia", "suelo", "humed", "calor")
+    )
+    if vague_moment or situational_action:
+        return (
+            "needs_clarification",
+            [
+                "Indicar cultivo, etapa, frecuencia de riego y condiciones actuales del suelo "
+                "y del ambiente."
+            ],
+        )
+    return None
+
+
 class QueryService:
     def __init__(
         self,
@@ -237,6 +297,11 @@ class QueryService:
                 raise BudgetExceeded("Proveedor superó presupuesto")
             return generated.data
 
+        preflight = preflight_decision(question, crop, context)
+        if preflight is not None:
+            preflight_status, preflight_missing = preflight
+            decision = "clarify" if preflight_status == "needs_clarification" else "abstain"
+            return finish(preflight_status, missing=preflight_missing)
         if (
             ("litro" in normalized or "cuanto" in normalized)
             and ("riego" in normalized or "regar" in normalized)
