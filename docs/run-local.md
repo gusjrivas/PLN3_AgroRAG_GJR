@@ -206,6 +206,28 @@ uv run pytest -m e2e tests/e2e -q
 
 La suite normal excluye E2E porque el navegador se instala aparte; CI ejecuta ambos jobs obligatorios. E2E usa un PDF sintético, procesos HTTP reales y Chromium. No consulta proveedores pagos. `uv run pip-audit --local --skip-editable` audita dependencias con acceso a Internet; los hallazgos requieren resolución o excepción justificada explícita.
 
+### Checklist manual y recorrido Playwright del benchmark
+
+Generar el PDF rellenable de 60 casos (campos de tester, Pass, Fail, resultado y observaciones):
+
+```powershell
+uv run python scripts/build_benchmark_checklist.py
+```
+
+El archivo queda en `output/pdf/agro-rag-benchmark-checklist.pdf`. Para automatizar el recorrido
+contra una UI ya levantada, instalar Chromium una sola vez y ejecutar primero un caso de humo:
+
+```powershell
+uv run playwright install chromium
+uv run python scripts/run_benchmark_playwright.py --url http://127.0.0.1:8501 --limit 1
+```
+
+Quitar `--limit 1` para recorrer los 60 casos. Cada consulta usa el proveedor configurado y puede
+tener costo y latencia reales. El resultado incremental se guarda en
+`output/evaluation/benchmark-live-results.jsonl`, incluso si un caso falla. Playwright compara el
+estado visible (`answered`, `needs_clarification` o `insufficient_evidence`); la corrección del
+contenido, los claims y las citas se valida manualmente en el PDF.
+
 ## Verificar la entrega
 
 Regenerar el informe y comprobar offline que el paquete contiene runbook, manifiesto, guion,

@@ -45,6 +45,15 @@ comparador conserva deltas negativos y publica el denominador y los IDs excluido
 ejecutó E1/E2/E3 definitivo porque depende del benchmark humano congelado; las pruebas actuales
 validan el mecanismo con datos sintéticos y no son resultados de calidad.
 
+## Ejecución asistida del checklist
+
+`scripts/build_benchmark_checklist.py` convierte el borrador de 60 casos en un PDF rellenable con
+Pass/Fail, resultado observado y notas por consulta. `scripts/run_benchmark_playwright.py` recorre
+la aplicación Streamlit mediante un navegador real y registra por caso el estado esperado y
+observado, coincidencia, latencia, texto visible y error. La salida automatizada es evidencia
+operativa, no una calificación factual: una coincidencia de estado no demuestra que la respuesta,
+los claims o las fuentes sean correctos. Esa decisión queda en el checklist humano.
+
 ## Conjunto
 
 60 casos únicos: 36 respondibles (incluye 12 que integran más de un pasaje), 12 ambiguos/sin soporte y 12 adversariales/fuera de alcance. Dividir por grupos de intención/familias de paráfrasis: 30 dev y 30 test, con 18/6/6 de cada categoría en cada split. Las paráfrasis de la misma pregunta no cruzan splits. Semilla 42, lista de IDs congelada y hash. El corpus completo sigue disponible en RAG; lo retenido son las preguntas/etiquetas de test, no necesariamente documentos.

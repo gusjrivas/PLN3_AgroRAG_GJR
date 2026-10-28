@@ -67,6 +67,19 @@ Propiedad: adaptador Ollama, normalización controlada del agente, cliente UI, p
 - [x] V.2 GREEN: esquemas por rol, reparación acotada antes del verificador y mensajes seguros.
 - [x] V.3 LIVE: Ollama local `qwen2.5:1.5b`, readiness y consulta real con respuesta y dos citas.
 
+## Corte independiente: checklist de benchmark y automatización Playwright
+
+Responsable y revisor disponible: coordinador, misma sesión. Rama:
+`feat/manual-benchmark-runner`. Propiedad: scripts del checklist y runner, pruebas unitarias,
+documentación y evidencia `docs/evidence/tdd/UI-05-benchmark-playwright.md`.
+
+- [x] P.1 RED: exigir 60 campos Pass/Fail/resultado/notas y el contrato de clasificación UI.
+- [x] P.2 GREEN: generar un PDF AcroForm de 31 páginas e implementar el recorrido incremental.
+- [x] P.3 REFACTOR: verificar visualmente portada y muestra de casos; documentar el límite entre
+  estado automatizado y evaluación factual humana.
+- [ ] P.4 LIVE: ejecutar y revisar los 60 casos con proveedor real; requiere decisión explícita por
+  costo/latencia y completar el PDF por una persona.
+
 ## 1. Preparación
 
 - [ ] 1.1 Leer ADR aplicables, fijar archivos de propiedad y comprobar dependencias.
