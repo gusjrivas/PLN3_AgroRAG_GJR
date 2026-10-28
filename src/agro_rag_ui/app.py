@@ -116,7 +116,7 @@ def main() -> None:
     with result_area:
         result = st.session_state.result
         st.caption(f"Resultado para: “{st.session_state.submitted_query}”")
-        if result.get("mode") == "lexical_preview":
+        if str(result.get("mode", "")).endswith("_preview"):
             st.info("Fragmentos recuperados de las fuentes. Este modo no genera una respuesta.")
             if not result.get("evidence"):
                 st.warning("No se encontraron fragmentos para esa consulta.")

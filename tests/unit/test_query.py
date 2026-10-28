@@ -46,6 +46,20 @@ def test_two_agents_approve_only_existing_evidence():
     assert result["answer"] == result["claims"][0]["text"]
 
 
+def test_response_limitations_disclose_configured_retrieval_mode():
+    from agro_rag.application.query import QueryService
+
+    model = FakeModel([draft(), {"decision": "approve", "feedback": ""}])
+    r = retriever([evidence("a", "Lechuga: riego y humedad constante.", crop="lettuce")])
+
+    result = asyncio.run(
+        QueryService(r, model, "v1", retrieval_mode="hybrid").run("riego lechuga", "lettuce", {})
+    )
+
+    assert any("hybrid" in limitation for limitation in result["limitations"])
+    assert all("lexical" not in limitation for limitation in result["limitations"])
+
+
 def test_revision_is_dynamic_and_bounded():
     model = FakeModel(
         [

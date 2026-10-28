@@ -87,6 +87,18 @@ la inyección segura de la credencial local; no activa el adaptador ni declara R
 - [x] S.4 REFACTOR: ejecutar suite afectada, controles estáticos y revisión final del diff.
 - [x] S.5 Registrar evidencia y riesgos restantes.
 
+## Corte de activación runtime explícita
+
+Responsable: coordinador/RAG, misma sesión. Rama: `feat/semantic-runtime-activation`.
+Propiedad: `src/agro_rag/bootstrap/retrieval.py`, tokenizer/configuración/ensamblado afectados,
+pruebas focalizadas, documentación y evidencia `docs/evidence/tdd/03-semantic-runtime-activation.md`.
+No cambia BM25 como default ni acredita evaluación humana.
+
+- [x] T.1 RED: exigir composición semántica fail-closed, tokenizer fijado, modo observable y cierre.
+- [x] T.2 GREEN: conectar los cuatro modos al bootstrap sin I/O de proveedor en modo BM25.
+- [x] T.3 REFACTOR: suite completa, calidad, OpenSpec, evidencia y revisión del diff.
+- [ ] T.4 LIVE: activar con namespace/modelos reales y repetir E1/E2/E3 tras qrels humanos.
+
 ## 1. Preparación
 
 - [ ] 1.1 Leer ADR aplicables, fijar archivos de propiedad y comprobar dependencias.

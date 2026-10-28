@@ -91,6 +91,63 @@ def test_catalogue_search_and_versioned_evidence():
         assert "original_text" not in result
 
 
+def test_configured_retrieval_runtime_is_disclosed_and_closed(monkeypatch):
+    from agro_rag.bootstrap import app as app_module
+    from agro_rag.bootstrap.retrieval import RetrievalRuntime
+    from agro_rag.bootstrap.settings import Settings
+    from agro_rag.domain.evidence import Catalogue, Evidence
+
+    item = Evidence(
+        "abc",
+        "v1",
+        "S",
+        "Manual",
+        "2008",
+        "https://example.org/doc.pdf",
+        3,
+        "1",
+        "Riego",
+        "tomato",
+        "Humedad constante",
+        "Humedad constante",
+        0,
+        17,
+    )
+    catalogue = Catalogue("v1", (item,))
+
+    class SemanticRetriever:
+        def search(self, question, crop):
+            return (item,)
+
+    closed = False
+
+    def close() -> None:
+        nonlocal closed
+        closed = True
+
+    def build(config, given_catalogue):
+        assert config.retrieval_mode == "hybrid"
+        assert given_catalogue is catalogue
+        return RetrievalRuntime(SemanticRetriever(), "hybrid", close)
+
+    monkeypatch.setattr(app_module, "build_retrieval_runtime", build)
+    settings = Settings(reader_key=KEY, retrieval_mode="hybrid")
+
+    with TestClient(app_module.create_app(settings, catalogue=catalogue)) as c:
+        headers = {"X-API-Key": KEY}
+        assert c.get("/v1/corpus", headers=headers).json()["mode"] == "hybrid"
+        result = c.get(
+            "/v1/preview/search",
+            params={"question": "humedad", "crop": "tomato"},
+            headers=headers,
+        )
+        assert result.status_code == 200
+        assert result.json()["mode"] == "hybrid_preview"
+        assert result.json()["evidence"][0]["evidence_id"] == "abc"
+
+    assert closed is True
+
+
 def test_query_response_schema_and_end_to_end_fake_provider():
     from agro_rag.application.query import Generation, QueryService
     from agro_rag.bootstrap.app import create_app

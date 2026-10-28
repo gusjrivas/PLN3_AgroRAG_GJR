@@ -25,7 +25,11 @@ CNN/ViT y acción final externa automática son opcionales en la consigna y qued
 
 ## Matriz de requisitos de implementación
 
-La matriz describe el objetivo completo. Hay implementación parcial en PR #1–#4 y evidencia en docs/evidence/tdd; ver docs/plan.md para estado actual. RET-01/02/03 avanzan con contratos offline según ADR-013, sin declarar integración semántica ni evaluación real. Al completar un requisito entero, añadir commit y ubicación de evidencia; no cambiar sólo la etiqueta de estado.
+La matriz describe el objetivo completo. La implementación incremental y su evidencia están en
+`docs/evidence/tdd`; ver `docs/plan.md` para el estado actual. RET-01/02/03 tienen contratos,
+adaptadores, smoke dev y activación runtime explícita según ADR-013, pero BM25 continúa como default
+y no se declara evaluación científica completa. Al completar un requisito entero, añadir commit y
+ubicación de evidencia; no cambiar sólo la etiqueta de estado.
 
 | ID | Requisito | Cambio/spec | Escenarios | Evidencia prevista |
 |---|---|---|---|---|

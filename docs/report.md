@@ -98,23 +98,22 @@ respuestas generadas.
 
 ## 4. Implementación y reutilización
 
-El backend y el frontend están implementados en Python 3.12. FastAPI expone salud, catálogo,
-evidencia y consultas; Streamlit presenta exploración de fuentes y respuesta verificada. Pydantic
-valida settings y contratos HTTP. SQLite conserva el catálogo; BM25 es el modo público vigente.
-OpenAI y Ollama son proveedores opcionales y se conectan por HTTP cuando el operador configura
-uno de ellos.
+Backend y frontend usan Python 3.12. FastAPI expone salud, catálogo, evidencia y consultas;
+Streamlit presenta fuentes y respuesta verificada. Pydantic valida settings/HTTP y SQLite conserva
+el catálogo. BM25 es el default; vector, hybrid o hybrid_rerank requieren activación explícita e
+identidad, secreto y tokenizer compatibles. OpenAI y Ollama son proveedores HTTP opcionales.
 
-El trabajo reutiliza como referencia el código de `Teoria1/Codigo/RAG` del repositorio docente en
-el commit `1f4cdbb37f59a049ef9b35c482ccb1de850fbc43`. Se adaptaron los patrones de configuración,
-BM25, Pinecone, fusión RRF y reranking. No se copió la limpieza automática de namespaces ni la
-creación de índices durante startup. El nuevo diseño separa identidad de fuente, página y pasaje,
-verifica modelo/revisión/dimensión y publica el manifiesto remoto sólo después de comprobar IDs.
+Se adaptaron del código docente `Teoria1/Codigo/RAG`, commit
+`1f4cdbb37f59a049ef9b35c482ccb1de850fbc43`, los patrones de configuración, BM25, Pinecone, RRF y
+reranking. No se copiaron limpieza automática ni creación de índices en startup. El diseño separa
+fuente/página/pasaje y publica el manifiesto remoto sólo después de verificar IDs.
 
 La integración semántica administrativa usa `intfloat/multilingual-e5-small`, revisión
 `614241f622f53c4eeff9890bdc4f31cfecc418b3`, con dimensión 384. El reranker experimental usa
 `BAAI/bge-reranker-v2-m3`, revisión `953dc6f6f85a1b2dbfca4c34a2796e7dde08d41e`.
-Ambos se cargan de forma diferida. El comando `index-pinecone` requiere configuración completa y
-un namespace nuevo; `--create-index` es una decisión administrativa explícita.
+Ambos se cargan de forma diferida. `index-pinecone` requiere configuración completa y namespace
+nuevo; `--create-index` es explícito. El runtime verifica corpus/modelo/revisión/dimensión, cuenta
+contexto sin truncarlo con tokenizer fijado, no degrada a BM25 e informa el modo efectivo.
 
 La implementación siguió TDD por escenarios. La suite contiene pruebas unitarias, contrato API,
 integración local, UI, arquitectura y navegador. Ruff, mypy, import-linter, OpenSpec y GitHub
@@ -255,7 +254,8 @@ forma automática.
 AgroRAG alcanza una primera versión local modular: corpus con procedencia, búsqueda lexical, API,
 UI, dos roles acotados, citas verificables, seguridad básica, caché y auditoría redactada. Los
 adaptadores semánticos se integraron en un namespace aislado y demostraron que el pipeline puede
-medirse sin activar una configuración no validada.
+medirse. El runtime permite una activación explícita y fail-closed para corridas controladas, sin
+cambiar BM25 como default ni confundir capacidad técnica con validación científica.
 
 La principal conclusión técnica es que mayor score preliminar no implica una mejor decisión de
 producto. El reranker fue demasiado lento y los qrels no tienen revisión humana. Mantener BM25 en

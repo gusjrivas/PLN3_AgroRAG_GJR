@@ -10,13 +10,13 @@ from fastapi.responses import JSONResponse
 from agro_rag.api.health import router
 from agro_rag.api.query import error, query_router
 from agro_rag.application.query import QueryService
+from agro_rag.bootstrap.retrieval import build_retrieval_runtime
 from agro_rag.bootstrap.settings import Settings
 from agro_rag.domain.evidence import Catalogue
 from agro_rag.infrastructure.audit import LoggingAuditSink
 from agro_rag.infrastructure.corpus import load_catalogue
 from agro_rag.infrastructure.ollama import OllamaModel
 from agro_rag.infrastructure.openai import OpenAIModel
-from agro_rag.infrastructure.retrieval import LexicalRetriever
 
 
 def build_model(config: Settings, client: httpx.AsyncClient) -> OllamaModel | OpenAIModel | None:
@@ -41,25 +41,40 @@ def create_app(
     config = settings or Settings()
     if catalogue is None and (config.catalogue_path / "active.json").exists():
         catalogue = load_catalogue(config.catalogue_path)
-    retriever = LexicalRetriever(catalogue) if catalogue else None
+    retrieval_runtime = build_retrieval_runtime(config, catalogue) if catalogue else None
+    retriever = retrieval_runtime.retriever if retrieval_runtime else None
     client = httpx.AsyncClient(trust_env=False)
     model = build_model(config, client) if service is None else None
     if service is None and retriever and catalogue and model:
+        assert retrieval_runtime is not None
         service = QueryService(
             retriever,
             model,
             catalogue.version,
             audit_sink=LoggingAuditSink(),
+            retrieval_mode=retrieval_runtime.mode,
         )
 
     @asynccontextmanager
     async def lifespan(app: FastAPI) -> AsyncIterator[None]:
-        yield
-        await client.aclose()
+        try:
+            yield
+        finally:
+            await client.aclose()
+            if retrieval_runtime is not None:
+                retrieval_runtime.close()
 
     app = FastAPI(title="AgroRAG", version="0.1.0", lifespan=lifespan)
     app.include_router(router)
-    app.include_router(query_router(config.reader_key, catalogue, retriever, service))
+    app.include_router(
+        query_router(
+            config.reader_key,
+            catalogue,
+            retriever,
+            service,
+            retrieval_runtime.mode if retrieval_runtime else config.retrieval_mode,
+        )
+    )
 
     @app.exception_handler(HTTPException)
     async def http_error(request: Request, exc: HTTPException) -> JSONResponse:

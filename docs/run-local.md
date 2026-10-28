@@ -4,10 +4,11 @@
 
 Descarga institucional con hashes fijados, ingesta PDF curada, catálogo SQLite inmutable, búsqueda BM25 con filtro de cultivo, API con clave reader y frontend Streamlit. Dos roles de generación (investigador/verificador) intercambian JSON y admiten una corrección. OpenAI u Ollama se conectan por HTTP sólo cuando se configura el proveedor correspondiente.
 
-La búsqueda pública sigue siendo un baseline lexical. Existe un adaptador administrativo para
-indexar el catálogo con E5 en Pinecone y un adaptador CrossEncoder, pero todavía no están
-inyectados en la API. No es la entrega final de la cátedra: faltan integración real aislada,
-benchmark bilingüe y activación explícita. No hay Docker Compose aún.
+La búsqueda pública usa BM25 por defecto. El runtime permite activar explícitamente vector,
+hybrid o hybrid_rerank sobre el namespace E5/Pinecone ya indexado, con identidad verificada,
+tokenizer fijado y CrossEncoder opcional. No se degrada silenciosamente a BM25. El default no cambia
+porque faltan qrels humanos, E1/E2/E3 y resolver la latencia observada del reranker. No hay Docker
+Compose aún; no es un requisito de la cátedra.
 
 ## Preparar
 
@@ -103,7 +104,10 @@ evento contiene sólo identificadores operativos, resultado, decisión, duració
 incluye pregunta, contexto, evidencia, prompt ni detalle de excepción. La configuración de logging
 del proceso anfitrión determina destino, rotación y retención.
 
-El modelo no se descargó ni ejecutó en esta entrega. Las pruebas guionadas del flujo no prueban calidad factual de un LLM real. Una cita válida tampoco garantiza que la afirmación sea correcta: falta evaluación semántica y agronómica.
+El corte inicial no descargaba ni ejecutaba modelos. Después se documentaron un smoke local real con
+Ollama `qwen2.5:1.5b` y una respuesta visible con OpenAI; esas ejecuciones comprueban integración,
+no calidad factual. Las pruebas guionadas tampoco sustituyen la evaluación: una cita válida no
+garantiza que la afirmación sea correcta y aún falta evaluación semántica y agronómica.
 
 ## Credencial local de Pinecone
 
@@ -156,6 +160,36 @@ sus variantes están ignorados por Git, pero siguen siendo texto plano en disco:
 adjuntarlos ni copiarlos a tickets. El tipo `SecretStr` evita que el valor aparezca en la
 representación de `Settings`; no cifra la variable ni el archivo. En CI o despliegues usar el secret
 store de la plataforma e inyectar la misma variable.
+
+## Activar retrieval semántico de forma explícita
+
+Primero ejecutar la indexación administrativa anterior y conservar el namespace publicado. Los
+modelos y tokenizer deben existir en caché local cuando se mantiene el default seguro
+`AGRO_SEMANTIC_LOCAL_FILES_ONLY=true`; el servidor no descarga pesos durante startup.
+
+Configurar en `.env`:
+
+```dotenv
+AGRO_RETRIEVAL_MODE=hybrid
+PINECONE_NAMESPACE=corpus-<version-activa>
+AGRO_RETRIEVAL_TOKENIZER_MODEL=<tokenizer-exacto-del-generador>
+AGRO_RETRIEVAL_TOKENIZER_REVISION=<revision-inmutable>
+AGRO_SEMANTIC_LOCAL_FILES_ONLY=true
+```
+
+Los valores permitidos son `bm25`, `vector`, `hybrid` y `hybrid_rerank`. Este último también carga
+el reranker configurado. Para cualquier modo semántico, startup falla si falta la credencial, el
+tokenizer o si el manifiesto remoto no coincide exactamente en corpus, embedding, revisión y
+dimensión. Eso es intencional: no se presenta un resultado lexical como híbrido.
+
+El tokenizer debe corresponder al modelo generador efectivo. Para Ollama, usar el tokenizer de la
+misma familia/revisión del modelo instalado; para un proveedor cuyo tokenizer exacto no pueda
+fijarse localmente, mantener BM25 hasta incorporar un contador compatible. La API publica el modo
+activo en `/v1/corpus` y `<modo>_preview` en `/v1/preview/search`.
+
+Esta activación permite una corrida controlada, pero no sustituye la revisión humana de qrels ni
+autoriza declarar mejora científica. Después de cambiar el modo, repetir E1/E2/E3 con manifiesto,
+hardware y versiones registrados.
 
 ## Pruebas
 

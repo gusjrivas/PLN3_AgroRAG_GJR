@@ -47,10 +47,16 @@ def error(
 
 
 def query_router(
-    key: str, catalogue: Catalogue | None, retriever: Retriever | None, service: QueryService | None
+    key: str,
+    catalogue: Catalogue | None,
+    retriever: Retriever | None,
+    service: QueryService | None,
+    retrieval_mode: str = "bm25",
 ) -> APIRouter:
     router = APIRouter()
     active = 0
+    public_mode = "lexical_preview" if retrieval_mode == "bm25" else retrieval_mode
+    preview_mode = "lexical_preview" if retrieval_mode == "bm25" else f"{retrieval_mode}_preview"
 
     def authorize(given: str | None) -> None:
         if not key or not given or not secrets.compare_digest(key.encode(), given.encode()):
@@ -64,7 +70,7 @@ def query_router(
         return {
             "corpus_version": catalogue.version,
             "evidence_count": len(catalogue.evidence),
-            "mode": "lexical_preview",
+            "mode": public_mode,
             "sources": sorted({e.source_id for e in catalogue.evidence}),
         }
 
@@ -91,7 +97,7 @@ def query_router(
         if retriever is None:
             raise error(503, "NOT_READY", "Corpus no disponible")
         return {
-            "mode": "lexical_preview",
+            "mode": preview_mode,
             "evidence": [public_evidence(item) for item in retriever.search(question, crop)],
         }
 

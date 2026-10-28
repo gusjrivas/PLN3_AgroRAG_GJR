@@ -26,7 +26,8 @@ class IndexIdentity:
 
 
 class CandidateRanker(Protocol):
-    corpus_version: str
+    @property
+    def corpus_version(self) -> str: ...
 
     def rank(self, question: str, crop: str | None) -> tuple[ScoredId, ...]: ...
 

@@ -35,6 +35,34 @@ def test_preview_shows_provenance_without_duplicate_request(monkeypatch):
     assert len(calls) == 1
 
 
+def test_semantic_preview_is_rendered_as_evidence_not_as_generated_answer(monkeypatch):
+    from agro_rag_ui.client import ApiClient
+
+    def search(self, question, crop):
+        return {
+            "mode": "hybrid_preview",
+            "evidence": [
+                {
+                    "text": "Evidencia semántica trazable.",
+                    "title": "Manual INTA",
+                    "pdf_page": 4,
+                    "printed_page": "2",
+                    "source_url": "https://example.org/doc.pdf",
+                }
+            ],
+        }
+
+    monkeypatch.setattr(ApiClient, "search", search)
+    monkeypatch.setenv("AGRO_READER_KEY", "test-reader-token-123456")
+    app = AppTest.from_file(str(Path("src/agro_rag_ui/app.py").resolve())).run()
+    app.text_area[0].set_value("riego tomate")
+    app.button[0].click().run()
+
+    assert not app.exception
+    assert any("Evidencia semántica trazable" in value.value for value in app.text)
+    assert any("no genera una respuesta" in value.value.lower() for value in app.info)
+
+
 def test_preview_explains_mode_and_allows_a_second_query(monkeypatch):
     from agro_rag_ui.client import ApiClient
 

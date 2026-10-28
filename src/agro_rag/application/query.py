@@ -56,6 +56,7 @@ class QueryService:
         deadline_seconds: float = 60.0,
         retrieval_cache_size: int = 128,
         audit_sink: AuditSink | None = None,
+        retrieval_mode: str = "bm25",
     ) -> None:
         if retrieval_cache_size <= 0:
             raise ValueError("El tamaño de caché debe ser positivo")
@@ -65,6 +66,7 @@ class QueryService:
         self.deadline_seconds = deadline_seconds
         self.retrieval_cache_size = retrieval_cache_size
         self.audit_sink = audit_sink
+        self.retrieval_mode = retrieval_mode
         self._retrieval_cache: OrderedDict[tuple[str, str, str | None], tuple[Evidence, ...]] = (
             OrderedDict()
         )
@@ -182,7 +184,11 @@ class QueryService:
                 "citations": citations,
                 "missing_information": missing or [],
                 "limitations": [
-                    "Corpus piloto; recuperación lexical, sin índice semántico todavía.",
+                    (
+                        "Corpus piloto; recuperación lexical, sin índice semántico activo."
+                        if self.retrieval_mode == "bm25"
+                        else f"Corpus piloto; recuperación {self.retrieval_mode} activada."
+                    ),
                     "Verificación automática pendiente de evaluación agronómica.",
                 ],
                 "corpus_version": self.version,
