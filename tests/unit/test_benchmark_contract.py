@@ -1,4 +1,5 @@
 import json
+from dataclasses import replace
 from pathlib import Path
 
 import pytest
@@ -54,6 +55,26 @@ def write_rows(tmp_path, rows):
         encoding="utf-8",
     )
     return path
+
+
+def repository_draft_fixture():
+    rows = [
+        json.loads(line)
+        for line in (ROOT / "data/evaluation/benchmark-60-draft.jsonl")
+        .read_text(encoding="utf-8")
+        .splitlines()
+        if line.strip()
+    ]
+    version = rows[0]["corpus_version"]
+    ids = sorted({item_id for row in rows for item_id in row["relevant_evidence_ids"]})
+    catalogue = Catalogue(
+        version,
+        tuple(
+            replace(evidence(item_id, "fixture", crop=None), corpus_version=version)
+            for item_id in ids
+        ),
+    )
+    return rows, catalogue
 
 
 def test_eva_01_split_and_denominators_are_frozen(tmp_path):
@@ -137,11 +158,12 @@ def test_eva_01_draft_packet_rejects_mixed_review_status(tmp_path):
 
 def test_eva_01_repository_draft_packet_is_complete_and_pending_human():
     from agro_rag.evaluation.benchmark import load_benchmark_draft
-    from agro_rag.infrastructure.corpus import load_catalogue
+
+    _, catalogue = repository_draft_fixture()
 
     draft = load_benchmark_draft(
         ROOT / "data/evaluation/benchmark-60-draft.jsonl",
-        load_catalogue(ROOT / "data/processed/catalogue"),
+        catalogue,
     )
 
     assert draft.split_counts == {"dev": 30, "test": 30}
@@ -153,10 +175,13 @@ def test_eva_01_repository_draft_packet_is_complete_and_pending_human():
     assert draft.pending_human_count == 60
 
 
-def test_cli_validates_draft_packet_without_promoting_it(capsys):
-    from agro_rag.bootstrap.cli import main
+def test_cli_validates_draft_packet_without_promoting_it(capsys, monkeypatch):
+    from agro_rag.bootstrap import cli
 
-    result = main(
+    _, catalogue = repository_draft_fixture()
+    monkeypatch.setattr(cli, "load_catalogue", lambda path: catalogue)
+
+    result = cli.main(
         [
             "validate-benchmark",
             str(ROOT / "data/evaluation/benchmark-60-draft.jsonl"),

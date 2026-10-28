@@ -60,6 +60,12 @@ detalle de las páginas 4 y 5; no se observaron cortes, superposiciones ni pági
 La repetición final de `test_delivery.py` encontró primero una denegación del sandbox sobre el
 directorio temporal de pytest; fuera de ese límite operativo terminó con `3 passed`.
 
+El primer check `offline` del PR #23 aportó un RED de checkout limpio: `2 failed, 186 passed`.
+Las dos pruebas nuevas intentaban leer `data/processed/catalogue`, un artefacto runtime ignorado que
+no existe en CI. Se reemplazó esa dependencia por un catálogo fixture en memoria construido para el
+contrato del paquete; la validación operativa local sigue usando el catálogo activo real. El comando
+focalizado posterior terminó con `7 passed` y no se incorporaron snapshots runtime al repositorio.
+
 Commit de implementación: `6160259` (`feat: prepare EVA-01 human review packet`).
 
 ## Límite y siguiente puerta
