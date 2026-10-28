@@ -1,9 +1,13 @@
 import json
+from dataclasses import replace
+from pathlib import Path
 
 import pytest
 from test_retrieval import evidence
 
 from agro_rag.domain.evidence import Catalogue
+
+ROOT = Path(__file__).parents[2]
 
 
 def benchmark_rows():
@@ -36,6 +40,14 @@ def benchmark_rows():
     return rows
 
 
+def draft_rows():
+    rows = benchmark_rows()
+    for row in rows:
+        row["annotator"] = "codex-draft"
+        row["review_status"] = "pending_human"
+    return rows
+
+
 def write_rows(tmp_path, rows):
     path = tmp_path / "benchmark.jsonl"
     path.write_text(
@@ -43,6 +55,26 @@ def write_rows(tmp_path, rows):
         encoding="utf-8",
     )
     return path
+
+
+def repository_draft_fixture():
+    rows = [
+        json.loads(line)
+        for line in (ROOT / "data/evaluation/benchmark-60-draft.jsonl")
+        .read_text(encoding="utf-8")
+        .splitlines()
+        if line.strip()
+    ]
+    version = rows[0]["corpus_version"]
+    ids = sorted({item_id for row in rows for item_id in row["relevant_evidence_ids"]})
+    catalogue = Catalogue(
+        version,
+        tuple(
+            replace(evidence(item_id, "fixture", crop=None), corpus_version=version)
+            for item_id in ids
+        ),
+    )
+    return rows, catalogue
 
 
 def test_eva_01_split_and_denominators_are_frozen(tmp_path):
@@ -89,3 +121,76 @@ def test_eva_01_unanswerable_cases_never_enter_ir_denominator(tmp_path):
 
     with pytest.raises(ValueError, match="sin soporte"):
         load_benchmark(write_rows(tmp_path, rows), catalogue)
+
+
+def test_eva_01_draft_packet_is_balanced_but_cannot_be_promoted_implicitly(tmp_path):
+    from agro_rag.evaluation.benchmark import load_benchmark, load_benchmark_draft
+
+    catalogue = Catalogue("v1", (evidence("a", "riego", crop="tomato"),))
+    path = write_rows(tmp_path, draft_rows())
+
+    draft = load_benchmark_draft(path, catalogue)
+
+    assert len(draft.cases) == 60
+    assert draft.split_counts == {"dev": 30, "test": 30}
+    assert draft.category_counts == {
+        "respondable": 36,
+        "unsupported": 12,
+        "adversarial": 12,
+    }
+    assert draft.pending_human_count == 60
+    with pytest.raises(ValueError, match="review"):
+        load_benchmark(path, catalogue)
+
+
+def test_eva_01_draft_packet_rejects_mixed_review_status(tmp_path):
+    from agro_rag.evaluation.benchmark import load_benchmark_draft
+
+    rows = draft_rows()
+    rows[0]["review_status"] = "reviewed"
+
+    with pytest.raises(ValueError, match="pending_human"):
+        load_benchmark_draft(
+            write_rows(tmp_path, rows),
+            Catalogue("v1", (evidence("a", "riego", crop="tomato"),)),
+        )
+
+
+def test_eva_01_repository_draft_packet_is_complete_and_pending_human():
+    from agro_rag.evaluation.benchmark import load_benchmark_draft
+
+    _, catalogue = repository_draft_fixture()
+
+    draft = load_benchmark_draft(
+        ROOT / "data/evaluation/benchmark-60-draft.jsonl",
+        catalogue,
+    )
+
+    assert draft.split_counts == {"dev": 30, "test": 30}
+    assert draft.category_counts == {
+        "respondable": 36,
+        "unsupported": 12,
+        "adversarial": 12,
+    }
+    assert draft.pending_human_count == 60
+
+
+def test_cli_validates_draft_packet_without_promoting_it(capsys, monkeypatch):
+    from agro_rag.bootstrap import cli
+
+    _, catalogue = repository_draft_fixture()
+    monkeypatch.setattr(cli, "load_catalogue", lambda path: catalogue)
+
+    result = cli.main(
+        [
+            "validate-benchmark",
+            str(ROOT / "data/evaluation/benchmark-60-draft.jsonl"),
+            "--draft",
+        ]
+    )
+
+    assert result == 0
+    payload = json.loads(capsys.readouterr().out)
+    assert payload["review_status"] == "pending_human"
+    assert payload["case_count"] == 60
+    assert payload["pending_human_count"] == 60

@@ -15,6 +15,7 @@ from agro_rag.domain.evidence import Catalogue
 Split = Literal["dev", "test"]
 Category = Literal["respondable", "unsupported", "adversarial"]
 ExpectedStatus = Literal["answered", "needs_clarification", "insufficient_evidence"]
+ReviewStatus = Literal["reviewed", "pending_human"]
 
 
 @dataclass(frozen=True)
@@ -31,7 +32,7 @@ class BenchmarkCase:
     source_pages: tuple[str, ...]
     split: Split
     annotator: str
-    review_status: Literal["reviewed"]
+    review_status: ReviewStatus
     corpus_version: str
 
 
@@ -56,6 +57,25 @@ class BenchmarkDataset:
     @property
     def abstention_cases(self) -> tuple[BenchmarkCase, ...]:
         return tuple(case for case in self.cases if case.category != "respondable")
+
+
+@dataclass(frozen=True)
+class BenchmarkDraft:
+    corpus_version: str
+    file_sha256: str
+    cases: tuple[BenchmarkCase, ...]
+
+    @property
+    def split_counts(self) -> dict[str, int]:
+        return dict(Counter(case.split for case in self.cases))
+
+    @property
+    def category_counts(self) -> dict[str, int]:
+        return dict(Counter(case.category for case in self.cases))
+
+    @property
+    def pending_human_count(self) -> int:
+        return sum(case.review_status == "pending_human" for case in self.cases)
 
 
 _CASE_FIELDS = {
@@ -97,7 +117,12 @@ def _string_list(value: object, *, allow_empty: bool) -> tuple[str, ...]:
     return tuple(cast(list[str], value))
 
 
-def _case_from_json(value: object, catalogue: Catalogue) -> BenchmarkCase:
+def _case_from_json(
+    value: object,
+    catalogue: Catalogue,
+    *,
+    expected_review_status: ReviewStatus,
+) -> BenchmarkCase:
     if not isinstance(value, Mapping) or set(value) != _CASE_FIELDS:
         raise ValueError("Caso de benchmark con campos invalidos")
 
@@ -122,10 +147,11 @@ def _case_from_json(value: object, catalogue: Catalogue) -> BenchmarkCase:
         or not isinstance(reference_answer, str)
         or split not in ("dev", "test")
         or not _nonempty_string(annotator)
-        or review_status != "reviewed"
         or corpus_version != catalogue.version
     ):
         raise ValueError("Caso de benchmark invalido o de otro corpus")
+    if review_status != expected_review_status:
+        raise ValueError(f"review_status debe ser {expected_review_status}")
 
     required_claims = _string_list(value["required_claims"], allow_empty=True)
     relevant = _string_list(value["relevant_evidence_ids"], allow_empty=True)
@@ -155,20 +181,21 @@ def _case_from_json(value: object, catalogue: Catalogue) -> BenchmarkCase:
         source_pages=source_pages,
         split=cast(Split, split),
         annotator=cast(str, annotator),
-        review_status="reviewed",
+        review_status=expected_review_status,
         corpus_version=catalogue.version,
     )
 
 
-def load_benchmark(path: Path, catalogue: Catalogue) -> BenchmarkDataset:
-    """Load EVA-01 JSONL and reject any drift in its frozen sampling contract."""
+def _load_values(path: Path) -> tuple[bytes, list[object]]:
     raw = path.read_bytes()
     try:
         values = [json.loads(line) for line in raw.decode("utf-8").splitlines() if line.strip()]
     except (UnicodeDecodeError, json.JSONDecodeError) as exc:
         raise ValueError("JSONL de benchmark invalido") from exc
+    return raw, values
 
-    cases = tuple(_case_from_json(value, catalogue) for value in values)
+
+def _validate_sampling_contract(cases: tuple[BenchmarkCase, ...]) -> None:
     if len(cases) != 60 or len({case.query_id for case in cases}) != len(cases):
         raise ValueError("EVA-01 exige 60 query_id unicos")
 
@@ -183,7 +210,31 @@ def load_benchmark(path: Path, catalogue: Catalogue) -> BenchmarkDataset:
         if len(subset) != 30 or Counter(case.category for case in subset) != _EXPECTED_PER_SPLIT:
             raise ValueError("Cada split exige 18 respondibles, 6 sin soporte y 6 adversariales")
 
+
+def load_benchmark(path: Path, catalogue: Catalogue) -> BenchmarkDataset:
+    """Load human-reviewed EVA-01 JSONL and reject sampling or review drift."""
+    raw, values = _load_values(path)
+    cases = tuple(
+        _case_from_json(value, catalogue, expected_review_status="reviewed") for value in values
+    )
+    _validate_sampling_contract(cases)
+
     return BenchmarkDataset(
+        corpus_version=catalogue.version,
+        file_sha256=hashlib.sha256(raw).hexdigest(),
+        cases=cases,
+    )
+
+
+def load_benchmark_draft(path: Path, catalogue: Catalogue) -> BenchmarkDraft:
+    """Validate a complete annotation packet without treating it as reviewed evidence."""
+    raw, values = _load_values(path)
+    cases = tuple(
+        _case_from_json(value, catalogue, expected_review_status="pending_human")
+        for value in values
+    )
+    _validate_sampling_contract(cases)
+    return BenchmarkDraft(
         corpus_version=catalogue.version,
         file_sha256=hashlib.sha256(raw).hexdigest(),
         cases=cases,

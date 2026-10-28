@@ -9,8 +9,9 @@ Responsable: coordinador/RAG, misma sesión. Rama: feat/03-retrieval-contracts. 
 - [x] C.1 Leer contratos/ADR y verificar corpus descargado y base main.
 - [x] C.2 RED: cuatro modos, fallo vector, identidad de índice, filtros, diversidad y presupuesto.
 - [x] C.3 GREEN/REFACTOR: pipeline por puertos, candidatos lexicales y errores controlados; suite y checks locales.
-- [ ] C.4 CI remota y revisión del diff; integrar sólo con checks aprobados.
-- [ ] C.5 Adaptadores reales, tokenizer, prefijos E5, evaluación en español y activación por bootstrap (otro PR).
+- [x] C.4 CI remota y revisión del diff; cortes integrados sólo con checks aprobados.
+- [x] C.5 Adaptadores reales, tokenizer, prefijos E5, smoke en español y activación configurable por
+  bootstrap. La evaluación científica permanece en T.4.
 
 Los checks del corte no cierran los requisitos completos siguientes.
 

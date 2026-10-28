@@ -7,14 +7,13 @@ API/UI, investigador/verificador, caché, auditoría redactada, proveedores Olla
 adaptadores E5/Pinecone/reranker, contratos de evaluación, informe PDF y guion de demo. La suite
 rápida tiene evidencia vigente y el verificador offline reconoce los ocho artefactos de entrega.
 
-Corte activo: `feat/semantic-runtime-activation`, responsable coordinador/RAG, misma sesión.
-Propiedad: ensamblado de retrieval en bootstrap, tokenizer, configuración, pruebas y documentación de
-03. El runtime permite seleccionar `bm25`, `vector`, `hybrid` o `hybrid_rerank`; los modos semánticos
-fallan antes de servir si faltan secreto, identidad compatible o tokenizer fijado. BM25 continúa como
-default: no se presenta el smoke de ocho qrels `pending_human` como evaluación definitiva ni se activa
-silenciosamente un fallback.
+Corte activo: `feat/eva01-human-review-packet`, responsable coordinador/evaluador, misma sesión.
+Propiedad: contrato y CLI de validación de benchmark, `data/evaluation/benchmark-60-draft.jsonl`,
+pruebas, documentación y evidencia EVA-01. El paquete contiene 60 casos balanceados y resolubles
+contra el corpus activo, todos `pending_human`; la automatización valida estructura pero no puede
+promoverlos a `reviewed` ni habilitar E1/E2/E3.
 
-Siguiente puerta académica: revisión humana del benchmark, ejecución E1/E2/E3 y actualización del
+Siguiente puerta académica: revisión humana del paquete, ejecución E1/E2/E3 y actualización del
 informe con resultados definitivos. Después corresponde ensayo final de 15 minutos, confirmación de
 modalidad/fecha y envío a ambos docentes sólo con autorización del usuario. La secuencia original de
 abajo queda como mapa de dependencias, no como estado de implementación.

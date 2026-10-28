@@ -1,9 +1,10 @@
 # Entrega académica y demo
 
 Estado técnico al 28/10/2026: informe reproducible, guion y runtime configurable de retrieval
-semántico implementados. La entrega académica definitiva no está cerrada: faltan benchmark humano,
-activación semántica con infraestructura real, E1/E2/E3, confirmación de modalidad y fecha calendario
-de Teoría 7. No se envió correo ni se publicó fuera del repositorio.
+semántico implementados. La entrega académica definitiva no está cerrada: falta revisar humanamente
+el paquete candidato de 60 casos, activar la configuración semántica con infraestructura real,
+ejecutar E1/E2/E3 y confirmar modalidad y fecha calendario de Teoría 7. No se envió correo ni se
+publicó fuera del repositorio.
 
 La cátedra solicita repositorio funcional, informe técnico PDF y exposición final de 15 minutos. Fecha máxima: clase Teoría 7; fecha calendario aún por confirmar. Entrega por correo a ambos docentes cuando el usuario lo autorice. El plan no envía mensajes.
 
