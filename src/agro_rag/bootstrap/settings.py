@@ -33,6 +33,14 @@ class Settings(BaseSettings):
     embedding_revision: str = "614241f622f53c4eeff9890bdc4f31cfecc418b3"
     reranker_model: str = "BAAI/bge-reranker-v2-m3"
     reranker_revision: str = "953dc6f6f85a1b2dbfca4c34a2796e7dde08d41e"
+    retrieval_mode: Literal["bm25", "vector", "hybrid", "hybrid_rerank"] = "bm25"
+    retrieval_tokenizer_model: str = ""
+    retrieval_tokenizer_revision: str = ""
+    retrieval_token_budget: int = Field(default=3000, gt=0)
+    retrieval_source_cap: int = Field(default=2, gt=0)
+    retrieval_max_items: int = Field(default=4, gt=0)
+    retrieval_candidate_limit: int = Field(default=20, gt=0)
+    semantic_local_files_only: bool = True
     catalogue_path: Path = Path("data/processed/catalogue")
     model_provider: Literal["ollama", "openai"] = "ollama"
     ollama_url: str = "http://127.0.0.1:11434"

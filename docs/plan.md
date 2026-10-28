@@ -1,12 +1,23 @@
 # Plan de inicio y ejecución
 
-## Estado al 22/10/2026
+## Estado al 28/10/2026
 
-PR #1: setup operativo de Engram; PR #2: base y CI; PR #3: corpus; PR #4: primera versión de API, UI y consulta. Los cuatro están integrados. El corpus vigente reúne cinco fuentes de INTA y FAO, con selección revisada de 27 fragmentos sobre fundamentos, programación de riego, tomate y lechuga; ver docs/corpus.md y data/manifest.json. El runbook vigente es docs/run-local.md.
+La primera versión local y el paquete técnico están implementados: corpus curado de 27 fragmentos,
+API/UI, investigador/verificador, caché, auditoría redactada, proveedores Ollama/OpenAI opcionales,
+adaptadores E5/Pinecone/reranker, contratos de evaluación, informe PDF y guion de demo. La suite
+rápida tiene evidencia vigente y el verificador offline reconoce los ocho artefactos de entrega.
 
-Siguiente corte: `feat/03-retrieval-contracts`, responsable coordinador/RAG, implementación por esta sesión. Propiedad: application/retrieval_pipeline.py, infrastructure/retrieval.py, tests/unit/test_retrieval_pipeline.py y documentación/evidencia de 03. Implementa contratos de modos y selección de contexto mediante TDD; no activa proveedores semánticos ficticios. ADR-013 fija límites y siguientes puertas. La secuencia original de abajo es planificación histórica, ajustada por ADR-012 para entregar un corte vertical temprano.
+Corte activo: `feat/semantic-runtime-activation`, responsable coordinador/RAG, misma sesión.
+Propiedad: ensamblado de retrieval en bootstrap, tokenizer, configuración, pruebas y documentación de
+03. El runtime permite seleccionar `bm25`, `vector`, `hybrid` o `hybrid_rerank`; los modos semánticos
+fallan antes de servir si faltan secreto, identidad compatible o tokenizer fijado. BM25 continúa como
+default: no se presenta el smoke de ocho qrels `pending_human` como evaluación definitiva ni se activa
+silenciosamente un fallback.
 
-Después: adaptadores E5/Pinecone/reranker y tokenizer reales → integración aislada y evaluación dev → conectar el modo híbrido con deadline/API → evaluar generación real y completar hardening/entrega. La falta de credenciales no bloquea contratos offline, pero sí la acreditación de integración real. No cerrar etapas enteras por un corte parcial.
+Siguiente puerta académica: revisión humana del benchmark, ejecución E1/E2/E3 y actualización del
+informe con resultados definitivos. Después corresponde ensayo final de 15 minutos, confirmación de
+modalidad/fecha y envío a ambos docentes sólo con autorización del usuario. La secuencia original de
+abajo queda como mapa de dependencias, no como estado de implementación.
 
 ## Decisión de organización
 
