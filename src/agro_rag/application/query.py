@@ -80,6 +80,16 @@ def preflight_decision(
             ],
         )
 
+    unresolved_reference = any(phrase in normalized for phrase in ("es suficiente", "alcanza para"))
+    if unresolved_reference and not context.get("clarification_context"):
+        return (
+            "needs_clarification",
+            [
+                "Indicar qué cantidad, recurso o condición se quiere evaluar y durante qué "
+                "período del cultivo."
+            ],
+        )
+
     context_complete = all(context.get(key) for key in ("growth_stage", "soil_description"))
     if context_complete:
         return None

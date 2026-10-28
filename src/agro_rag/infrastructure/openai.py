@@ -53,6 +53,7 @@ class OpenAIModel:
                         }
                     },
                     "max_output_tokens": 768,
+                    "temperature": 0,
                     "store": False,
                 },
             )

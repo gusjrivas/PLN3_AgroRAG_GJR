@@ -46,6 +46,7 @@ def test_openai_responses_uses_strict_schema_and_separates_untrusted_input():
     assert request.url.path == "/v1/responses"
     assert request.headers["Authorization"] == "Bearer secret"
     assert body["store"] is False
+    assert body["temperature"] == 0
     assert body["model"] == "gpt-test"
     assert body["text"]["format"]["type"] == "json_schema"
     assert body["text"]["format"]["strict"] is True

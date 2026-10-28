@@ -24,6 +24,16 @@ Responsable y revisor disponible: coordinador/backend, misma sesión. Rama:
 - [x] S.2 GREEN: resolver alcance y contexto situacional antes de llamar al modelo.
 - [x] S.3 REFACTOR: suite, typing, arquitectura, corrida live dirigida y revisión del diff.
 
+## Corte independiente: estabilidad de decisión generativa
+
+Responsable y revisor disponible: coordinador/backend, misma sesión. Rama:
+`fix/generative-stability`. Propiedad: preflight, contrato generativo, adaptador OpenAI, runner de
+benchmark, pruebas y evidencia `docs/evidence/tdd/AGT-EVAL-generative-stability.md`.
+
+- [x] G.1 RED: reproducir referente ausente, muestreo no fijado y falta de resumen repetido.
+- [x] G.2 GREEN: aclaración determinista, prompts de estado, `temperature=0` y resumen estable.
+- [x] G.3 REFACTOR: suite offline, typing, arquitectura y documentación sin llamadas live extra.
+
 ## 1. Preparación
 
 - [ ] 1.1 Leer ADR aplicables, fijar archivos de propiedad y comprobar dependencias.

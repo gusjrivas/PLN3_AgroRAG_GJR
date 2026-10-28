@@ -19,6 +19,8 @@ Responsable: Evaluador y coordinador. Dependencias: 05-frontend-hardening; anota
 - [x] 2.2.2 GREEN: implementar comparación pareada, procedencia y persistencia completa de EVA-02.
 - [x] 2.2.3 REFACTOR: mejorar diseño, ejecutar suite afectada/typing/imports y registrar evidencia del contrato EVA-02.
 - [ ] 2.2.4 Ejecutar E1/E2/E3 con benchmark humano congelado y proveedores reales; revisar soporte y publicar resultados completos, incluidos los negativos.
+- [x] 2.2.5 Implementar repetición y resumen de estabilidad con pruebas offline; la nueva corrida
+  live queda pendiente de autorización de costo.
 - [x] 2.3.1 Definir verificación observable de DEL-01; generador PDF y verificador comenzaron con prueba RED.
 - [x] 2.3.2 Generar, renderizar e inspeccionar el PDF; validar offline comandos, secciones, guion y hashes.
 - [x] 2.3.3 Revisar los escenarios DEL-01 y registrar benchmark, evaluación, modalidad y fecha aún pendientes.

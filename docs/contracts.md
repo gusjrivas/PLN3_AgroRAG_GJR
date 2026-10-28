@@ -32,6 +32,10 @@ costos, precios y recomendaciones comerciales por marca/modelo - producen
 fuente de datos de mercado. Si el contexto agronómico requerido está completo, la consulta continúa
 al flujo normal de recuperación, investigación y verificación.
 
+Una pregunta elíptica como "¿es suficiente?" sin referente produce `needs_clarification` antes de
+invocar modelos. Si llega con `clarification_context`, puede continuar al flujo normal. Una pregunta
+factual directamente respondible por los pasajes no requiere inventar cultivo o contexto adicional.
+
 ## ErrorResponse
 
 `error: {code, message, request_id, retryable}`. 401 auth inválida; 422 input; 429 saturación; 502 salida/proveedor inválido; 503 índice/modelo/corpus no disponible; 504 deadline. UI distingue todos estos casos de insufficient_evidence.

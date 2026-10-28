@@ -59,6 +59,12 @@ Una respuesta answered MUST respaldar cada claim con evidence_ids válidos; falt
 - **THEN** se devuelve evidencia insuficiente sin convertir la ausencia de corpus en una pregunta
   aclaratoria ni llamar a los agentes.
 
+#### Scenario: AGT-02-referente-y-hecho-documental
+- **GIVEN** una pregunta sin referente o una pregunta factual respaldada directamente por pasajes.
+- **WHEN** se decide el estado.
+- **THEN** la primera solicita aclaración sin llamar al modelo; la segunda no exige cultivo o
+  contexto situacional inexistente sólo para poder responder.
+
 ### Requirement: AGT-03 Presupuesto y errores
 La orquestación MUST respetar límites globales de llamadas, búsquedas, tokens y deadline, incluidos reintentos.
 
