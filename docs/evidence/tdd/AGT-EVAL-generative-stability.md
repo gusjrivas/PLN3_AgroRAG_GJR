@@ -2,6 +2,7 @@
 
 Fecha: 2026-10-28. Responsable y revisor: misma sesión; no hubo revisor independiente disponible.
 Rama: `fix/generative-stability`.
+Commit de implementación: `c734396`.
 
 ## Propiedad y alcance
 
