@@ -43,6 +43,7 @@ packages = ["src/agro_rag", "src/agro_rag_ui"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+pythonpath = ["."]
 addopts = "-ra --strict-markers -m 'not e2e and not integration_live'"
 markers = ["e2e: real browser and local processes", "integration_live: requires explicit opt-in and external providers"]
 

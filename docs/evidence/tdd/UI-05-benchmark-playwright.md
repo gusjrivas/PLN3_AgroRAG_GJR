@@ -66,3 +66,10 @@ git diff --check                                  -> sin errores
 Los 59 casos restantes y la calificación humana del PDF continúan pendientes; no se ejecutaron
 para evitar costo y latencia de proveedor sin una decisión explícita. Commit funcional:
 `1335d1a`. CI queda registrada en el PR.
+
+## Corrección de portabilidad detectada por CI
+
+El job offline de Linux falló al coleccionar los dos tests nuevos: `uv run pytest` no incorporaba
+la raíz del repositorio a `sys.path` y no encontraba el paquete versionado `scripts`. Browser y
+specs pasaron. Se fijó `pythonpath = ["."]` en la configuración de pytest y se repitió la suite con
+el ejecutable directo, además de los checks locales anteriores.
