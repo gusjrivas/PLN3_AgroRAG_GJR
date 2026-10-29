@@ -66,9 +66,45 @@ Artefactos locales ignorados y SHA-256, en orden de ejecución:
 - `e2-budgeted-dev-batch3-2026-10-28.json`: `58c170f122c69e7895d1cf76417d086e8eff55e3bf49858df4ef924f20eeadfa`;
 - `e2-budgeted-dev-batch4-2026-10-28.json`: `2a232254bf3ac4c6c09c0426a36cc126a77d7550056b5996a3aef1d0485c5ae2`.
 
+### Revisión documental dirigida de los cinco textos modificados
+
+Esta revisión fue realizada por la misma sesión agente contra referencia, claims requeridos y
+pasajes citados; no se presenta como revisión humana independiente.
+
+| query_id | Resultado | Hallazgo |
+|---|---|---|
+| dev-r-001 | FAIL | Omite que más de 30 °C perjudica germinación y desarrollo. |
+| dev-r-009 | FAIL | Define ET, pero omite que evaporación y transpiración ocurren simultáneamente. |
+| dev-r-011 | FAIL | Habla de ET y no responde que la pérdida principal ocurre por los estomas. |
+| dev-r-016 | PASS | Conserva gravimetría/sensores y tensiómetros/bloques de yeso. |
+| dev-r-018 | PASS | Conserva presión osmótica, dificultad de absorción y sequía fisiológica. |
+
+El verificador aprobó también los tres resultados incompletos. Por tanto, no hay evidencia de que
+el verificador haya mejorado soporte factual en esta muestra dirigida.
+
+## E3 real presupuestado, una consulta y tres repeticiones
+
+Se usó `dev-r-001`, retrieval hybrid, investigador sin verificador y salida máxima de 256 tokens.
+Los tres servicios nuevos produjeron miss; el primer servicio se reutilizó para tres hits. Ambos
+lados conservaron modelo, prompt, evidencia y límites.
+
+| Variante | n | Hits | p50 ms | máximo observado ms | Entrada | Salida | Costo USD |
+|---|---:|---:|---:|---:|---:|---:|---:|
+| Fría | 3 | 0/3 | 1.562 | 2.156 | 5.487 | 306 | 0,016778 |
+| Caliente | 3 | 3/3 | 1.406 | 1.468 | 5.487 | 311 | 0,016828 |
+
+La caché redujo la mediana observada 156 ms, pero no ahorró tokens ni costo de generación porque
+la implementación cachea retrieval, no respuestas. Con n=1 y tres repeticiones no se generaliza
+capacidad. Artefacto local `e3-budgeted-dev-r-001-2026-10-28.json`, SHA-256
+`f3a379461cb4855c3020d5b4f491b6c811efa5eeb289a795d55a2705a239a3f6`.
+
+E3 costó USD 0,033605. El gasto real total de EVA-02, incluido el piloto E2 duplicado, fue
+USD 0,334369; quedaron USD 0,165631 sin usar.
+
 ## Puertas restantes
 
-- revisión humana de soporte/citas de E2, con atención a los 5 textos modificados;
-- E3 frío/caliente con protocolo de tres pasadas; no se ejecutó con el saldo sin una decisión
-  explícita porque volvería a pagar generación y no completa la revisión humana;
+- revisión humana independiente de soporte/citas de los 18 pares E2; la revisión dirigida de los
+  cinco cambios encontró tres FAIL;
+- ampliar E3 a más consultas sólo si se necesita generalización; el protocolo mínimo de tres
+  repeticiones quedó ejecutado sobre una consulta;
 - mantener `test` fuera de ajustes: todas estas corridas usaron únicamente `dev`.

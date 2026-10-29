@@ -59,7 +59,10 @@ Recall@20 0,9722 y p95 215,98 ms: el reranker mejoró MRR/nDCG, pero alcanzó p9
 E2 completó 18 pares con/sin verificador y consumió USD 0,289792; el gasto total con el piloto de
 estimación fue USD 0,300764. Ambos modos acertaron el estado 18/18, pero el verificador cambió cinco
 textos sin pedir revisiones. Falta revisión humana antes de interpretar esos cambios como mejora
-factual. E3 no se ejecutó. Evidencia completa en
+factual; una revisión documental dirigida de esos cinco cambios encontró tres incompletos y dos
+aceptables. E3 se ejecutó como piloto de una consulta con tres mediciones frías y tres calientes:
+la mediana bajó de 1.562 a 1.406 ms, sin ahorro de tokens porque sólo se cachea retrieval. El gasto
+total de EVA-02 quedó en USD 0,334369. Evidencia completa en
 `docs/evidence/tdd/EVA-02-budgeted-live.md`.
 
 ## Ejecución asistida del checklist
