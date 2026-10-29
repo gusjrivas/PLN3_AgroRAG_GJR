@@ -51,6 +51,17 @@ comparador conserva deltas negativos y publica el denominador y los IDs excluido
 definitivo ya no está bloqueado por EVA-01; queda pendiente acordar presupuesto, ejecutar las
 variantes reales y revisar soporte.
 
+### Corrida presupuestada EVA-02 del 28/10/2026
+
+Con un tope absoluto de USD 0,50 se ejecutaron E1 y E2 reales únicamente sobre los 18 casos
+respondibles de `dev`; `test` permaneció cerrado. E1 favoreció a hybrid RRF como compromiso de
+Recall@20 0,9722 y p95 215,98 ms: el reranker mejoró MRR/nDCG, pero alcanzó p95 47.012,40 ms.
+E2 completó 18 pares con/sin verificador y consumió USD 0,289792; el gasto total con el piloto de
+estimación fue USD 0,300764. Ambos modos acertaron el estado 18/18, pero el verificador cambió cinco
+textos sin pedir revisiones. Falta revisión humana antes de interpretar esos cambios como mejora
+factual. E3 no se ejecutó. Evidencia completa en
+`docs/evidence/tdd/EVA-02-budgeted-live.md`.
+
 ## Ejecución asistida del checklist
 
 `scripts/build_benchmark_checklist.py` convierte el borrador de 60 casos en un PDF rellenable con

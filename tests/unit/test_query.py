@@ -65,6 +65,22 @@ def test_two_agents_approve_only_existing_evidence():
     assert result["answer"] == result["claims"][0]["text"]
 
 
+def test_eva_02_without_verifier_returns_validated_researcher_draft_once():
+    from agro_rag.application.query import QueryService
+
+    model = FakeModel([draft()])
+    r = retriever([evidence("a", "Lechuga: riego y humedad constante.", crop="lettuce")])
+
+    result = asyncio.run(
+        QueryService(r, model, "v1", verifier_enabled=False).run("riego lechuga", "lettuce", {})
+    )
+
+    assert result["status"] == "answered"
+    assert result["verification"]["decision"] == "not_run"
+    assert result["usage"]["llm_calls"] == 1
+    assert model.roles == ["researcher"]
+
+
 def test_response_limitations_disclose_configured_retrieval_mode():
     from agro_rag.application.query import QueryService
 

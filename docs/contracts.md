@@ -20,7 +20,7 @@ Ingesta mediante CLI local administrativa, fuera de la API pública del MVP. No 
 
 ## QueryResponse
 
-Campos: request_id (UUID), status (answered|needs_clarification|insufficient_evidence), answer (string), claims (lista de claim_id, text, evidence_ids), citations (lista de evidence_id, source_id, title, edition, pdf_page, printed_page, section, excerpt, source_url), missing_information (lista), limitations (lista), corpus_version, verification (decision, revision_count, issue_codes), usage (llm_calls, input_tokens, output_tokens, estimated, total_ms, cache_hit).
+Campos: request_id (UUID), status (answered|needs_clarification|insufficient_evidence), answer (string), claims (lista de claim_id, text, evidence_ids), citations (lista de evidence_id, source_id, title, edition, pdf_page, printed_page, section, excerpt, source_url), missing_information (lista), limitations (lista), corpus_version, verification (decision, revision_count, issue_codes), usage (llm_calls, input_tokens, output_tokens, estimated, total_ms, cache_hit). `verification.decision` usa approve, revise, clarify o abstain en operación normal; la ablación EVA-02 sin verificador usa `not_run` para no simular una aprobación.
 
 Invariantes: answered exige claims no vacíos y evidencia por cada claim; IDs se resuelven en catálogo de la misma corpus_version. needs_clarification exige missing_information. insufficient_evidence explica el límite y no añade recomendaciones inventadas. No se expone chain-of-thought. Metadata administrativa como claves, rutas absolutas y stacktraces nunca forma parte de la respuesta.
 
