@@ -13,7 +13,7 @@ Responsable: Evaluador y coordinador. Dependencias: 05-frontend-hardening; anota
 - [x] 2.1.2 GREEN: implementar mínimo comportamiento automatizable de EVA-01 y ejecutar las mismas pruebas.
 - [x] 2.1.3 REFACTOR: validar diseño, suite afectada/typing/imports y registrar evidencia del contrato EVA-01.
 - [x] 2.1.4 Preparar y validar un paquete de 60 casos `pending_human`, sin promoción implícita.
-- [ ] 2.1.5 Revisar humanamente preguntas, referencias, claims, páginas e IDs; congelar el benchmark
+- [x] 2.1.5 Revisar humanamente preguntas, referencias, claims, páginas e IDs; congelar el benchmark
   final sólo cuando las 60 filas sean `reviewed`.
 - [x] 2.2.1 RED: escribir y ejecutar pruebas del contrato de reporte EVA-02; guardar fallo funcional esperado.
 - [x] 2.2.2 GREEN: implementar comparación pareada, procedencia y persistencia completa de EVA-02.

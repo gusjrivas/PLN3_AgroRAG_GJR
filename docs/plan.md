@@ -7,14 +7,15 @@ API/UI, investigador/verificador, caché, auditoría redactada, proveedores Olla
 adaptadores E5/Pinecone/reranker, contratos de evaluación, informe PDF y guion de demo. La suite
 rápida tiene evidencia vigente y el verificador offline reconoce los ocho artefactos de entrega.
 
-Corte activo: `feat/eva01-human-review-packet`, responsable coordinador/evaluador, misma sesión.
-Propiedad: contrato y CLI de validación de benchmark, `data/evaluation/benchmark-60-draft.jsonl`,
-pruebas, documentación y evidencia EVA-01. El paquete contiene 60 casos balanceados y resolubles
-contra el corpus activo, todos `pending_human`; la automatización valida estructura pero no puede
-promoverlos a `reviewed` ni habilitar E1/E2/E3.
+Corte activo: `eval/freeze-human-benchmark`, responsable coordinador/evaluador, misma sesión.
+Propiedad: `data/evaluation/benchmark-60.jsonl`, contrato de repositorio, documentación y evidencia
+EVA-01. El usuario cerró la revisión humana el 28/10/2026 sobre la corrida asistida por Playwright;
+el paquete final contiene 60 casos `reviewed`, split 30/30, 36 respondibles y 24 de abstención, con
+hash SHA-256 `b12253c38bec4e2e58b20ddb4ec1303c515a360001db37c56e6e54246bdcba69`.
 
-Siguiente puerta académica: revisión humana del paquete, ejecución E1/E2/E3 y actualización del
-informe con resultados definitivos. Después corresponde ensayo final de 15 minutos, confirmación de
+Siguiente puerta académica: ejecutar E1/E2/E3 con el benchmark congelado y actualizar el informe
+con resultados definitivos. Las variantes con proveedor real requieren acordar presupuesto antes
+de multiplicar llamadas. Después corresponde ensayo final de 15 minutos, confirmación de
 modalidad/fecha y envío a ambos docentes sólo con autorización del usuario. La secuencia original de
 abajo queda como mapa de dependencias, no como estado de implementación.
 
