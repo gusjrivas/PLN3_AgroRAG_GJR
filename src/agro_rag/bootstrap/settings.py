@@ -69,6 +69,9 @@ class Settings(BaseSettings):
     retrieval_candidate_limit: int = Field(default=20, gt=0)
     semantic_local_files_only: bool = True
     catalogue_path: Path = Path("data/processed/catalogue")
+    release_version: str = "0.1.0"
+    commit_sha: str = "unknown"
+    image_digest: str = "unknown"
     healthcheck_url: str = "http://127.0.0.1:8000/health/ready"
     healthcheck_expected_status: Literal["ok", "ready"] = "ready"
     model_provider: Literal["ollama", "openai"] = "ollama"

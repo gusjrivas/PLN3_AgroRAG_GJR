@@ -59,6 +59,7 @@ ubicación de evidencia; no cambiar sólo la etiqueta de estado.
 | IMG-V2 | Imágenes reproducibles/mínimas | [07-containerized-production-poc](../openspec/changes/07-containerized-production-poc/specs/containerized-production-poc/spec.md) | IMG-V2-build, content | [IMG-V2-01/02](evidence/tdd/IMG-V2-01-02-images.md) |
 | CMP/DAT-V2 | Compose y catálogo persistente | [07-containerized-production-poc](../openspec/changes/07-containerized-production-poc/specs/containerized-production-poc/spec.md) | CMP-V2-e2e, DAT-V2-persistence | [CMP/DAT-V2-01](evidence/tdd/CMP-DAT-V2-01-compose-local.md) |
 | SEC-V2 | Overlay productivo endurecido | [07-containerized-production-poc](../openspec/changes/07-containerized-production-poc/specs/containerized-production-poc/spec.md) | SEC-V2-exposure, OPS-V2-rollback | [SEC-V2-01](evidence/tdd/SEC-V2-01-production-overlay.md) |
+| OPS-V2 | Readiness, identidad y logs estructurados | [07-containerized-production-poc](../openspec/changes/07-containerized-production-poc/specs/containerized-production-poc/spec.md) | OPS-V2-release-observability | [OPS-V2-01](evidence/tdd/OPS-V2-01-release-observability.md) |
 | GARAK-V2 | Evaluación adversarial trazable | [07-containerized-production-poc](../openspec/changes/07-containerized-production-poc/specs/containerized-production-poc/spec.md) | GARAK-V2-gate, confidentiality | Evidencia pendiente de implementación/scan autorizado |
 
 ## Prioridades

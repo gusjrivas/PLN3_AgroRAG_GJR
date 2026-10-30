@@ -29,6 +29,12 @@ Compose y API monta el catálogo read-only. `catalogue-admin` escribe el volumen
 operación explícita. Imágenes y configuración no contienen secretos; producción usa archivos
 montados por servicio. Garak será un job separado de release/staging y no una dependencia runtime.
 
+La API recibe identidad de release por entorno (`AGRO_RELEASE_VERSION`, `AGRO_COMMIT_SHA` y
+`AGRO_IMAGE_DIGEST`), la publica en `/health/version` junto con el catálogo activo y emite un evento
+JSON sanitizado por request. Readiness continúa autenticada y valida corpus/proveedor; liveness no
+depende de red. La referencia observable no sustituye la verificación del digest en el manifiesto de
+Compose ni la evidencia de promoción.
+
 ```mermaid
 flowchart LR
   USER[Usuario] --> GW[Gateway TLS + auth]

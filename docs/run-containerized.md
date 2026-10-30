@@ -1,7 +1,7 @@
 # Ejecutar AgroRAG V2 con contenedores
 
-Estado: implementación incremental. Imágenes y Compose local están verificados; gateway productivo,
-rollback, CI de supply chain y garak se completan en fases posteriores del cambio OpenSpec 07.
+Estado: implementación incremental. Imágenes, Compose local, gateway productivo e identidad/logs de
+release están verificados; rollback, CI de supply chain y garak continúan en fases posteriores.
 
 ## Requisitos
 
@@ -38,6 +38,11 @@ docker run --rm -p 127.0.0.1:18501:8501 agrorag-ui:<commit>
 
 `http://127.0.0.1:18501/_stcore/health` debe responder 200. Sin reader key, la pantalla muestra la
 advertencia segura y no consulta API.
+
+`GET /health/version` expone versión, commit, referencia inmutable de imagen y versión de catálogo,
+sin configuración ni secretos. Cada respuesta API incluye `X-Request-ID`; el evento
+`http_request_completed` se escribe como una línea JSON con método, path sin query string, estado y
+duración. Uvicorn access log se desactiva para no duplicar ni registrar parámetros.
 
 ## Secretos en runtime
 
@@ -121,7 +126,9 @@ docker run --rm -it caddy:2.11.4-alpine caddy hash-password
 
 Asignar las variables del ambiente o secret store: `AGRO_API_IMAGE`, `AGRO_UI_IMAGE` y
 `AGRO_GATEWAY_IMAGE` con referencias `@sha256:...`; `AGRO_CATALOGUE_VOLUME`, `AGRO_DOMAIN`,
-`AGRO_OPENAI_MODEL` y `AGRO_SECRETS_DIR`. Validar sin revelar contenido:
+`AGRO_OPENAI_MODEL`, `AGRO_SECRETS_DIR`, `AGRO_RELEASE_VERSION` (semver) y `AGRO_COMMIT_SHA`.
+El overlay pasa `AGRO_API_IMAGE` también como identidad observable de la imagen. Validar sin revelar
+contenido:
 
 ```powershell
 docker compose -f compose.yaml -f compose.production.yaml config --quiet

@@ -91,6 +91,8 @@ def test_sec_v2_production_exposes_only_gateway_and_uses_immutable_images(tmp_pa
             "AGRO_DOMAIN": "agrorag.example.test",
             "AGRO_OPENAI_MODEL": "test-model",
             "AGRO_SECRETS_DIR": str(secrets),
+            "AGRO_RELEASE_VERSION": "2.0.0-rc.1",
+            "AGRO_COMMIT_SHA": "a" * 40,
         },
     )
     services = config["services"]
@@ -109,6 +111,9 @@ def test_sec_v2_production_exposes_only_gateway_and_uses_immutable_images(tmp_pa
         for service in services.values()
         for mount in service.get("volumes", [])
     )
+    assert services["api"]["environment"]["AGRO_RELEASE_VERSION"] == "2.0.0-rc.1"
+    assert services["api"]["environment"]["AGRO_COMMIT_SHA"] == "a" * 40
+    assert services["api"]["environment"]["AGRO_IMAGE_DIGEST"].endswith("a" * 64)
 
 
 def test_sec_v2_production_limits_secrets_and_privileges(tmp_path: Path) -> None:
@@ -127,6 +132,8 @@ def test_sec_v2_production_limits_secrets_and_privileges(tmp_path: Path) -> None
             "AGRO_DOMAIN": "agrorag.example.test",
             "AGRO_OPENAI_MODEL": "test-model",
             "AGRO_SECRETS_DIR": str(secrets),
+            "AGRO_RELEASE_VERSION": "2.0.0-rc.1",
+            "AGRO_COMMIT_SHA": "a" * 40,
         },
     )
     api, ui, gateway = (config["services"][name] for name in ("api", "ui", "gateway"))

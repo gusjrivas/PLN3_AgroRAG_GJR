@@ -36,6 +36,8 @@ RUN groupadd --gid 10001 app \
 ENV PATH=/opt/venv/bin:$PATH \
     PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
+    AGRO_RELEASE_VERSION=${APP_VERSION} \
+    AGRO_COMMIT_SHA=${VCS_REF} \
     HOME=/tmp \
     XDG_CONFIG_HOME=/tmp/.config
 WORKDIR /app
@@ -45,7 +47,7 @@ FROM runtime AS api
 
 USER 10001:10001
 EXPOSE 8000
-CMD ["uvicorn", "agro_rag.bootstrap.app:create_app", "--factory", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["uvicorn", "agro_rag.bootstrap.app:create_app", "--factory", "--host", "0.0.0.0", "--port", "8000", "--no-access-log"]
 
 FROM runtime AS ui
 

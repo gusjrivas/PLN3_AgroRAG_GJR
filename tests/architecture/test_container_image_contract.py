@@ -21,7 +21,10 @@ def test_img_v2_has_builder_and_separate_non_root_runtime_targets() -> None:
     commands = [
         json.loads(value) for value in re.findall(r"^CMD\s+(\[.*\])$", dockerfile, re.MULTILINE)
     ]
-    assert any(command[0] == "uvicorn" and "--factory" in command for command in commands)
+    assert any(
+        command[0] == "uvicorn" and "--factory" in command and "--no-access-log" in command
+        for command in commands
+    )
     assert any(command[:2] == ["streamlit", "run"] for command in commands)
 
 
@@ -30,6 +33,8 @@ def test_img_v2_uses_oci_labels_and_never_declares_secret_build_inputs() -> None
 
     assert "org.opencontainers.image.revision" in dockerfile
     assert "org.opencontainers.image.version" in dockerfile
+    assert "AGRO_RELEASE_VERSION=${APP_VERSION}" in dockerfile
+    assert "AGRO_COMMIT_SHA=${VCS_REF}" in dockerfile
     assert not re.search(
         r"^(?:ARG|ENV)\s+.*(?:API_KEY|READER_KEY|SECRET|TOKEN)",
         dockerfile,

@@ -8,6 +8,9 @@ services:
       AGRO_MODEL_PROVIDER: openai
       AGRO_OPENAI_MODEL: ${AGRO_OPENAI_MODEL:?Defina el modelo OpenAI productivo}
       OPENAI_API_KEY_FILE: /run/secrets/openai_api_key
+      AGRO_RELEASE_VERSION: ${AGRO_RELEASE_VERSION:?Defina la versión semántica de release}
+      AGRO_COMMIT_SHA: ${AGRO_COMMIT_SHA:?Defina el commit de release}
+      AGRO_IMAGE_DIGEST: ${AGRO_API_IMAGE:?Defina la imagen API inmutable por digest}
     secrets: [reader_key, openai_api_key]
     read_only: true
     tmpfs:

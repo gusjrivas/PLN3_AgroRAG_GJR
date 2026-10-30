@@ -61,6 +61,12 @@ El overlay productivo MUST minimizar exposición, privilegios, secretos y estado
 - **WHEN** falla la candidata.
 - **THEN** el runbook restaura digest+manifiesto y prueba salud sin borrar el volumen activo.
 
+#### Scenario: OPS-V2-release-observability
+- **GIVEN** una imagen construida con versión, commit y referencia inmutable.
+- **WHEN** la API atiende health o tráfico funcional.
+- **THEN** expone identidad de release/catálogo y emite eventos JSON correlacionables sin query,
+  credenciales, cuerpo ni secretos.
+
 ### Requirement: GARAK-V2 Evaluación adversarial trazable
 La release candidate MUST superar una política garak versionada sobre el gateway desplegado, sin
 presentar el resultado como garantía o certificación.
