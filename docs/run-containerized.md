@@ -107,8 +107,8 @@ limpia sus recursos. No usa el catálogo ni volumen local del usuario.
 
 ## Limitaciones todavía abiertas
 
-- La publicación GHCR sólo puede comprobarse al integrar en `main`; el PR ya verificó E2E, SBOM,
-  scans y gate sobre las mismas imágenes candidatas.
+- El push del merge `5a11a29` publicó API/UI/gateway por digest y conservó el manifiesto inmutable en
+  el run `41061924537`. Esto prueba registry/supply chain, no un despliegue staging.
 - Falta un host Linux staging autorizado, dominio/TLS, presupuesto de proveedor y credenciales de
   ensayo para ejecutar el primer reporte Garak real. Ningún resultado adversarial fue fabricado.
 - Docker Scout local requiere autenticación y no se usó como evidencia. Trivy 0.76.1 sí se ejecutó
@@ -244,9 +244,11 @@ al binario oficial Caddy 2.11.7, tienen responsable y vencen el 15/11/2026. Venc
 bloquean automáticamente; deben eliminarse al publicar Caddy corregido. No son una declaración de
 ausencia de riesgo ni autorizan promoción sin triage humano.
 
-La ejecución de PR `40996190194` aprobó build único, E2E, tres SBOM/scans y el gate. La publicación
-se omitió deliberadamente por no ser un push a `main`; al integrar, el workflow publica esos mismos
-bytes por SHA y conserva el manifiesto de digests.
+La ejecución de PR `40996190194` aprobó build único, E2E, tres SBOM/scans y el gate. Tras integrar,
+el [run de `main` 41061924537](https://github.com/gusjrivas/PLN3_AgroRAG_GJR/actions/runs/41061924537)
+repitió esos controles, publicó los tres paquetes por SHA y conservó el manifiesto de digests para
+el commit `5a11a29a8e0e8b3ce4c1dce9e5ecf7a221d24af6`. Los digests están registrados en CI-V2-01;
+staging debe consumir exactamente esas referencias, no reconstruirlas.
 
 ## Evaluación Garak
 
@@ -254,8 +256,9 @@ bytes por SHA y conserva el manifiesto de digests.
 Construye `Dockerfile.garak` con Garak 0.17.0 y un lock exacto de 197 paquetes, corre como UID/GID
 10003 sin puertos, capabilities ni
 credenciales de proveedor, y escribe evidencia fuera del contenedor. La distribución oficial de
-Garak arrastra PyTorch/CUDA: la imagen local validada mide 3.292.465.354 bytes. Debe publicarse y
-cachearse por separado; nunca se incorpora a API/UI/gateway.
+Garak arrastra PyTorch/CUDA: la imagen local validada mide 3.292.465.354 bytes. El run
+`41062609444` publicó la candidata del merge por digest; debe cachearse por separado y nunca se
+incorpora a API/UI/gateway.
 
 El lock actual incluye wheels CUDA y el Dockerfile falla cerrado fuera de `linux/amd64`. Soportar
 ARM64 exige resolver/escanear un lock e imagen propios; no se presume portabilidad binaria.
@@ -311,12 +314,27 @@ aislada del runner. Sólo después publica ese mismo objeto como
 no crea `latest`. Ejecutarlo desde Actions con `acknowledge_large_build=true` y conservar el
 manifiesto de 90 días para el siguiente paso.
 
+La ejecución autorizada
+[41062609444](https://github.com/gusjrivas/PLN3_AgroRAG_GJR/actions/runs/41062609444) terminó
+`success` para `5a11a29a8e0e8b3ce4c1dce9e5ecf7a221d24af6`. El manifiesto fijó:
+
+```text
+ghcr.io/gusjrivas/pln3_agrorag_gjr/garak-runner@sha256:9a56fcacf404a0668496747820c9529bfb1de880853fe9de2123ff1ea4270e61
+```
+
+Usar exactamente esa referencia en el primer scan de esta candidata; no usar el tag SHA como
+identidad de promoción.
+
 Crear en GitHub el environment protegido `staging-security`, con reviewer humano y estos secrets:
 
 - `GARAK_GATEWAY_AUTHORIZATION`: cabecera Basic de la identidad exclusiva de ensayo.
 - `GARAK_READER_KEY`: reader key de la candidata desplegada.
 - `GARAK_REPORT_ENCRYPTION_KEY`: frase robusta y exclusiva para cifrar el crudo; conservarla en el
   secret store durante la retención del artefacto.
+
+Los environments `staging` y `staging-security` ya existen, requieren aprobación de `gusjrivas` y
+admiten sólo ejecuciones desde `main`. Sus listas de secrets permanecen vacías: cargarlas desde el
+secret store antes de ejecutar, sin copiar valores al repositorio ni a la evidencia.
 
 El workflow manual `staging-garak-security-gate` recibe `target_url`, `release_id`, `garak_image` y
 `authorization_confirmed=true`. `garak_image` debe copiarse del manifiesto anterior y terminar en

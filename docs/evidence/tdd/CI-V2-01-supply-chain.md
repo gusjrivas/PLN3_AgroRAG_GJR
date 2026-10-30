@@ -1,8 +1,9 @@
 # Evidencia TDD: CI y supply chain de contenedores
 
-Fecha: 30/10/2026. Responsable y revisión: misma sesión coordinadora; revisión humana pendiente en
-MR #30. Rama: `feat/v2-container-foundation`. Propiedad: workflows, gateway base, política de
-vulnerabilidades, contratos, runbook y esta evidencia.
+Fecha: 30/10/2026. Responsable y revisión técnica: misma sesión coordinadora. MR #30 integrado por
+`gusjrivas` sin una review formal registrada en GitHub. Rama de implementación:
+`feat/v2-container-foundation`. Propiedad: workflows, gateway base, política de vulnerabilidades,
+contratos, runbook y esta evidencia.
 
 Commit de implementación: `f0c9c05` (`ci: build scan and publish immutable images`).
 
@@ -65,3 +66,24 @@ La ejecución final del código `cc7cae7` también aprobó
 [supply chain 41000755487](https://github.com/gusjrivas/PLN3_AgroRAG_GJR/actions/runs/41000755487).
 GitHub advirtió que `upload-artifact` v4 apuntaba a Node 20 y lo forzaba sobre Node 24; se actualizó
 a la release oficial v7.0.2, fijada al commit completo, para eliminar esa deuda antes del merge.
+
+## Publicación post-merge verificada
+
+MR #30 se integró en `main` como `5a11a29a8e0e8b3ce4c1dce9e5ecf7a221d24af6`. El
+[run de supply chain 41061924537](https://github.com/gusjrivas/PLN3_AgroRAG_GJR/actions/runs/41061924537)
+terminó `success`: E2E, tres SBOM/scans, gate, login GHCR, publicación y upload del manifiesto
+aprobaron. El [run quality 41061924511](https://github.com/gusjrivas/PLN3_AgroRAG_GJR/actions/runs/41061924511)
+del mismo commit también terminó `success`.
+
+El artefacto `release-manifest-5a11a29a8e0e8b3ce4c1dce9e5ecf7a221d24af6` fue descargado desde
+ese run y declaró:
+
+```text
+api     ghcr.io/gusjrivas/pln3_agrorag_gjr/api@sha256:eb6b549890a537f297c96a40962e11675b1d9a7ce3aafacfe094352a9017b8cd
+ui      ghcr.io/gusjrivas/pln3_agrorag_gjr/ui@sha256:cc6f9a917cdf4808bc6625c4de1b6489b5df1bf95258e18619e5a136a22392ea
+gateway ghcr.io/gusjrivas/pln3_agrorag_gjr/gateway@sha256:b12518884a681b6d12668041765ebc4eebf922cd09bb37159e830d5e4fa8d333
+```
+
+`docker buildx imagetools inspect` resolvió las tres referencias desde esta máquina, devolvió
+exit 0 y confirmó cada digest exacto. Esta evidencia completa la publicación de CI-V2-01; no prueba
+todavía despliegue, TLS, catálogo, smoke ni Garak en staging.

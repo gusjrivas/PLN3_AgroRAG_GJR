@@ -9,8 +9,9 @@ Repositorio independiente: https://github.com/gusjrivas/PLN3_AgroRAG_GJR
 ADR-015/OpenSpec 07: settings por secret files, imágenes API/UI/gateway no root, Compose local,
 catálogo persistente/read-only y overlay productivo endurecido ya tienen evidencia; CI de imágenes,
 identidad de release, logs HTTP JSON y rollback validado ya tienen evidencia; supply chain aprobó
-en GitHub y el runner Garak 0.17.0 aprobó sus contratos offline. La publicación inmutable del runner
-y el scan manual autorizado ya tienen workflows fail-closed. El smoke de staging también ata
+en GitHub y las imágenes API/UI/gateway del merge `5a11a29` están publicadas por digest en GHCR.
+El runner Garak 0.17.0 aprobó sus contratos offline y fue publicado por digest desde el mismo merge.
+El scan manual autorizado tiene un workflow fail-closed. El smoke de staging también ata
 manifiesto, identidad, catálogo y una consulta citada en evidencia sanitizada. El preflight de host
 valida digests, identidad OCI, volumen y secretos antes de levantar producción; el despliegue y la
 ejecución reales en staging siguen abiertos.

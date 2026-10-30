@@ -121,12 +121,16 @@ secretos sólo en los servicios autorizados; la aplicación adoptará variables 
 Cada corte se integra por separado. Las tareas funcionales se abren en OpenSpec después de aceptar
 ADR-015. Los tests de contenedor no consultan LLMs pagos ni descargan pesos.
 
-Estado al 30/10/2026 en MR #30: fases 0–4, supply chain del producto y gate Garak offline completos.
-La publicación manual del runner y el scan autorizado quedaron automatizados con imagen por digest,
-secrets de environment, evidencia cruda cifrada y resumen sanitizado. Permanecen abiertos el
+Estado al 30/10/2026: MR #30 integrado como `5a11a29`; fases 0–4, supply chain del producto y gate
+Garak offline completos. API/UI/gateway y el runner Garak fueron publicados por digest desde el
+mismo commit de `main`. El scan autorizado quedó automatizado con imagen por digest, secrets de
+environment, evidencia cruda cifrada y resumen sanitizado. Permanecen abiertos el
 despliegue Linux limpio, la ejecución Garak real, el triage humano y la promoción de los mismos
 digests. Ninguna fase abierta se considera satisfecha por la documentación o por un workflow no
 ejecutado.
+
+Los environments protegidos `staging` y `staging-security` ya están creados para `main` con reviewer
+humano; sus secrets siguen vacíos hasta que el operador aporte credenciales desde el secret store.
 
 La puerta previa de staging también está automatizada: descarga el `release-manifest.json` del run
 que publicó las imágenes, exige coincidencia de commit/digests, consulta identidad y catálogo por el
