@@ -27,8 +27,9 @@ en runtime, y ejecutar con identidad no root.
 
 #### Scenario: IMG-V2-build
 - **GIVEN** checkout limpio sin `.env` ni catálogo privado.
-- **WHEN** BuildKit construye ambos targets.
-- **THEN** instala el wheel bloqueado, labels OCI y entrypoint exec-form sin descargar modelos.
+- **WHEN** BuildKit construye los artefactos API/UI/gateway.
+- **THEN** instala el wheel bloqueado, API/UI/gateway comparten versión y revisión OCI, y los
+  entrypoints exec-form arrancan sin descargar modelos.
 
 #### Scenario: IMG-V2-content
 - **GIVEN** imágenes finales.

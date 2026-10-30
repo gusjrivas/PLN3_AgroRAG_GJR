@@ -44,7 +44,8 @@ La API recibe identidad de release por entorno (`AGRO_RELEASE_VERSION`, `AGRO_CO
 `AGRO_IMAGE_DIGEST`), la publica en `/health/version` junto con el catálogo activo y emite un evento
 JSON sanitizado por request. Readiness continúa autenticada y valida corpus/proveedor; liveness no
 depende de red. La referencia observable no sustituye la verificación del digest en el manifiesto de
-Compose ni la evidencia de promoción.
+Compose ni la evidencia de promoción. API, UI y gateway llevan la misma revisión/versión OCI; CI y
+el preflight rechazan cualquiera de los tres artefactos si su label no coincide con la candidata.
 
 El backup de catálogo es un artefacto autocontenido con hashes: manifiesto activo, único snapshot
 referenciado y metadata de release. Restore verifica todo antes de escribir, conserva snapshots ya

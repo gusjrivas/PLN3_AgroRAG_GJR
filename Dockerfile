@@ -58,6 +58,16 @@ CMD ["streamlit", "run", "/app/ui.py", "--server.address", "0.0.0.0", "--server.
 
 FROM ${CADDY_IMAGE} AS gateway
 
+ARG APP_VERSION=0.1.0
+ARG VCS_REF=unknown
+ARG SOURCE_URL=https://github.com/gusjrivas/PLN3_AgroRAG_GJR
+
+LABEL org.opencontainers.image.title="AgroRAG gateway" \
+      org.opencontainers.image.description="Gateway TLS de AgroRAG" \
+      org.opencontainers.image.source="${SOURCE_URL}" \
+      org.opencontainers.image.version="${APP_VERSION}" \
+      org.opencontainers.image.revision="${VCS_REF}"
+
 RUN apk upgrade --no-cache \
     && addgroup -g 10002 -S gateway \
     && adduser -u 10002 -S -D -H -G gateway gateway \

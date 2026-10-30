@@ -18,6 +18,14 @@ def test_ci_v2_builds_once_tests_the_images_and_emits_supply_chain_evidence() ->
     assert "scripts/check_vulnerability_policy.py" in workflow
     assert "exit-code: '0'" in workflow
     assert "release-manifest.json" in workflow
+    inspection = workflow[
+        workflow.index("name: Inspect runtime identities") : workflow.index(
+            "name: Validate single-host preflight syntax"
+        )
+    ]
+    assert "org.opencontainers.image.revision" in inspection
+    for image in ("agrorag-api:ci", "agrorag-ui:ci", "agrorag-gateway:ci"):
+        assert image in inspection
 
 
 def test_ci_v2_publishes_only_sha_and_semver_without_rebuild_or_latest() -> None:

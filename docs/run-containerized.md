@@ -361,7 +361,14 @@ y monta el backup read-only. Ambos ejecutan sin red, capabilities ni privilegios
 
 Antes de promover una candidata, conservar en el registro restringido de release los tres digests
 API/UI/gateway y el Compose renderizado. Configurar un directorio absoluto fuera del repositorio y
-crear un backup nombrado de forma inmutable:
+crear un backup nombrado de forma inmutable. En Linux el directorio debe ser `0700` y escribible por
+el UID/GID runtime `10001:10001`; por ejemplo:
+
+```bash
+sudo install -d -m 0700 -o 10001 -g 10001 /var/backups/agrorag
+```
+
+Luego ejecutar el job:
 
 ```powershell
 $env:AGRO_BACKUP_DIR = 'D:\backups\agrorag'
