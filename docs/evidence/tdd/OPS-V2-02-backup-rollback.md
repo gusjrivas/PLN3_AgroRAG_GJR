@@ -4,6 +4,8 @@ Fecha: 30/10/2026. Responsable y revisión: misma sesión coordinadora; revisió
 MR #30. Rama: `feat/v2-container-foundation`. Propiedad: backup/restore de catálogo, CLI, overlay de
 operaciones, contratos y runbook.
 
+Commit de implementación: `ea5d87f` (`feat: add verified catalogue rollback`).
+
 ## RED
 
 ```powershell
