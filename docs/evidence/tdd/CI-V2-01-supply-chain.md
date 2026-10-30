@@ -38,3 +38,15 @@ Gustavo Julián Rivas y vencimiento 15/11/2026; Caddyfile validó dentro de la i
 La excepción no equivale a resolución. Antes del vencimiento se debe consumir el primer Caddy
 oficial corregido, reescanear y retirar entradas. La ejecución real del nuevo workflow, publicación
 GHCR y manifest remoto se registrarán después del push; este documento no los anticipa.
+
+## RED remoto y corrección
+
+La primera ejecución remota, run `40995993762`, construyó correctamente las tres imágenes pero
+falló el E2E al montar un fixture bajo el directorio temporal `0700` del runner. El contenedor,
+correctamente ejecutado como UID 10001, recibió `PermissionError`; no se debilitó su identidad.
+El upload `always()` también falló porque el directorio de artefactos se creaba después del E2E.
+
+Se hizo atravesable el directorio sintético y legibles sus dos archivos antes del bind mount. La
+evidencia de contexto ahora se inicializa antes del E2E, por lo que un fallo temprano deja un
+artefacto diagnosticable. Verificación local: E2E Compose `1 passed`, contrato CI `3 passed`, Ruff y
+`git diff --check` con exit 0. El resultado de la reejecución se añadirá sin anticiparlo.

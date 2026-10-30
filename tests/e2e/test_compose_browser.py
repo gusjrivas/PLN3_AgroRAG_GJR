@@ -53,11 +53,16 @@ def _wait(url: str, timeout: float = 60) -> None:
 
 
 def _fixture(tmp_path: Path) -> Path:
+    # GitHub-hosted runners create pytest temporary directories as 0700. The
+    # released image deliberately runs as UID 10001, so the bind-mounted
+    # fixture directory must be traversable without weakening the image user.
+    tmp_path.chmod(0o755)
     document = tmp_path / "manual.pdf"
     pdf = Canvas(str(document))
     pdf.drawString(50, 750, "Lechuga: conservar humedad constante durante el crecimiento.")
     pdf.showPage()
     pdf.save()
+    document.chmod(0o644)
     manifest = tmp_path / "manifest.json"
     manifest.write_text(
         json.dumps(
@@ -90,6 +95,7 @@ def _fixture(tmp_path: Path) -> Path:
         ),
         encoding="utf-8",
     )
+    manifest.chmod(0o644)
     return manifest
 
 

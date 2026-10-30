@@ -50,14 +50,16 @@ jobs:
           test "$(docker run --rm --entrypoint id agrorag-ui:ci -u)" = "10001"
           test "$(docker run --rm --entrypoint id agrorag-gateway:ci -u)" = "10002"
 
+      - name: Initialize supply-chain evidence
+        run: |
+          mkdir -p artifacts
+          printf 'commit=%s\nrun=%s\n' "$GITHUB_SHA" "$GITHUB_RUN_ID" > artifacts/build-context.txt
+
       - name: Browser through Compose using candidate images
         env:
           AGRO_E2E_API_IMAGE: agrorag-api:ci
           AGRO_E2E_UI_IMAGE: agrorag-ui:ci
         run: uv run pytest -m e2e tests/e2e/test_compose_browser.py -q
-
-      - name: Create artifact directory
-        run: mkdir -p artifacts
 
       - name: API SBOM
         uses: anchore/sbom-action@66cbf4bc1f1c0d2edc94016e65bc221b6bb0ad6c # v0.24.3
