@@ -19,3 +19,4 @@ Estado inicial: propuestas técnicas para revisión. Python, TDD y repositorio s
 - [ADR-012: primera versión incremental](012.md).
 - [ADR-013: contratos de recuperación y activación semántica](013.md).
 - [ADR-014: proveedor generativo OpenAI opcional y explícito](014.md).
+- [ADR-015: monolito modular containerizado con Compose para una PoC productiva single-host](015.md).
