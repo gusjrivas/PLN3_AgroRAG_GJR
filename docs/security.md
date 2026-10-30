@@ -32,6 +32,9 @@ Los JSONL/hitlogs crudos pueden contener prompts y respuestas: se guardan con mo
 `output/garak/raw/`, están ignorados por Git y deben ir a almacenamiento restringido. El gate sólo
 publica conteos por probe/detector. Un HIGH sin triage bloquea; uno confirmado necesita excepción
 con riesgo, owner, tracking y vencimiento. Toda regresión mayor a la tolerancia versionada bloquea.
+En GitHub, el scan real exige aprobación del environment `staging-security`, runner GHCR por digest
+y tres secretos separados. El crudo se cifra antes de subirlo y se retiene 7 días; el resumen
+sanitizado se retiene 90. Los archivos temporales y credenciales se eliminan aun si el gate falla.
 
 ## Auditoría
 

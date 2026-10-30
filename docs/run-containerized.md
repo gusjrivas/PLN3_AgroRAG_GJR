@@ -234,6 +234,39 @@ dependencias de Garak 0.17.0. La excepción vive aislada en
 API/UI/gateway. Referencia primaria:
 https://github.com/fsspec/filesystem_spec/security/advisories/GHSA-27vj-qcqg-25rc.
 
+### Publicación y scan autorizado desde GitHub
+
+El workflow manual `garak-runner-supply-chain` construye `Dockerfile.garak` una sola vez en
+`linux/amd64`, comprueba UID/versión/revisión, produce SBOM, ejecuta Trivy 0.76.1 y aplica la política
+aislada del runner. Sólo después publica ese mismo objeto como
+`ghcr.io/<owner>/<repo>/garak-runner:sha-<commit>` y entrega un manifiesto con referencia por digest;
+no crea `latest`. Ejecutarlo desde Actions con `acknowledge_large_build=true` y conservar el
+manifiesto de 90 días para el siguiente paso.
+
+Crear en GitHub el environment protegido `staging-security`, con reviewer humano y estos secrets:
+
+- `GARAK_GATEWAY_AUTHORIZATION`: cabecera Basic de la identidad exclusiva de ensayo.
+- `GARAK_READER_KEY`: reader key de la candidata desplegada.
+- `GARAK_REPORT_ENCRYPTION_KEY`: frase robusta y exclusiva para cifrar el crudo; conservarla en el
+  secret store durante la retención del artefacto.
+
+El workflow manual `staging-garak-security-gate` recibe `target_url`, `release_id`, `garak_image` y
+`authorization_confirmed=true`. `garak_image` debe copiarse del manifiesto anterior y terminar en
+`@sha256:<64 hex>`; el workflow rechaza tags, paquetes ajenos, HTTP, rutas distintas de `/v1/query`
+y releases con caracteres inseguros. Vuelve a escanear el digest, materializa credenciales en
+archivos efímeros `0600` y ejecuta Compose con `--no-build`.
+
+El reporte crudo nunca se sube directamente: se empaqueta y cifra con AES-256-CBC/PBKDF2 antes del
+upload, junto con el SHA-256 del ciphertext, con retención de 7 días. El resumen sanitizado se
+conserva 90 días. El job elimina secretos y evidencia local con `always()`, y finalmente falla si
+Garak bloqueó, no produjo crudo o no produjo resumen. El hash detecta corrupción accidental; la
+autorización/acceso del artefacto y el secret store siguen siendo necesarios para integridad y
+confidencialidad operacional.
+
+La existencia de ambos workflows no completa 5.3: registrar por separado URL/host autorizado,
+digests de API/UI/gateway/runner, run de Actions, costo, resumen, triage y dictamen humano. No
+descargar ni compartir el crudo salvo necesidad de triage y acceso aprobado.
+
 ## Backup y rollback
 
 `compose.ops.yaml` agrega jobs offline y no forma parte del runtime. El backup monta el catálogo

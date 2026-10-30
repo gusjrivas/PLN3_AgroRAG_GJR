@@ -41,3 +41,6 @@ misma sesión durante implementación; revisión humana requerida antes de cada 
 - [x] 5.2 SEC-V2-02: runner, adaptador, configuración, parser/gate y tests offline.
 - [ ] 5.3 Ejecutar staging limpio y scan autorizado; registrar resultados reales separados.
 - [ ] 5.4 Promover la misma imagen y completar documentación/release sólo con evidencia.
+
+Preparación de 5.3: workflows manuales de publicación del runner y scan protegido implementados;
+no se marca completa hasta registrar un host limpio y un reporte real autorizado.

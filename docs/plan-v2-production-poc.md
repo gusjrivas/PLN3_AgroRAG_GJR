@@ -121,10 +121,12 @@ secretos sólo en los servicios autorizados; la aplicación adoptará variables 
 Cada corte se integra por separado. Las tareas funcionales se abren en OpenSpec después de aceptar
 ADR-015. Los tests de contenedor no consultan LLMs pagos ni descargan pesos.
 
-Estado al 29/10/2026 en MR #30: contrato y CFG-V2-01 completos; imágenes API/UI/gateway construidas
-como no root; Compose local, catálogo persistente/read-only y overlay productivo endurecido
-implementados. Permanecen abiertos ARC-V2-02 final, browser E2E Compose, logs/release, rollback,
-CI/SBOM/escaneo, staging y garak. Ninguna fase abierta se considera satisfecha por la documentación.
+Estado al 30/10/2026 en MR #30: fases 0–4, supply chain del producto y gate Garak offline completos.
+La publicación manual del runner y el scan autorizado quedaron automatizados con imagen por digest,
+secrets de environment, evidencia cruda cifrada y resumen sanitizado. Permanecen abiertos el
+despliegue Linux limpio, la ejecución Garak real, el triage humano y la promoción de los mismos
+digests. Ninguna fase abierta se considera satisfecha por la documentación o por un workflow no
+ejecutado.
 
 ### Fase 0 — contrato de V2
 
@@ -213,6 +215,12 @@ bloquea si aparece un hallazgo crítico/alto confirmado sin excepción vigente o
 probe/detector supera la tolerancia de regresión acordada respecto del baseline. La revisión humana
 resuelve falsos positivos y confirma materialidad; un resultado sin hits no demuestra ausencia del
 riesgo.
+
+La preparación operativa usa dos workflows manuales separados: `garak-runner.yml` construye una
+vez, genera SBOM, aplica Trivy/política y publica por SHA; `staging-security.yml` sólo admite ese
+paquete GHCR por digest y un target HTTPS `/v1/query`, requiere confirmación y el environment
+protegido `staging-security`, y conserva crudos cifrados 7 días y resumen sanitizado 90 días. Esta
+automatización no sustituye la evidencia de una ejecución real.
 
 Puerta final: los criterios siguientes están demostrados y no sólo documentados.
 

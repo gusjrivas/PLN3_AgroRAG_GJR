@@ -31,6 +31,10 @@ montados por servicio. Garak es un job separado de release/staging y no una depe
 Su contenedor no recibe credenciales de proveedor: un adaptador loopback traduce el contrato REST
 de Garak a `/v1/query`, agrega Basic auth y reader key desde archivos distintos, y sólo acepta un
 target HTTPS explícito. El gateway enruta `/v1/*` a API bajo la misma autenticación de ingreso.
+El runner se construye, genera SBOM, reescanea y publica una sola vez por SHA mediante un workflow
+manual separado. Otro workflow manual, protegido por el environment `staging-security`, acepta
+exclusivamente ese paquete por digest, exige autorización y secretos de ensayo, cifra el reporte
+crudo antes de conservarlo y publica por separado el resumen sanitizado.
 
 La API recibe identidad de release por entorno (`AGRO_RELEASE_VERSION`, `AGRO_COMMIT_SHA` y
 `AGRO_IMAGE_DIGEST`), la publica en `/health/version` junto con el catálogo activo y emite un evento

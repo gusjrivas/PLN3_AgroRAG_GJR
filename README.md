@@ -9,8 +9,9 @@ Repositorio independiente: https://github.com/gusjrivas/PLN3_AgroRAG_GJR
 ADR-015/OpenSpec 07: settings por secret files, imágenes API/UI/gateway no root, Compose local,
 catálogo persistente/read-only y overlay productivo endurecido ya tienen evidencia; CI de imágenes,
 identidad de release, logs HTTP JSON y rollback validado ya tienen evidencia; supply chain aprobó
-en GitHub y el runner Garak 0.17.0 aprobó sus contratos offline. El despliegue staging y el scan
-autorizado siguen abiertos.
+en GitHub y el runner Garak 0.17.0 aprobó sus contratos offline. La publicación inmutable del runner
+y el scan manual autorizado ya tienen workflows fail-closed; el despliegue y la ejecución reales en
+staging siguen abiertos.
 El benchmark congelado de 60 casos conserva 49 PASS y 11
 FAIL de contenido/citas, con 60/60 estados observados correctos. E1/E2 y el piloto mínimo E3 se
 ejecutaron sobre `dev`; BM25 permanece como default.**

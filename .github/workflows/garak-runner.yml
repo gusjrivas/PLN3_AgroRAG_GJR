@@ -1,0 +1,115 @@
+name: garak-runner-supply-chain
+
+on:
+  workflow_dispatch:
+    inputs:
+      acknowledge_large_build:
+        description: Confirmar el build manual del runner Garak (imagen de varios GB)
+        required: true
+        type: boolean
+        default: false
+
+concurrency:
+  group: garak-runner-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build-scan-publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - name: Require explicit build acknowledgement
+        env:
+          ACKNOWLEDGED: ${{ inputs.acknowledge_large_build }}
+        run: test "$ACKNOWLEDGED" = "true"
+
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Build runner once
+        run: >-
+          docker build -f Dockerfile.garak --platform linux/amd64
+          --build-arg VCS_REF="$GITHUB_SHA"
+          -t agrorag-garak:ci .
+
+      - name: Inspect runtime identity and version
+        run: |
+          set -euo pipefail
+          test "$(docker run --rm --entrypoint id agrorag-garak:ci -u)" = "10003"
+          docker run --rm --entrypoint python agrorag-garak:ci -m garak --version
+          test "$(docker image inspect agrorag-garak:ci --format '{{index .Config.Labels "org.opencontainers.image.revision"}}')" = "$GITHUB_SHA"
+
+      - name: Initialize runner evidence
+        run: |
+          mkdir -p artifacts
+          printf 'commit=%s\nrun=%s\n' "$GITHUB_SHA" "$GITHUB_RUN_ID" > artifacts/garak-runner-build-context.txt
+
+      - name: Runner SBOM
+        uses: anchore/sbom-action@66cbf4bc1f1c0d2edc94016e65bc221b6bb0ad6c # v0.24.3
+        with:
+          image: agrorag-garak:ci
+          format: spdx-json
+          output-file: artifacts/garak-runner.spdx.json
+          upload-artifact: false
+
+      - name: Scan runner
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          image-ref: agrorag-garak:ci
+          format: json
+          output: artifacts/garak-runner-trivy.json
+          severity: CRITICAL,HIGH
+          ignore-unfixed: true
+          exit-code: '0'
+          scanners: vuln,secret
+          version: v0.76.1
+
+      - name: Enforce runner vulnerability policy
+        run: >-
+          python3 scripts/check_vulnerability_policy.py
+          --report garak-runner=artifacts/garak-runner-trivy.json
+          --exceptions configs/security/garak-runner-vulnerability-exceptions.json
+
+      - name: Upload runner supply-chain evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: garak-runner-supply-chain-${{ github.sha }}
+          path: artifacts/
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Login to GHCR
+        uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6 # v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish immutable runner
+        run: |
+          set -euo pipefail
+          repository="$(echo "$GITHUB_REPOSITORY" | tr '[:upper:]' '[:lower:]')"
+          remote="ghcr.io/${repository}/garak-runner"
+          sha_tag="${remote}:sha-${GITHUB_SHA}"
+          docker tag agrorag-garak:ci "$sha_tag"
+          docker push "$sha_tag"
+          docker pull "$sha_tag"
+          digest_ref="$(docker image inspect "$sha_tag" --format '{{index .RepoDigests 0}}')"
+          [[ "$digest_ref" =~ ^ghcr\.io/.+@sha256:[0-9a-f]{64}$ ]]
+          jq -n --arg commit "$GITHUB_SHA" --arg image "$digest_ref" \
+            '{commit:$commit,image:$image}' > artifacts/garak-runner-manifest.json
+
+      - name: Upload immutable runner manifest
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: garak-runner-manifest-${{ github.sha }}
+          path: artifacts/garak-runner-manifest.json
+          if-no-files-found: error
+          retention-days: 90
