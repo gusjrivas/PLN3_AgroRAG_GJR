@@ -54,6 +54,13 @@ Suite completa y controles: Ruff, format, mypy sobre 38 archivos de producto má
 dos contratos import-linter y `git diff --check`, exit 0. Pytest terminó con exit 0:
 `275 passed, 3 deselected, 1 warning in 11.11s`.
 
+El HEAD `ad786e6` aprobó en GitHub
+[quality 41002537329](https://github.com/gusjrivas/PLN3_AgroRAG_GJR/actions/runs/41002537329):
+offline, OpenSpec y browser terminaron `success`. También aprobó
+[container supply chain 41002537339](https://github.com/gusjrivas/PLN3_AgroRAG_GJR/actions/runs/41002537339):
+el gateway con la nueva ruta fue construido una vez junto con API/UI, y E2E, tres SBOM, tres scans,
+política y evidencia terminaron `success`. Publicación se omitió correctamente por ser un PR.
+
 ## Límite pendiente
 
 No se descargó un manifiesto publicado ni se llamó un staging real: el MR sigue draft, todavía no
