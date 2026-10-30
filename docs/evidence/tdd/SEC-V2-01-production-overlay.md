@@ -4,6 +4,8 @@ Fecha: 29/10/2026. Responsable y revisión: misma sesión coordinadora; revisió
 MR #30. Rama: `feat/v2-container-foundation`. Propiedad: overlay productivo, gateway Caddy,
 Dockerfile, contratos, runbook, plan y esta evidencia.
 
+Commit de implementación: `61ffbe9` (`feat: harden production compose gateway`).
+
 ## RED
 
 Se añadieron dos escenarios al contrato Compose: imágenes inmutables/gateway único y
