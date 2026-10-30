@@ -107,8 +107,8 @@ limpia sus recursos. No usa el catálogo ni volumen local del usuario.
 
 ## Limitaciones todavía abiertas
 
-- La publicación GHCR sólo puede comprobarse al integrar en `main`; el PR ya verificó E2E, SBOM,
-  scans y gate sobre las mismas imágenes candidatas.
+- El push del merge `5a11a29` publicó API/UI/gateway por digest y conservó el manifiesto inmutable en
+  el run `41061924537`. Esto prueba registry/supply chain, no un despliegue staging.
 - Falta un host Linux staging autorizado, dominio/TLS, presupuesto de proveedor y credenciales de
   ensayo para ejecutar el primer reporte Garak real. Ningún resultado adversarial fue fabricado.
 - Docker Scout local requiere autenticación y no se usó como evidencia. Trivy 0.76.1 sí se ejecutó
@@ -244,9 +244,11 @@ al binario oficial Caddy 2.11.7, tienen responsable y vencen el 15/11/2026. Venc
 bloquean automáticamente; deben eliminarse al publicar Caddy corregido. No son una declaración de
 ausencia de riesgo ni autorizan promoción sin triage humano.
 
-La ejecución de PR `40996190194` aprobó build único, E2E, tres SBOM/scans y el gate. La publicación
-se omitió deliberadamente por no ser un push a `main`; al integrar, el workflow publica esos mismos
-bytes por SHA y conserva el manifiesto de digests.
+La ejecución de PR `40996190194` aprobó build único, E2E, tres SBOM/scans y el gate. Tras integrar,
+el [run de `main` 41061924537](https://github.com/gusjrivas/PLN3_AgroRAG_GJR/actions/runs/41061924537)
+repitió esos controles, publicó los tres paquetes por SHA y conservó el manifiesto de digests para
+el commit `5a11a29a8e0e8b3ce4c1dce9e5ecf7a221d24af6`. Los digests están registrados en CI-V2-01;
+staging debe consumir exactamente esas referencias, no reconstruirlas.
 
 ## Evaluación Garak
 
