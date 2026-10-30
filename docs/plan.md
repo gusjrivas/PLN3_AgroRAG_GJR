@@ -1,5 +1,9 @@
 # Plan de inicio y ejecución
 
+La evolución posterior a `v0.1.0` se propone en
+[Plan V2: PoC containerizada y desplegable](plan-v2-production-poc.md) y
+[ADR-015](adr/015.md). Esta referencia no declara la V2 implementada.
+
 ## Estado al 29/10/2026
 
 La primera versión local y el paquete técnico están implementados: corpus curado de 27 fragmentos,
