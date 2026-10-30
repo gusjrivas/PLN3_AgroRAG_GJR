@@ -50,5 +50,9 @@ contaminación del entorno ya documentada en DEL-02, no una regresión del produ
 - OpenSpec 07 strict: exit 0, cambio válido.
 - `uv lock --check`: exit 0, 146 paquetes resueltos sin cambiar dependencias.
 
+Commit funcional: `5e0dca9`. Después de aplicar el formato, `ruff format --check .` terminó con
+exit 0 sobre 193 archivos. La revisión del diff fue realizada por la misma sesión; revisión humana
+pendiente en el MR.
+
 No se consultaron proveedores, no se descargaron modelos y no se imprimieron secretos. ARC-V2-02,
 las imágenes y Compose continúan pendientes; este corte no declara containerización completa.
