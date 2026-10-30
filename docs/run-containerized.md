@@ -1,8 +1,8 @@
 # Ejecutar AgroRAG V2 con contenedores
 
 Estado: implementación incremental. Imágenes, Compose local, gateway productivo, identidad/logs de
-release y rollback de catálogo/imagen están verificados; el workflow supply chain está implementado
-y aguarda su ejecución en GitHub; staging y garak continúan.
+release, rollback y supply chain están verificados. El runner Garak aprobó build/smoke y contratos
+offline; staging y el primer scan autorizado continúan pendientes.
 
 ## Requisitos
 
@@ -107,8 +107,10 @@ limpia sus recursos. No usa el catálogo ni volumen local del usuario.
 
 ## Limitaciones todavía abiertas
 
-- La ejecución del E2E dentro del workflow CI sigue pendiente; localmente el recorrido Compose,
-  reinicio y compatibilidad V1 están verificados.
+- La publicación GHCR sólo puede comprobarse al integrar en `main`; el PR ya verificó E2E, SBOM,
+  scans y gate sobre las mismas imágenes candidatas.
+- Falta un host Linux staging autorizado, dominio/TLS, presupuesto de proveedor y credenciales de
+  ensayo para ejecutar el primer reporte Garak real. Ningún resultado adversarial fue fabricado.
 - Docker Scout local requiere autenticación y no se usó como evidencia. Trivy 0.76.1 sí se ejecutó
   sin login y el workflow conserva JSON/SBOM; consultar la política y evidencia CI-V2-01.
 - Estas imágenes contienen el perfil BM25 base. El job semántico/administrativo se define de forma
@@ -173,6 +175,64 @@ bloquea siempre CRITICAL y secretos; HIGH exige una entrada completa y no vencid
 al binario oficial Caddy 2.11.7, tienen responsable y vencen el 15/11/2026. Vencidas o ausentes
 bloquean automáticamente; deben eliminarse al publicar Caddy corregido. No son una declaración de
 ausencia de riesgo ni autorizan promoción sin triage humano.
+
+La ejecución de PR `40996190194` aprobó build único, E2E, tres SBOM/scans y el gate. La publicación
+se omitió deliberadamente por no ser un push a `main`; al integrar, el workflow publica esos mismos
+bytes por SHA y conserva el manifiesto de digests.
+
+## Evaluación Garak
+
+`compose.security.yaml` es independiente del runtime y sólo define el perfil one-shot `security`.
+Construye `Dockerfile.garak` con Garak 0.17.0 y un lock exacto de 197 paquetes, corre como UID/GID
+10003 sin puertos, capabilities ni
+credenciales de proveedor, y escribe evidencia fuera del contenedor. La distribución oficial de
+Garak arrastra PyTorch/CUDA: la imagen local validada mide 3.292.465.354 bytes. Debe publicarse y
+cachearse por separado; nunca se incorpora a API/UI/gateway.
+
+El lock actual incluye wheels CUDA y el Dockerfile falla cerrado fuera de `linux/amd64`. Soportar
+ARM64 exige resolver/escanear un lock e imagen propios; no se presume portabilidad binaria.
+
+Antes del scan, crear una identidad Basic exclusiva y de mínimo privilegio para staging. El secreto
+`gateway_authorization` contiene `Basic <base64(usuario:password)>`; `reader_key` contiene la misma
+reader key configurada en la API candidata. Ambos archivos deben provenir del secret store y tener
+acceso restringido. No reutilizar el archivo Caddy `gateway_auth`: ese archivo contiene un hash y
+no es una cabecera cliente.
+
+En Linux, preparar un directorio restringido escribible por el UID del runner y configurar un
+endpoint autorizado exacto:
+
+```bash
+sudo install -d -m 0700 -o 10003 -g 10003 /var/lib/agrorag/garak
+export AGRO_GARAK_OUTPUT_DIR=/var/lib/agrorag/garak
+export AGRO_GARAK_SECRETS_DIR=/ruta/del/secret-store/garak
+export AGRO_GARAK_TARGET_URL=https://staging.example.org/v1/query
+export AGRO_GARAK_RELEASE_ID=2.0.0-sha-<commit>
+export AGRO_COMMIT_SHA=<commit-completo>
+docker compose -f compose.security.yaml --profile security config --quiet
+docker compose -f compose.security.yaml --profile security build garak
+docker compose -f compose.security.yaml --profile security run --rm garak
+```
+
+El adaptador loopback es el único componente que ve ambas credenciales y rechaza targets que no
+sean HTTPS o no terminen en `/v1/query`. Garak prueba cuatro familias acotadas: prompt injection,
+jailbreak, Base64 y generación de credenciales aparentes, con seed 1729, una generación y cap 32.
+El costo máximo real depende de los prompts que expanda Garak; confirmar presupuesto/proveedor antes
+de ejecutar. No apuntar este perfil a producción sin autorización explícita.
+
+Los reportes e hitlogs quedan en `raw/` con modo `0600` y pueden contener prompts/respuestas; no se
+suben a Git ni a artefactos de acceso general. `summary/<release>.json` contiene sólo agregados,
+hashes de configuración/política y decisión. Un hallazgo HIGH sin triage, uno confirmado sin
+excepción completa/vigente, una regresión o un detector esperado ausente bloquean el job. Completar
+`infra/garak/triage.json`, `exceptions.json` y `baseline.json` mediante revisión humana; no convertir
+automáticamente un hit heurístico en vulnerabilidad confirmada.
+
+Trivy 0.76.1 dejó 0 CRITICAL, 1 HIGH y 0 secretos. El HIGH es CVE-2026-104851 de `fsspec`; afecta
+`ReferenceFileSystem` al procesar un documento Kerchunk/reference no confiable, superficie que este
+runner no invoca. `datasets 3.6` impide actualizar a la versión corregida sin salir del conjunto de
+dependencias de Garak 0.17.0. La excepción vive aislada en
+`configs/security/garak-runner-vulnerability-exceptions.json`, vence el 15/11/2026 y no se aplica a
+API/UI/gateway. Referencia primaria:
+https://github.com/fsspec/filesystem_spec/security/advisories/GHSA-27vj-qcqg-25rc.
 
 ## Backup y rollback
 

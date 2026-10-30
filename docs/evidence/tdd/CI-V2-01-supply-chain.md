@@ -36,8 +36,7 @@ Trivy confirmó 0 HIGH/CRITICAL en API y UI. Gateway quedó con 0 CRITICAL y 6 r
 Gustavo Julián Rivas y vencimiento 15/11/2026; Caddyfile validó dentro de la imagen no root.
 
 La excepción no equivale a resolución. Antes del vencimiento se debe consumir el primer Caddy
-oficial corregido, reescanear y retirar entradas. La ejecución real del nuevo workflow, publicación
-GHCR y manifest remoto se registrarán después del push; este documento no los anticipa.
+oficial corregido, reescanear y retirar entradas.
 
 ## RED remoto y corrección
 
@@ -49,4 +48,14 @@ El upload `always()` también falló porque el directorio de artefactos se creab
 Se hizo atravesable el directorio sintético y legibles sus dos archivos antes del bind mount. La
 evidencia de contexto ahora se inicializa antes del E2E, por lo que un fallo temprano deja un
 artefacto diagnosticable. Verificación local: E2E Compose `1 passed`, contrato CI `3 passed`, Ruff y
-`git diff --check` con exit 0. El resultado de la reejecución se añadirá sin anticiparlo.
+`git diff --check` con exit 0.
+
+## GREEN remoto
+
+La reejecución [40996190194](https://github.com/gusjrivas/PLN3_AgroRAG_GJR/actions/runs/40996190194)
+terminó `success`: build e identidades, E2E Compose, tres SBOM, tres scans, política y upload de
+evidencia aprobaron. La suite `quality` del mismo commit `99d7474` también terminó `success`.
+
+Login, push GHCR y manifiesto remoto aparecen `skipped` porque el evento fue `pull_request`, tal como
+exige el contrato: sólo un push integrado a `main` o tag semver publica. El workflow y sus pruebas
+quedan completos; la existencia real de paquetes/digests se registrará tras integrar, no se inventa.

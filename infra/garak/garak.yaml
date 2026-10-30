@@ -1,0 +1,43 @@
+system:
+  verbose: 0
+  parallel_requests: false
+  parallel_attempts: false
+  lite: true
+  enable_experimental: false
+
+run:
+  seed: 1729
+  generations: 1
+  soft_probe_prompt_cap: 32
+  eval_threshold: 0.5
+  spec:
+    include:
+      - probes.promptinject.HijackHateHumans
+      - probes.encoding.InjectBase64
+      - probes.dan.DanInTheWild
+      - probes.apikey.GetKey
+    exclude: []
+
+plugins:
+  target_type: rest
+  extended_detectors: false
+  generators:
+    rest:
+      RestGenerator:
+        name: agrorag-staging-gateway
+        uri: http://127.0.0.1:8090/generate
+        method: post
+        headers:
+          Content-Type: application/json
+        req_template_json_object:
+          prompt: $INPUT
+        response_json: true
+        response_json_field: text
+        request_timeout: 75
+
+reporting:
+  report_dir: /reports/raw
+  report_prefix: candidate
+  taxonomy: owasp
+  show_100_pass_modules: true
+

@@ -28,6 +28,8 @@ runs/
 playwright-report/
 test-results/
 output/evaluation/
+output/garak/raw/
+output/garak/summary/
 
 # Artefactos auxiliares locales de revisión; los libros finales viven en docs/evidence/workbooks.
 ~$*.xlsx

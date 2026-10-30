@@ -23,12 +23,22 @@
 		Permissions-Policy "camera=(), microphone=(), geolocation=()"
 	}
 
-	reverse_proxy ui:8501 {
-		health_uri /_stcore/health
-		health_interval 30s
-		health_timeout 5s
-		transport http {
-			dial_timeout 3s
+	handle /v1/* {
+		reverse_proxy api:8000 {
+			transport http {
+				dial_timeout 3s
+			}
+		}
+	}
+
+	handle {
+		reverse_proxy ui:8501 {
+			health_uri /_stcore/health
+			health_interval 30s
+			health_timeout 5s
+			transport http {
+				dial_timeout 3s
+			}
 		}
 	}
 }

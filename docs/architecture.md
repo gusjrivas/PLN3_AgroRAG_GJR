@@ -27,7 +27,10 @@ flowchart TD
 ADR-015 define una PoC productiva single-host. Sólo gateway publica 80/443; UI consume API por DNS
 Compose y API monta el catálogo read-only. `catalogue-admin` escribe el volumen únicamente en una
 operación explícita. Imágenes y configuración no contienen secretos; producción usa archivos
-montados por servicio. Garak será un job separado de release/staging y no una dependencia runtime.
+montados por servicio. Garak es un job separado de release/staging y no una dependencia runtime.
+Su contenedor no recibe credenciales de proveedor: un adaptador loopback traduce el contrato REST
+de Garak a `/v1/query`, agrega Basic auth y reader key desde archivos distintos, y sólo acepta un
+target HTTPS explícito. El gateway enruta `/v1/*` a API bajo la misma autenticación de ingreso.
 
 La API recibe identidad de release por entorno (`AGRO_RELEASE_VERSION`, `AGRO_COMMIT_SHA` y
 `AGRO_IMAGE_DIGEST`), la publica en `/health/version` junto con el catálogo activo y emite un evento
@@ -48,7 +51,7 @@ flowchart LR
   API2 --> CAT[(Catálogo read-only)]
   ADMIN[Job catalogue-admin] -->|read-write| CAT
   API2 --> EXT[OpenAI/Pinecone opcionales]
-  GARAK[Job garak] --> GW
+  GARAK[Job garak + adaptador loopback] -->|HTTPS autorizado| GW
 ```
 
 El overlay local comprueba liveness para permitir exploración BM25; el productivo exige readiness

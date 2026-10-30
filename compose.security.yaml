@@ -1,0 +1,38 @@
+name: agrorag-security
+
+services:
+  garak:
+    image: ${AGRO_GARAK_IMAGE:-agrorag-garak:0.17.0}
+    build:
+      context: .
+      dockerfile: Dockerfile.garak
+      args:
+        GARAK_VERSION: 0.17.0
+        VCS_REF: ${AGRO_COMMIT_SHA:-local}
+    profiles: [security]
+    environment:
+      AGRO_GARAK_TARGET_URL: ${AGRO_GARAK_TARGET_URL:?Defina el endpoint HTTPS autorizado /v1/query}
+      AGRO_GARAK_RELEASE_ID: ${AGRO_GARAK_RELEASE_ID:?Defina la release candidata evaluada}
+      AGRO_GATEWAY_AUTHORIZATION_FILE: /run/secrets/gateway_authorization
+      AGRO_READER_KEY_FILE: /run/secrets/reader_key
+    secrets: [gateway_authorization, reader_key]
+    volumes:
+      - type: bind
+        source: ${AGRO_GARAK_OUTPUT_DIR:-./output/garak}
+        target: /reports
+    read_only: true
+    tmpfs:
+      - /tmp:size=2g,mode=1777
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    pids_limit: 512
+    cpus: 2.0
+    mem_limit: 8g
+    restart: "no"
+
+secrets:
+  gateway_authorization:
+    file: ${AGRO_GARAK_SECRETS_DIR:?Defina el directorio de secretos Garak}/gateway_authorization
+  reader_key:
+    file: ${AGRO_GARAK_SECRETS_DIR:?Defina el directorio de secretos Garak}/reader_key
+

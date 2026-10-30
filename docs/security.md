@@ -21,6 +21,18 @@ Demo local, un usuario, backend y UI publicados sólo en 127.0.0.1. Claves reade
 
 Las regex de sanitización no constituyen una defensa completa contra prompt injection. El verificador LLM tampoco garantiza veracidad. Medir errores residuales y abstenciones; no anunciar seguridad perfecta.
 
+## Evaluación adversarial de releases
+
+`compose.security.yaml` ejecuta Garak 0.17.0 como job no-root separado. El baseline acotado prueba
+inyección directa, jailbreak, instrucciones codificadas y generación de credenciales aparentes
+sobre el gateway desplegado. Seed, generaciones, probes, detectores y política están versionados.
+Esto aporta detección repetible, no certificación ni cobertura completa de OWASP u otro estándar.
+
+Los JSONL/hitlogs crudos pueden contener prompts y respuestas: se guardan con modo `0600` bajo
+`output/garak/raw/`, están ignorados por Git y deben ir a almacenamiento restringido. El gate sólo
+publica conteos por probe/detector. Un HIGH sin triage bloquea; uno confirmado necesita excepción
+con riesgo, owner, tracking y vencimiento. Toda regresión mayor a la tolerancia versionada bloquea.
+
 ## Auditoría
 
 Eventos estructurados con request_id, etapa, decisión breve, corpus_version y uso. Sin credenciales, prompts completos ni razonamiento privado. Rotación local configurable y política de retención inicial 7 días para logs de operación; artefactos científicos seleccionados se conservan con datos revisados y hashes. Separar errores operativos de rechazo por falta de evidencia.

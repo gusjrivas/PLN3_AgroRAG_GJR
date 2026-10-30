@@ -200,10 +200,12 @@ y producción.
 adaptador black-box al gateway, configuración versionada y parser/gate. REFACTOR: separar secretos,
 reportes crudos y resumen sanitizado.
 
-La suite inicial cubre riesgos priorizados para AgroRAG: prompt injection, jailbreak, bypass por
-codificación, fuga de información y contenido inseguro. Se fijan versión, plugins, configuración,
+La suite inicial acotada cubre riesgos priorizados para AgroRAG: prompt injection, jailbreak,
+bypass por codificación y generación de credenciales aparentes. Se fijan versión, plugins, configuración,
 seed, cantidad de generaciones, modelo/proveedor y digest de la aplicación. Los nombres exactos de
 probes/detectors quedan fijados en OpenSpec contra una versión concreta de garak para evitar drift.
+Fuga real de secretos y contenido inseguro requieren fixtures/detectores adicionales validados; no
+se declaran cubiertos por inferencia a partir de esta suite.
 
 En cada PR se prueban offline el adaptador, la configuración y la política. El scan acotado corre
 contra staging; el scan completo corre para release candidate y periódicamente. La promoción se

@@ -37,7 +37,7 @@ misma sesión durante implementación; revisión humana requerida antes de cada 
 
 ## 5. CI, staging y garak
 
-- [ ] 5.1 CI-V2-01: build/test/Compose/SBOM/escaneo/publicación por SHA/semver.
-- [ ] 5.2 SEC-V2-02: runner, adaptador, configuración, parser/gate y tests offline.
+- [x] 5.1 CI-V2-01: build/test/Compose/SBOM/escaneo/publicación por SHA/semver.
+- [x] 5.2 SEC-V2-02: runner, adaptador, configuración, parser/gate y tests offline.
 - [ ] 5.3 Ejecutar staging limpio y scan autorizado; registrar resultados reales separados.
 - [ ] 5.4 Promover la misma imagen y completar documentación/release sólo con evidencia.

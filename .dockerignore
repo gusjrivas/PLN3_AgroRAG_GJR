@@ -14,6 +14,11 @@ tests
 docs
 openspec
 scripts
+!scripts/
+scripts/*
+!scripts/garak_adapter.py
+!scripts/check_garak_policy.py
+!scripts/run_garak.py
 output
 data/raw
 data/processed
