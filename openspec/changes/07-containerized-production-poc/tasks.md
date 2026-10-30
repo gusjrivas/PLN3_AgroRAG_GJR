@@ -19,9 +19,9 @@ misma sesión durante implementación; revisión humana requerida antes de cada 
 
 ## 2. Imágenes
 
-- [ ] 2.1 IMG-V2-01 RED/GREEN: Dockerfile multi-stage, targets API/UI, wheel y usuario no root.
-- [ ] 2.2 IMG-V2-02 RED/GREEN: contexto mínimo, sin secretos/toolchain/dev deps.
-- [ ] 2.3 Inspección, smoke y evidencia de imagen.
+- [x] 2.1 IMG-V2-01 RED/GREEN: Dockerfile multi-stage, targets API/UI, wheel y usuario no root.
+- [x] 2.2 IMG-V2-02 RED/GREEN: contexto mínimo, sin secretos/toolchain/dev deps.
+- [x] 2.3 Inspección, smoke y evidencia de imagen.
 
 ## 3. Compose y catálogo
 

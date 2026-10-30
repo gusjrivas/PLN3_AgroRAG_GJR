@@ -10,7 +10,10 @@ Engram 3.5.2 está instalado y verificado en el entorno de trabajo remoto; `.eng
 
 ## Empezar aquí
 
-**Para ejecutarlo:** seguir [run-local](docs/run-local.md). **Para continuar el desarrollo:** [start-here](docs/start-here.md). Repositorio independiente: `PLN3_AgroRAG_GJR`.
+**Para ejecutarlo localmente:** seguir [run-local](docs/run-local.md). **La V2 containerizada está
+en implementación incremental:** consultar [run-containerized](docs/run-containerized.md). **Para
+continuar el desarrollo:** [start-here](docs/start-here.md). Repositorio independiente:
+`PLN3_AgroRAG_GJR`.
 
 1. [Plan de ejecución](docs/plan.md): secuencia, dependencias y puertas de salida.
 2. [Requisitos y trazabilidad](docs/requirements.md): consigna → cambio → prueba → evidencia.
