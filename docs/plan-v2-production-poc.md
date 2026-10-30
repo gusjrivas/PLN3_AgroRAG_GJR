@@ -129,6 +129,9 @@ despliegue Linux limpio, la ejecución Garak real, el triage humano y la promoci
 digests. Ninguna fase abierta se considera satisfecha por la documentación o por un workflow no
 ejecutado.
 
+Los environments protegidos `staging` y `staging-security` ya están creados para `main` con reviewer
+humano; sus secrets siguen vacíos hasta que el operador aporte credenciales desde el secret store.
+
 La puerta previa de staging también está automatizada: descarga el `release-manifest.json` del run
 que publicó las imágenes, exige coincidencia de commit/digests, consulta identidad y catálogo por el
 gateway y ejecuta una pregunta sintética citada. Su existencia no sustituye una ejecución real.

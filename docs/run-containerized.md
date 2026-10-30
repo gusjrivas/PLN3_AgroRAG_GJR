@@ -332,6 +332,10 @@ Crear en GitHub el environment protegido `staging-security`, con reviewer humano
 - `GARAK_REPORT_ENCRYPTION_KEY`: frase robusta y exclusiva para cifrar el crudo; conservarla en el
   secret store durante la retención del artefacto.
 
+Los environments `staging` y `staging-security` ya existen, requieren aprobación de `gusjrivas` y
+admiten sólo ejecuciones desde `main`. Sus listas de secrets permanecen vacías: cargarlas desde el
+secret store antes de ejecutar, sin copiar valores al repositorio ni a la evidencia.
+
 El workflow manual `staging-garak-security-gate` recibe `target_url`, `release_id`, `garak_image` y
 `authorization_confirmed=true`. `garak_image` debe copiarse del manifiesto anterior y terminar en
 `@sha256:<64 hex>`; el workflow rechaza tags, paquetes ajenos, HTTP, rutas distintas de `/v1/query`

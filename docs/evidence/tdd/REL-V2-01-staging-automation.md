@@ -1,8 +1,9 @@
 # Evidencia TDD: automatización de publicación y gate Garak en staging
 
-Fecha: 30/10/2026. Responsable y revisión: misma sesión coordinadora; revisión humana pendiente en
-MR #30. Rama: `feat/v2-container-foundation`. Propiedad: workflows Garak, contratos de arquitectura,
-runbook, plan, seguridad y esta evidencia.
+Fecha: 30/10/2026. Responsable y revisión técnica: misma sesión coordinadora. MR #30 integrado por
+`gusjrivas` sin una review formal registrada en GitHub. Rama de implementación:
+`feat/v2-container-foundation`. Propiedad: workflows Garak, contratos de arquitectura, runbook,
+plan, seguridad y esta evidencia.
 
 Commit de implementación: `a8fac27` (`ci: automate authorized garak staging gate`).
 
@@ -58,10 +59,29 @@ offline, OpenSpec y browser terminaron `success`. También aprobó
 build de las tres imágenes, identidades, E2E Compose, SBOM, Trivy, política y artefacto terminaron
 `success`. Login/publicación se omitieron correctamente porque el evento fue `pull_request`.
 
+## Estado post-merge de la preparación
+
+El workflow manual de supply chain del runner sí se ejecutó después del merge. El
+[run 41062609444](https://github.com/gusjrivas/PLN3_AgroRAG_GJR/actions/runs/41062609444)
+publicó y fijó el runner por digest para `5a11a29`; SEC-V2-02 conserva el manifiesto exacto.
+
+También se crearon mediante la API de GitHub los environments `staging` y `staging-security` con:
+
+- reviewer humano requerido: usuario `gusjrivas` (`id 54255294`);
+- `prevent_self_review=false`, necesario para el repositorio de un único responsable;
+- branch policy personalizada que admite únicamente `main`;
+- cero secrets cargados al momento de esta evidencia.
+
+La API devolvió dos environments, una regla `required_reviewers` y una `branch_policy` por cada uno;
+los endpoints de deployment branch policies devolvieron exactamente `main`. `gh secret list --env`
+confirmó listas vacías para ambos ambientes. No se inventaron credenciales.
+
 ## Límite y siguiente evidencia
 
-No se ejecutaron los workflows manuales ni un ataque real. No hay staging/dominio/TLS, credenciales
-de ensayo, presupuesto/proveedor ni autorización aportados, por lo que no se fabrican manifiesto,
+No se ejecutó un ataque real. Faltan host staging, dominio/TLS, credenciales de ensayo,
+presupuesto/proveedor y autorización de costo. Antes de disparar workflows deben cargarse dos
+entradas en `staging` (`GARAK_GATEWAY_AUTHORIZATION`, `GARAK_READER_KEY`) y tres en
+`staging-security` (las dos anteriores más `GARAK_REPORT_ENCRYPTION_KEY`). Por eso no se fabrican
 reporte, triage ni dictamen. OpenSpec 5.3 y 5.4 siguen abiertos. Para cerrar 5.3 se debe registrar el
-host Linux limpio, digests de producto/runner, run de GitHub, costo, resumen y revisión humana; para
-5.4 se deben promover exactamente los mismos digests y probar salud/rollback.
+host Linux limpio, digests de producto/runner, runs de GitHub, costo, resumen y revisión humana;
+para 5.4 se deben promover exactamente los mismos digests y probar salud/rollback.
