@@ -1,8 +1,9 @@
 # Plan V2: PoC containerizada y desplegable en un único host
 
-Estado: propuesto para revisión. Fecha: 29/10/2026. Responsable: coordinador de arquitectura.
-Rama de planificación: `plan/v2-containerized-poc`. Propiedad de esta etapa:
-`docs/plan-v2-production-poc.md`, `docs/adr/015.md` y `docs/adr/README.md`.
+Estado: aceptado y en ejecución. Fecha: 29/10/2026. Responsable: coordinador de arquitectura.
+Rama de implementación inicial: `feat/v2-container-foundation`. Propiedad de esta etapa:
+configuración/entrypoints, infraestructura de contenedores, pruebas, OpenSpec, documentación y
+evidencia V2. ADR-015 fue aceptado por Gustavo Julián Rivas el 29/10/2026.
 
 ## Objetivo
 
@@ -20,6 +21,7 @@ fuente de evidencia y una compuerta de release, no una garantía de seguridad, c
 cobertura completa de OWASP u otro estándar.
 
 Decisión arquitectónica: [ADR-015](adr/015.md).
+Contrato de implementación: [OpenSpec 07](../openspec/changes/07-containerized-production-poc/).
 
 ## Estado de partida y restricciones
 
