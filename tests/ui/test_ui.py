@@ -167,9 +167,12 @@ def test_changing_mode_clears_the_previous_result(monkeypatch):
     assert not any("Resultado para:" in value.value for value in app.caption)
 
 
-def test_missing_key_does_not_send_request(monkeypatch):
+def test_missing_key_does_not_send_request(monkeypatch, tmp_path):
+    script = Path("src/agro_rag_ui/app.py").resolve()
+    monkeypatch.chdir(tmp_path)
     monkeypatch.delenv("AGRO_READER_KEY", raising=False)
-    app = AppTest.from_file(str(Path("src/agro_rag_ui/app.py").resolve())).run()
+    monkeypatch.delenv("AGRO_READER_KEY_FILE", raising=False)
+    app = AppTest.from_file(str(script)).run()
     assert not app.exception
     assert len(app.warning) == 1
 

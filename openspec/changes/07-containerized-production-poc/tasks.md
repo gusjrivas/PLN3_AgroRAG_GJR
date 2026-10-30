@@ -12,8 +12,8 @@ misma sesión durante implementación; revisión humana requerida antes de cada 
 
 ## 1. Configuración y entrypoints
 
-- [ ] 1.1 CFG-V2-01 RED: secretos `*_FILE`, conflicto, archivo ausente/vacío y redacción.
-- [ ] 1.2 CFG-V2-01 GREEN: resolución tipada y fail-closed en API/UI.
+- [x] 1.1 CFG-V2-01 RED: secretos `*_FILE`, conflicto, archivo ausente/vacío y redacción.
+- [x] 1.2 CFG-V2-01 GREEN: resolución tipada y fail-closed en API/UI.
 - [ ] 1.3 ARC-V2-02: caracterizar URL/rutas existentes y proteger límites/runtime read-only.
 - [ ] 1.4 REFACTOR: tests afectados, typing, arquitectura, docs y evidencia.
 

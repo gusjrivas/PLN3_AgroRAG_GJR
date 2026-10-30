@@ -25,6 +25,7 @@ semantic = [
 
 [project.scripts]
 agro-rag = "agro_rag.bootstrap.cli:main"
+agro-rag-healthcheck = "agro_rag.bootstrap.healthcheck:main"
 
 [dependency-groups]
 dev = [
