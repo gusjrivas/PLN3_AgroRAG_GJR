@@ -1,8 +1,8 @@
 # Ejecutar AgroRAG V2 con contenedores
 
 Estado: implementación incremental. Imágenes, Compose local, gateway productivo, identidad/logs de
-release, rollback y supply chain están verificados. El runner Garak aprobó build/smoke y contratos
-offline; staging y el primer scan autorizado continúan pendientes.
+release, rollback, supply chain y preflight de host están verificados. El runner Garak aprobó
+build/smoke y contratos offline; staging y el primer scan autorizado continúan pendientes.
 
 ## Requisitos
 
@@ -145,12 +145,48 @@ docker run --rm -it caddy:2.11.7-alpine caddy hash-password
 Asignar las variables del ambiente o secret store: `AGRO_API_IMAGE`, `AGRO_UI_IMAGE` y
 `AGRO_GATEWAY_IMAGE` con referencias `@sha256:...`; `AGRO_CATALOGUE_VOLUME`, `AGRO_DOMAIN`,
 `AGRO_OPENAI_MODEL`, `AGRO_SECRETS_DIR`, `AGRO_RELEASE_VERSION` (semver) y `AGRO_COMMIT_SHA`.
-El overlay pasa `AGRO_API_IMAGE` también como identidad observable de la imagen. Validar sin revelar
-contenido:
+El overlay pasa `AGRO_API_IMAGE` también como identidad observable de la imagen.
+
+### Bootstrap y preflight de un host Linux limpio
+
+Copiar `infra/deploy/production.env.example` fuera del checkout, reemplazar todos los placeholders y
+cargarlo desde el secret store o con `set -a; . /ruta/segura/production.env; set +a`. El archivo
+sólo contiene referencias y configuración no secreta: las credenciales permanecen en
+`AGRO_SECRETS_DIR`. En Linux, el directorio debe ser absoluto, no symlink y modo `0700`; los tres
+archivos deben ser regulares, no vacíos, no symlinks y modo `0400` o `0600`.
+
+Crear el volumen externo y poblarlo desde un backup previamente aprobado. El restore valida hashes
+y trabaja sin red; no usar `catalogue-admin` ni reconstruir el corpus durante el deploy:
+
+```sh
+docker volume create "$AGRO_CATALOGUE_VOLUME"
+export AGRO_BACKUP_DIR=/ruta/absoluta/al/backup
+export AGRO_BACKUP_FILE=catalogue-release.zip
+docker pull "$AGRO_API_IMAGE"
+docker compose --profile restore -f compose.yaml -f compose.ops.yaml run --rm catalogue-restore
+docker pull "$AGRO_UI_IMAGE"
+docker pull "$AGRO_GATEWAY_IMAGE"
+```
+
+`scripts/preflight_single_host.sh` es read-only: no crea recursos, no descarga imágenes y no
+restaura datos. Antes de `up`, verifica Engine/Compose, referencias por digest, labels de commit,
+usuarios no root, volumen externo, permisos de secretos y renderizado Compose sin imprimir valores
+sensibles:
+
+```sh
+sh scripts/preflight_single_host.sh
+docker compose -f compose.yaml -f compose.production.yaml up -d --wait --no-build
+```
+
+Un resultado `status=approved` sólo aprueba las precondiciones locales; no sustituye el smoke por
+gateway, TLS real, backup/restore ni Garak. Si falla, corregir la precondición indicada y no ejecutar
+`up`. Para una actualización con catálogo ya existente, omitir la creación/restauración y conservar
+el backup previo.
+
+Como comprobación adicional o diagnóstico, validar sin revelar contenido:
 
 ```powershell
 docker compose -f compose.yaml -f compose.production.yaml config --quiet
-docker compose -f compose.yaml -f compose.production.yaml up -d --wait --no-build
 ```
 
 API usa readiness autenticada en este overlay; por eso una credencial/modelo/catálogo incompletos

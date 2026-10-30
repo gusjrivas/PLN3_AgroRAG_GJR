@@ -11,7 +11,8 @@ catálogo persistente/read-only y overlay productivo endurecido ya tienen eviden
 identidad de release, logs HTTP JSON y rollback validado ya tienen evidencia; supply chain aprobó
 en GitHub y el runner Garak 0.17.0 aprobó sus contratos offline. La publicación inmutable del runner
 y el scan manual autorizado ya tienen workflows fail-closed. El smoke de staging también ata
-manifiesto, identidad, catálogo y una consulta citada en evidencia sanitizada; el despliegue y la
+manifiesto, identidad, catálogo y una consulta citada en evidencia sanitizada. El preflight de host
+valida digests, identidad OCI, volumen y secretos antes de levantar producción; el despliegue y la
 ejecución reales en staging siguen abiertos.
 El benchmark congelado de 60 casos conserva 49 PASS y 11
 FAIL de contenido/citas, con 60/60 estados observados correctos. E1/E2 y el piloto mínimo E3 se

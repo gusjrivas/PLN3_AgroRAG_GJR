@@ -131,6 +131,9 @@ ejecutado.
 La puerta previa de staging también está automatizada: descarga el `release-manifest.json` del run
 que publicó las imágenes, exige coincidencia de commit/digests, consulta identidad y catálogo por el
 gateway y ejecuta una pregunta sintética citada. Su existencia no sustituye una ejecución real.
+El host limpio cuenta además con un preflight read-only que falla antes de `up` si faltan digests,
+labels de commit, identidades no root, volumen externo, secretos con permisos restrictivos o un
+Compose productivo válido. El bootstrap/restauración sigue siendo una operación explícita.
 
 ### Fase 0 — contrato de V2
 
@@ -197,6 +200,9 @@ genera SBOM, escanea imagen y publica sólo desde `main`/tag con tags SHA y semv
 
 **REL-V2-01.** Desplegar en staging Linux limpio, ejecutar smoke/E2E, reinicio, backup/restore y
 rollback. Registrar host/CPU/memoria, imágenes, digests, tiempos y evidencia.
+
+Antes del despliegue, ejecutar el preflight single-host sobre imágenes ya descargadas y un catálogo
+restaurado. Su aprobación es necesaria pero no completa REL-V2-01 sin las pruebas reales posteriores.
 
 **REL-V2-02.** Promover la misma imagen aprobada a la PoC productiva; no reconstruir entre staging
 y producción.

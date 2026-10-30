@@ -50,6 +50,9 @@ El backup de catálogo es un artefacto autocontenido con hashes: manifiesto acti
 referenciado y metadata de release. Restore verifica todo antes de escribir, conserva snapshots ya
 presentes y activa el puntero en último lugar. El rollback combina ese restore con los tres digests
 anteriores conservados por release; no reconstruye corpus durante startup ni elimina el volumen.
+En un host limpio, el operador crea y restaura explícitamente el volumen externo antes del runtime.
+Un preflight fail-closed y read-only comprueba Linux, Engine/Compose, imágenes locales por digest,
+commit OCI, usuarios no root, volumen y permisos de archivos secretos antes de permitir `up`.
 
 ```mermaid
 flowchart LR
@@ -57,6 +60,8 @@ flowchart LR
   GW --> UI2[Streamlit no root]
   UI2 -->|HTTP interno| API2[FastAPI no root]
   API2 --> CAT[(Catálogo read-only)]
+  PREFLIGHT[Preflight host] -. valida .-> API2
+  PREFLIGHT -. valida .-> CAT
   ADMIN[Job catalogue-admin] -->|read-write| CAT
   API2 --> EXT[OpenAI/Pinecone opcionales]
   GARAK[Job garak + adaptador loopback] -->|HTTPS autorizado| GW

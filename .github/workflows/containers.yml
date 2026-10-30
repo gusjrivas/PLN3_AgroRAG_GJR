@@ -50,6 +50,12 @@ jobs:
           test "$(docker run --rm --entrypoint id agrorag-ui:ci -u)" = "10001"
           test "$(docker run --rm --entrypoint id agrorag-gateway:ci -u)" = "10002"
 
+      - name: Validate single-host preflight syntax
+        run: >-
+          docker run --rm --entrypoint sh
+          -v "$PWD/scripts/preflight_single_host.sh:/tmp/preflight_single_host.sh:ro"
+          agrorag-gateway:ci -n /tmp/preflight_single_host.sh
+
       - name: Initialize supply-chain evidence
         run: |
           mkdir -p artifacts

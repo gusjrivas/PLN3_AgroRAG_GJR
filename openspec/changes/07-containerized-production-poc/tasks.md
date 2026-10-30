@@ -43,4 +43,5 @@ misma sesión durante implementación; revisión humana requerida antes de cada 
 - [ ] 5.4 Promover la misma imagen y completar documentación/release sólo con evidencia.
 
 Preparación de 5.3: workflows manuales de publicación del runner, smoke de release y scan protegido
-implementados; no se marca completa hasta registrar un host limpio y un reporte real autorizado.
+implementados; preflight y bootstrap/restore del host limpio documentados. No se marca completa
+hasta registrar su ejecución en un host real y un reporte real autorizado.

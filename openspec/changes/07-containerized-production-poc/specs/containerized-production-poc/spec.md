@@ -82,6 +82,13 @@ imágenes mediante referencias inmutables.
 Staging MUST demostrar que ejecuta los mismos digests aprobados y que el comportamiento observable
 continúa disponible por el gateway, sin conservar entradas ni salidas sensibles en la evidencia.
 
+#### Scenario: REL-V2-clean-host-preflight
+- **GIVEN** un host Linux limpio, imágenes candidatas descargadas por digest, secretos montados y un
+  catálogo externo restaurado.
+- **WHEN** se valida el host antes de levantar la candidata.
+- **THEN** falla cerrado ante Engine/Compose no disponible, tag mutable, commit/usuario de imagen
+  divergente, volumen ausente, permisos laxos o Compose inválido, sin imprimir secretos.
+
 #### Scenario: REL-V2-staging-smoke
 - **GIVEN** un manifiesto publicado por un run exitoso y esos digests desplegados en staging.
 - **WHEN** se verifica la candidata por el gateway autenticado.
