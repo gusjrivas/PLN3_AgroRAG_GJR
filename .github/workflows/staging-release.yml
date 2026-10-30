@@ -1,0 +1,139 @@
+name: staging-release-smoke
+
+on:
+  workflow_dispatch:
+    inputs:
+      supply_chain_run_id:
+        description: Run exitoso de container-supply-chain que publicó el manifiesto
+        required: true
+        type: string
+      commit:
+        description: Commit completo de la release publicada
+        required: true
+        type: string
+      target_origin:
+        description: Origen HTTPS de staging, sin path ni credenciales
+        required: true
+        type: string
+      release_version:
+        description: Versión observable esperada
+        required: true
+        type: string
+      corpus_version:
+        description: Versión de catálogo esperada
+        required: true
+        type: string
+      crop:
+        description: Cultivo del smoke funcional
+        required: true
+        type: choice
+        options: [tomato, lettuce]
+      question:
+        description: Pregunta sintética autorizada que debe producir respuesta citada
+        required: true
+        type: string
+      authorization_confirmed:
+        description: Confirmo target, autorización y costo de una consulta real
+        required: true
+        type: boolean
+        default: false
+
+concurrency:
+  group: staging-release-${{ inputs.commit }}
+  cancel-in-progress: false
+
+permissions:
+  actions: read
+  contents: read
+
+jobs:
+  verify-release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment: staging
+    steps:
+      - name: Initialize ephemeral verification root
+        run: echo "VERIFY_ROOT=$RUNNER_TEMP/agrorag-staging-$GITHUB_RUN_ID" >> "$GITHUB_ENV"
+
+      - name: Require explicit authorization and safe identifiers
+        env:
+          AUTHORIZATION_CONFIRMED: ${{ inputs.authorization_confirmed }}
+          SUPPLY_CHAIN_RUN_ID: ${{ inputs.supply_chain_run_id }}
+          RELEASE_COMMIT: ${{ inputs.commit }}
+        run: |
+          set -euo pipefail
+          test "$AUTHORIZATION_CONFIRMED" = "true"
+          [[ "$SUPPLY_CHAIN_RUN_ID" =~ ^[0-9]+$ ]]
+          [[ "$RELEASE_COMMIT" =~ ^[0-9a-f]{40}$ ]]
+
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Download published release manifest
+        uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: release-manifest-${{ inputs.commit }}
+          path: staging-input
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          run-id: ${{ inputs.supply_chain_run_id }}
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@37802adc94f370d6bfd71619e3f0bf239e1f3b78 # v7
+        with:
+          version: '0.13.5'
+          enable-cache: true
+
+      - name: Install locked verifier dependencies
+        run: uv sync --frozen --python 3.12
+
+      - name: Prepare ephemeral credentials and synthetic query
+        env:
+          GARAK_GATEWAY_AUTHORIZATION: ${{ secrets.GARAK_GATEWAY_AUTHORIZATION }}
+          GARAK_READER_KEY: ${{ secrets.GARAK_READER_KEY }}
+          SYNTHETIC_QUESTION: ${{ inputs.question }}
+        run: |
+          set -euo pipefail
+          test -n "$GARAK_GATEWAY_AUTHORIZATION"
+          test -n "$GARAK_READER_KEY"
+          test -n "$SYNTHETIC_QUESTION"
+          install -d -m 0700 "$VERIFY_ROOT/secrets" "$VERIFY_ROOT/evidence"
+          printf '%s' "$GARAK_GATEWAY_AUTHORIZATION" > "$VERIFY_ROOT/secrets/gateway_authorization"
+          printf '%s' "$GARAK_READER_KEY" > "$VERIFY_ROOT/secrets/reader_key"
+          printf '%s' "$SYNTHETIC_QUESTION" > "$VERIFY_ROOT/question.txt"
+          chmod 0600 "$VERIFY_ROOT"/secrets/* "$VERIFY_ROOT/question.txt"
+
+      - name: Verify deployed release identity and behavior
+        env:
+          TARGET_ORIGIN: ${{ inputs.target_origin }}
+          RELEASE_VERSION: ${{ inputs.release_version }}
+          CORPUS_VERSION: ${{ inputs.corpus_version }}
+          CROP: ${{ inputs.crop }}
+          RELEASE_COMMIT: ${{ inputs.commit }}
+        run: >-
+          uv run python scripts/verify_staging_release.py
+          --manifest staging-input/release-manifest.json
+          --repository "$GITHUB_REPOSITORY"
+          --expected-commit "$RELEASE_COMMIT"
+          --base-url "$TARGET_ORIGIN"
+          --release-version "$RELEASE_VERSION"
+          --corpus-version "$CORPUS_VERSION"
+          --gateway-authorization-file "$VERIFY_ROOT/secrets/gateway_authorization"
+          --reader-key-file "$VERIFY_ROOT/secrets/reader_key"
+          --question-file "$VERIFY_ROOT/question.txt"
+          --crop "$CROP"
+          --output "$VERIFY_ROOT/evidence/staging-release.json"
+
+      - name: Upload sanitized staging release evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: staging-release-evidence-${{ inputs.commit }}
+          path: ${{ env.VERIFY_ROOT }}/evidence/staging-release.json
+          if-no-files-found: warn
+          retention-days: 90
+
+      - name: Remove staging credentials and local evidence
+        if: always()
+        run: sudo rm -rf -- "$VERIFY_ROOT"

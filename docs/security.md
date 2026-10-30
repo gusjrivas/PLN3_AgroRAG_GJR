@@ -35,6 +35,9 @@ con riesgo, owner, tracking y vencimiento. Toda regresión mayor a la tolerancia
 En GitHub, el scan real exige aprobación del environment `staging-security`, runner GHCR por digest
 y tres secretos separados. El crudo se cifra antes de subirlo y se retiene 7 días; el resumen
 sanitizado se retiene 90. Los archivos temporales y credenciales se eliminan aun si el gate falla.
+El smoke de release tampoco sigue redirects ni acepta HTTP, tags o paquetes GHCR ajenos. Compara
+la identidad observada con el manifiesto publicado y conserva únicamente hostname, digests,
+conteos, modo, request ID y cantidad de citas; pregunta, respuesta y credenciales quedan fuera.
 
 ## Auditoría
 

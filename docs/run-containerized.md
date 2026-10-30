@@ -158,6 +158,32 @@ bloquean la cadena UI→gateway. Caddy aplica autenticación básica mínima, TL
 seguridad y logs JSON. En un ambiente corporativo, reemplazar basic auth por el ingress/IdP aprobado
 sin exponer API directamente.
 
+### Smoke verificable de staging
+
+Después de integrar y publicar las imágenes desde `main`, desplegar sus referencias por digest y
+ejecutar manualmente `staging-release-smoke`. El environment protegido `staging` debe contener
+`GARAK_GATEWAY_AUTHORIZATION` y `GARAK_READER_KEY`; se reutiliza la identidad mínima de ensayo, no
+una credencial humana o productiva. Completar:
+
+- `supply_chain_run_id`: run exitoso que publicó las imágenes.
+- `commit`: SHA completo asociado al artefacto `release-manifest-<commit>`.
+- `target_origin`: origen HTTPS sin path, query, credenciales ni fragmento.
+- `release_version` y `corpus_version`: valores esperados del despliegue.
+- `crop` y `question`: caso sintético no sensible, autorizado para una llamada real.
+- `authorization_confirmed=true`: confirma target y costo.
+
+El workflow descarga el manifiesto desde ese run y `scripts/verify_staging_release.py` exige esquema
+cerrado, tres paquetes GHCR del repositorio por digest y commit exacto. A través del gateway consulta
+`/health/version`, `/v1/corpus` y `/v1/query`; Caddy enruta `/health/*` y `/v1/*` a API manteniendo
+Basic auth global. El smoke falla ante redirects, identidad/catálogo divergente o una respuesta sin
+citas. El artefacto `staging-release-evidence-<commit>` conserva 90 días sólo hostname, manifiesto,
+digests, conteos, modo, request ID y cantidad de citas. No copia pregunta, respuesta ni credenciales.
+Los resultados bloqueados producidos por el verificador también quedan sanitizados para diagnóstico.
+
+Este smoke prueba la candidata ya desplegada, pero no instala el host ni demuestra rollback. Adjuntar
+su run a la evidencia de 5.3 junto con inventario del host, Compose renderizado, backup/restore y el
+scan Garak autorizado.
+
 La sintaxis, separación de secretos y hardening fueron probados. La emisión TLS real queda pendiente
 de dominio/DNS y la promoción por digest depende de seleccionar registry; no se declara un deploy
 productivo real hasta ejecutar staging.

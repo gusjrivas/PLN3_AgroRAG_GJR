@@ -35,6 +35,10 @@ El runner se construye, genera SBOM, reescanea y publica una sola vez por SHA me
 manual separado. Otro workflow manual, protegido por el environment `staging-security`, acepta
 exclusivamente ese paquete por digest, exige autorización y secretos de ensayo, cifra el reporte
 crudo antes de conservarlo y publica por separado el resumen sanitizado.
+El gateway expone `/health/*` hacia API bajo la misma autenticación global, de modo que la
+verificación externa pueda comparar `/health/version` con el manifiesto sin publicar API. El smoke
+de staging descarga el manifiesto producido por supply chain, rechaza tags/paquetes ajenos y sólo
+conserva identidad, conteos y estado de una consulta; no conserva pregunta, respuesta ni secretos.
 
 La API recibe identidad de release por entorno (`AGRO_RELEASE_VERSION`, `AGRO_COMMIT_SHA` y
 `AGRO_IMAGE_DIGEST`), la publica en `/health/version` junto con el catálogo activo y emite un evento

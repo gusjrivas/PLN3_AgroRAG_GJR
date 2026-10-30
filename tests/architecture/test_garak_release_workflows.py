@@ -4,6 +4,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 RUNNER_WORKFLOW = ROOT / ".github" / "workflows" / "garak-runner.yml"
 SCAN_WORKFLOW = ROOT / ".github" / "workflows" / "staging-security.yml"
+SMOKE_WORKFLOW = ROOT / ".github" / "workflows" / "staging-release.yml"
 
 
 def _uses(workflow: str) -> list[str]:
@@ -56,9 +57,30 @@ def test_authorized_staging_scan_requires_digest_files_and_encrypted_raw_evidenc
 def test_new_workflows_pin_every_third_party_action_to_a_full_commit() -> None:
     values = [
         value
-        for path in (RUNNER_WORKFLOW, SCAN_WORKFLOW)
+        for path in (RUNNER_WORKFLOW, SCAN_WORKFLOW, SMOKE_WORKFLOW)
         for value in _uses(path.read_text(encoding="utf-8"))
     ]
 
     assert values
     assert all(re.fullmatch(r"[^@]+@[0-9a-f]{40}", value) for value in values)
+
+
+def test_staging_smoke_downloads_published_manifest_and_preserves_sanitized_evidence() -> None:
+    workflow = SMOKE_WORKFLOW.read_text(encoding="utf-8")
+
+    assert "workflow_dispatch:" in workflow
+    assert "authorization_confirmed" in workflow
+    assert "environment: staging" in workflow
+    assert "actions/download-artifact@" in workflow
+    assert "run-id:" in workflow
+    assert "release-manifest-${{ inputs.commit }}" in workflow
+    assert "GARAK_GATEWAY_AUTHORIZATION" in workflow
+    assert "GARAK_READER_KEY" in workflow
+    assert "gateway_authorization" in workflow
+    assert "reader_key" in workflow
+    assert "scripts/verify_staging_release.py" in workflow
+    assert '--expected-commit "$RELEASE_COMMIT"' in workflow
+    assert "staging-release-evidence" in workflow
+    assert "retention-days: 90" in workflow
+    assert "if: always()" in workflow
+    assert 'sudo rm -rf -- "$VERIFY_ROOT"' in workflow

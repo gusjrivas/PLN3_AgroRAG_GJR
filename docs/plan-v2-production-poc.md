@@ -128,6 +128,10 @@ despliegue Linux limpio, la ejecución Garak real, el triage humano y la promoci
 digests. Ninguna fase abierta se considera satisfecha por la documentación o por un workflow no
 ejecutado.
 
+La puerta previa de staging también está automatizada: descarga el `release-manifest.json` del run
+que publicó las imágenes, exige coincidencia de commit/digests, consulta identidad y catálogo por el
+gateway y ejecuta una pregunta sintética citada. Su existencia no sustituye una ejecución real.
+
 ### Fase 0 — contrato de V2
 
 **ARC-V2-01.** Aceptar ADR-015, crear el cambio OpenSpec y fijar Definition of Done, propietario,

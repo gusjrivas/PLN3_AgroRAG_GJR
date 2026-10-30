@@ -78,6 +78,16 @@ imágenes mediante referencias inmutables.
   excepción completa/no vencida, y la publicación produce SHA, digest y manifiesto sin `latest` ni
   rebuild.
 
+### Requirement: REL-V2 Staging verifica la candidata publicada
+Staging MUST demostrar que ejecuta los mismos digests aprobados y que el comportamiento observable
+continúa disponible por el gateway, sin conservar entradas ni salidas sensibles en la evidencia.
+
+#### Scenario: REL-V2-staging-smoke
+- **GIVEN** un manifiesto publicado por un run exitoso y esos digests desplegados en staging.
+- **WHEN** se verifica la candidata por el gateway autenticado.
+- **THEN** identidad, commit, imagen API y catálogo coinciden con el manifiesto, una consulta
+  sintética produce respuesta citada y la evidencia no conserva pregunta, respuesta ni secretos.
+
 ### Requirement: GARAK-V2 Evaluación adversarial trazable
 La release candidate MUST superar una política garak versionada sobre el gateway desplegado, sin
 presentar el resultado como garantía o certificación.

@@ -23,6 +23,14 @@
 		Permissions-Policy "camera=(), microphone=(), geolocation=()"
 	}
 
+	handle /health/* {
+		reverse_proxy api:8000 {
+			transport http {
+				dial_timeout 3s
+			}
+		}
+	}
+
 	handle /v1/* {
 		reverse_proxy api:8000 {
 			transport http {

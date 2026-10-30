@@ -158,6 +158,17 @@ def test_sec_v2_production_limits_secrets_and_privileges(tmp_path: Path) -> None
     assert "synthetic" not in rendered
 
 
+def test_ops_v2_gateway_exposes_api_operability_without_bypassing_auth() -> None:
+    gateway = (ROOT / "infra" / "gateway" / "Caddyfile").read_text(encoding="utf-8")
+
+    assert "basic_auth" in gateway
+    assert "handle /health/*" in gateway
+    health_route = gateway.index("handle /health/*")
+    ui_fallback = gateway.index("handle {")
+    assert health_route < ui_fallback
+    assert "reverse_proxy api:8000" in gateway[health_route:ui_fallback]
+
+
 def test_ops_v2_backup_and_restore_jobs_have_explicit_write_boundaries(tmp_path: Path) -> None:
     backup_dir = tmp_path / "backups"
     backup_dir.mkdir()
