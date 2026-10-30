@@ -5,7 +5,7 @@ Autor y responsable académico: Gustavo Julián Rivas. Fecha del plan: 21/10/202
 
 Repositorio independiente: https://github.com/gusjrivas/PLN3_AgroRAG_GJR
 
-**Estado: primera versión local y paquete de entrega técnica implementados: corpus piloto, búsqueda, API, interfaz, flujo investigador/verificador, informe PDF reproducible y guion de demo. Pinecone/E5 y el reranker tienen un smoke real dev documentado; el runtime admite activación semántica explícita y fail-closed. Existe un paquete candidato de 60 casos, todavía `pending_human`; BM25 permanece como default hasta revisarlo, completar la evaluación y resolver la latencia CPU del reranker.**
+**Estado: primera versión local y paquete de entrega técnica implementados: corpus piloto, búsqueda, API, interfaz, flujo investigador/verificador, informe PDF reproducible y guion de demo. El benchmark de 60 casos quedó revisado y congelado en `data/evaluation/benchmark-60.jsonl`; la corrida aceptada obtuvo 49 PASS y 11 FAIL de contenido/citas, con 60/60 estados observados correctos. E1/E2 y el piloto mínimo E3 se ejecutaron sobre `dev` con proveedores reales y revisión humana de los 18 pares E2: 12 PASS y 6 FAIL. BM25 permanece como default por la latencia CPU del reranker, el alcance limitado a `dev` y la falta de evidencia causal de mejora por el verificador.**
 Engram 3.5.2 está instalado y verificado en el entorno de trabajo remoto; `.engram/config.json` identifica este proyecto. La instalación en la notebook y la activación de los clientes permanecen pendientes. Ver [evidencia](docs/evidence/engram-setup.md). Los ADR son propuestas técnicas; TDD y Python son requisitos expresos del usuario.
 
 ## Empezar aquí

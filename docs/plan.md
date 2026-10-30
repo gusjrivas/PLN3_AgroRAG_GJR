@@ -1,20 +1,21 @@
 # Plan de inicio y ejecución
 
-## Estado al 28/10/2026
+## Estado al 29/10/2026
 
 La primera versión local y el paquete técnico están implementados: corpus curado de 27 fragmentos,
 API/UI, investigador/verificador, caché, auditoría redactada, proveedores Ollama/OpenAI opcionales,
 adaptadores E5/Pinecone/reranker, contratos de evaluación, informe PDF y guion de demo. La suite
 rápida tiene evidencia vigente y el verificador offline reconoce los ocho artefactos de entrega.
 
-Corte activo: `feat/eva01-human-review-packet`, responsable coordinador/evaluador, misma sesión.
-Propiedad: contrato y CLI de validación de benchmark, `data/evaluation/benchmark-60-draft.jsonl`,
-pruebas, documentación y evidencia EVA-01. El paquete contiene 60 casos balanceados y resolubles
-contra el corpus activo, todos `pending_human`; la automatización valida estructura pero no puede
-promoverlos a `reviewed` ni habilitar E1/E2/E3.
+Corte activo: `eval/eva02-budgeted-run`, responsable coordinador/evaluador. Propiedad: runners E1,
+E2 y E3, integración del proveedor, documentación y evidencia EVA-02. El benchmark final contiene
+60 casos `reviewed`, split 30/30, 36 respondibles y 24 de abstención, con hash SHA-256
+`b12253c38bec4e2e58b20ddb4ec1303c515a360001db37c56e6e54246bdcba69`. E1/E2 y el piloto mínimo E3
+se ejecutaron sobre `dev`; la revisión humana de los 18 pares E2 obtuvo 12 PASS y 6 FAIL.
 
-Siguiente puerta académica: revisión humana del paquete, ejecución E1/E2/E3 y actualización del
-informe con resultados definitivos. Después corresponde ensayo final de 15 minutos, confirmación de
+Siguiente puerta académica: regenerar y revisar el informe con estos resultados, completar la
+revisión del diff del PR y ensayar la exposición de 15 minutos. `test` permanece cerrado y E3 sólo
+demuestra el comportamiento de caché para una consulta. Después corresponde confirmación de
 modalidad/fecha y envío a ambos docentes sólo con autorización del usuario. La secuencia original de
 abajo queda como mapa de dependencias, no como estado de implementación.
 

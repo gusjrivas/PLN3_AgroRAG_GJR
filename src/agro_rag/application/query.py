@@ -127,6 +127,7 @@ class QueryService:
         retrieval_cache_size: int = 128,
         audit_sink: AuditSink | None = None,
         retrieval_mode: str = "bm25",
+        verifier_enabled: bool = True,
     ) -> None:
         if retrieval_cache_size <= 0:
             raise ValueError("El tamaño de caché debe ser positivo")
@@ -137,6 +138,7 @@ class QueryService:
         self.retrieval_cache_size = retrieval_cache_size
         self.audit_sink = audit_sink
         self.retrieval_mode = retrieval_mode
+        self.verifier_enabled = verifier_enabled
         self._retrieval_cache: OrderedDict[tuple[str, str, str | None], tuple[Evidence, ...]] = (
             OrderedDict()
         )
@@ -385,6 +387,9 @@ class QueryService:
                 claims.append(
                     {"claim_id": str(i), "text": text, "evidence_ids": list(dict.fromkeys(ids))}
                 )
+            if not self.verifier_enabled:
+                decision = "not_run"
+                return finish("answered", claims)
             review = await generate(
                 "verifier", {"question": question, "claims": claims, "evidence": evidence}
             )

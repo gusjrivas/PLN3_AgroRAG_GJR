@@ -11,11 +11,22 @@ from agro_rag.infrastructure.generation_contract import FORMATS, PROMPTS
 
 
 class OpenAIModel:
-    def __init__(self, client: httpx.AsyncClient, base_url: str, api_key: str, model: str) -> None:
+    def __init__(
+        self,
+        client: httpx.AsyncClient,
+        base_url: str,
+        api_key: str,
+        model: str,
+        *,
+        max_output_tokens: int = 768,
+    ) -> None:
+        if not 1 <= max_output_tokens <= 768:
+            raise ValueError("Límite de salida inválido")
         self.client = client
         self.base_url = base_url.rstrip("/")
         self.api_key = api_key
         self.model = model
+        self.max_output_tokens = max_output_tokens
 
     @property
     def headers(self) -> dict[str, str]:
@@ -52,7 +63,7 @@ class OpenAIModel:
                             "schema": FORMATS[role],
                         }
                     },
-                    "max_output_tokens": 768,
+                    "max_output_tokens": self.max_output_tokens,
                     "temperature": 0,
                     "store": False,
                 },

@@ -7,7 +7,8 @@ Descarga institucional con hashes fijados, ingesta PDF curada, catálogo SQLite 
 La búsqueda pública usa BM25 por defecto. El runtime permite activar explícitamente vector,
 hybrid o hybrid_rerank sobre el namespace E5/Pinecone ya indexado, con identidad verificada,
 tokenizer fijado y CrossEncoder opcional. No se degrada silenciosamente a BM25. El default no cambia
-porque faltan qrels humanos, E1/E2/E3 y resolver la latencia observada del reranker. No hay Docker
+porque la evaluación real se limitó a `dev`, no demostró mejora causal del verificador y el
+reranker excedió ampliamente el objetivo de latencia en CPU. No hay Docker
 Compose aún; no es un requisito de la cátedra.
 
 ## Preparar

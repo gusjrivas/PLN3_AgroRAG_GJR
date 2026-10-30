@@ -21,14 +21,15 @@ EVA-01 cuenta además con un cargador contractual automatizado: exige exactament
 revisados, conserva la proporción 18/6/6 en cada split, impide que una familia cruce dev/test,
 resuelve los `evidence_id` contra la versión del catálogo y congela el archivo por SHA-256. Los
 36 casos respondibles forman el denominador IR; los otros 24 forman el denominador de
-abstención. `data/evaluation/benchmark-60-draft.jsonl` prepara esos 60 casos con referencias y
-evidencias candidatas: 30 dev/30 test y 18/6/6 por split. Sus 60 filas continúan
-`pending_human`; no son resultados científicos ni habilitan seleccionar la configuración final.
+abstención. El borrador se conserva en `data/evaluation/benchmark-60-draft.jsonl`; el usuario cerró
+la revisión el 28/10/2026 y el paquete final `data/evaluation/benchmark-60.jsonl` contiene 60 filas
+`reviewed`, 30 dev/30 test y 18/6/6 por split. Hubo una sola aceptación humana; no se informa
+acuerdo interanotador.
 
-Validar el paquete sin promoverlo:
+Validar el paquete final congelado:
 
 ```bash
-uv run agro-rag validate-benchmark data/evaluation/benchmark-60-draft.jsonl --draft
+uv run agro-rag validate-benchmark data/evaluation/benchmark-60.jsonl
 ```
 
 La revisión humana debe contrastar cada pregunta, respuesta, claim, página e `evidence_id` con las
@@ -37,13 +38,36 @@ efectivamente revisados. El archivo final completo se valida sin `--draft`. El c
 automáticamente paquetes pendientes o mixtos. Si sólo revisa una persona, se declara un anotador y
 no se informa acuerdo interanotador.
 
+La corrida Playwright aceptada registró los 59 casos pendientes sin errores y coincidió en estado
+en los 59; junto con el primer caso manual, los 60 estados fueron correctos. La revisión de
+contenido/citas cerró con 49 PASS y 11 FAIL. Este resultado evalúa la configuración actual y no
+reemplaza las ablaciones E1/E2/E3.
+
 El reporte EVA-02 también tiene un contrato automatizado. Exige las variantes completas de E1,
 E2 o E3, consultas pareadas, configuración y procedencia explícitas, resultados y errores por
 pregunta, tokens, latencia p50/p95 y métricas separadas por recuperación, generación, agentes y
 operación. Una ejecución `real` no puede mezclarse con `test_double` y exige revisión humana. El
-comparador conserva deltas negativos y publica el denominador y los IDs excluidos. Todavía no se
-ejecutó E1/E2/E3 definitivo porque depende del benchmark humano congelado; las pruebas actuales
-validan el mecanismo con datos sintéticos y no son resultados de calidad.
+comparador conserva deltas negativos y publica el denominador y los IDs excluidos. E1/E2/E3
+definitivo ya no está bloqueado por EVA-01. La corrida presupuestada sobre `dev` quedó ejecutada y
+revisada; `test` permanece cerrado y no se usa para ajustar parámetros.
+
+### Corrida presupuestada EVA-02 del 28/10/2026
+
+Con un tope absoluto de USD 0,50 se ejecutaron E1 y E2 reales únicamente sobre los 18 casos
+respondibles de `dev`; `test` permaneció cerrado. E1 favoreció a hybrid RRF como compromiso de
+Recall@20 0,9722 y p95 215,98 ms: el reranker mejoró MRR/nDCG, pero alcanzó p95 47.012,40 ms.
+E2 completó 18 pares con/sin verificador y consumió USD 0,289792; el gasto total con el piloto de
+estimación fue USD 0,300764. Ambos modos acertaron el estado 18/18, pero el verificador cambió cinco
+textos sin pedir revisiones. La revisión humana independiente registró 12 PASS y 6 FAIL; los FAIL
+fueron `dev-r-002`, `dev-r-003`, `dev-r-004`, `dev-r-011`, `dev-r-012` y `dev-r-013`. Entre los
+cinco textos modificados por el verificador, el dictamen humano fue 4 PASS y 1 FAIL, mientras que
+la revisión documental previa de la sesión agente había marcado 2 PASS y 3 FAIL. Se conservan ambos
+registros: la planilla emite un dictamen por par y no puntúa por separado cada variante, por lo que
+no permite atribuir causalmente una mejora factual al verificador. E3 se ejecutó como piloto de una
+consulta con tres mediciones frías y tres calientes:
+la mediana bajó de 1.562 a 1.406 ms, sin ahorro de tokens porque sólo se cachea retrieval. El gasto
+total de EVA-02 quedó en USD 0,334369. Evidencia completa en
+`docs/evidence/tdd/EVA-02-budgeted-live.md`.
 
 ## Ejecución asistida del checklist
 

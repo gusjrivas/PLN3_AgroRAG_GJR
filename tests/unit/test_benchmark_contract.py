@@ -175,6 +175,27 @@ def test_eva_01_repository_draft_packet_is_complete_and_pending_human():
     assert draft.pending_human_count == 60
 
 
+def test_eva_01_repository_final_packet_is_frozen_and_reviewed():
+    from agro_rag.evaluation.benchmark import load_benchmark
+
+    _, catalogue = repository_draft_fixture()
+
+    dataset = load_benchmark(
+        ROOT / "data/evaluation/benchmark-60.jsonl",
+        catalogue,
+    )
+
+    assert dataset.split_counts == {"dev": 30, "test": 30}
+    assert dataset.category_counts == {
+        "respondable": 36,
+        "unsupported": 12,
+        "adversarial": 12,
+    }
+    assert len(dataset.ir_cases) == 36
+    assert len(dataset.abstention_cases) == 24
+    assert {case.annotator for case in dataset.cases} == {"Gustavo Julián Rivas"}
+
+
 def test_cli_validates_draft_packet_without_promoting_it(capsys, monkeypatch):
     from agro_rag.bootstrap import cli
 

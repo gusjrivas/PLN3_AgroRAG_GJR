@@ -67,7 +67,7 @@ class CitationResponse(BaseModel):
 
 
 class VerificationResponse(BaseModel):
-    decision: Literal["approve", "revise", "clarify", "abstain"]
+    decision: Literal["approve", "revise", "clarify", "abstain", "not_run"]
     revision_count: int = Field(ge=0, le=1)
     issue_codes: list[str]
 

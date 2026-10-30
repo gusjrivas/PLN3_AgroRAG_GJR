@@ -59,6 +59,50 @@ def test_openai_responses_uses_strict_schema_and_separates_untrusted_input():
     assert result.estimated is False
 
 
+def test_openai_allows_a_lower_output_cap_for_budgeted_evaluation():
+    from agro_rag.infrastructure.openai import OpenAIModel
+
+    seen = []
+
+    def handler(request):
+        seen.append(json.loads(request.content))
+        return httpx.Response(
+            200,
+            json={
+                "status": "completed",
+                "output": [
+                    {
+                        "type": "message",
+                        "content": [
+                            {
+                                "type": "output_text",
+                                "text": (
+                                    '{"status":"insufficient_evidence","claims":[],'
+                                    '"missing_information":[]}'
+                                ),
+                            }
+                        ],
+                    }
+                ],
+                "usage": {"input_tokens": 100, "output_tokens": 20},
+            },
+        )
+
+    async def run():
+        async with httpx.AsyncClient(transport=httpx.MockTransport(handler)) as client:
+            model = OpenAIModel(
+                client,
+                "https://api.openai.test/v1",
+                "secret",
+                "gpt-test",
+                max_output_tokens=256,
+            )
+            await model.generate("researcher", {}, 10)
+
+    asyncio.run(run())
+    assert seen[0]["max_output_tokens"] == 256
+
+
 def test_openai_readiness_checks_the_configured_model_without_generation():
     from agro_rag.infrastructure.openai import OpenAIModel
 

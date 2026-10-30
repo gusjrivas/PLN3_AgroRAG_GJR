@@ -52,8 +52,8 @@ ubicación de evidencia; no cambiar sólo la etiqueta de estado.
 | UI-02 | Estado aislado y sin duplicación | [05-frontend-hardening](../openspec/changes/05-frontend-hardening/specs/frontend-hardening/spec.md) | UI-02-rerun, UI-02-sesiones | test-plan del cambio + docs/evidence/tdd/UI-02.md |
 | SEC-01 | Acceso y entradas no confiables | [05-frontend-hardening](../openspec/changes/05-frontend-hardening/specs/frontend-hardening/spec.md) | SEC-01-sin-clave, SEC-01-injection, SEC-01-traversal | test-plan del cambio + docs/evidence/tdd/SEC-01.md |
 | OPS-01 | Caché y trazas | [05-frontend-hardening](../openspec/changes/05-frontend-hardening/specs/frontend-hardening/spec.md) | OPS-01-hit, OPS-01-invalidate, OPS-01-redaccion | test-plan del cambio + docs/evidence/tdd/OPS-01.md |
-| EVA-01 | Benchmark congelado | [06-evaluation-delivery](../openspec/changes/06-evaluation-delivery/specs/evaluation-delivery/spec.md) | EVA-01-split, EVA-01-sin-soporte | test-plan del cambio + docs/evidence/tdd/EVA-01.md |
-| EVA-02 | Métricas y ablaciones reales | [06-evaluation-delivery](../openspec/changes/06-evaluation-delivery/specs/evaluation-delivery/spec.md) | EVA-02-comparacion, EVA-02-negativo | test-plan del cambio + docs/evidence/tdd/EVA-02.md |
+| EVA-01 | Benchmark congelado | [06-evaluation-delivery](../openspec/changes/06-evaluation-delivery/specs/evaluation-delivery/spec.md) | EVA-01-split, EVA-01-sin-soporte | [contrato](evidence/tdd/06-benchmark-contract.md) + [cierre humano](evidence/tdd/EVA-01-human-review-freeze.md) |
+| EVA-02 | Métricas y ablaciones reales | [06-evaluation-delivery](../openspec/changes/06-evaluation-delivery/specs/evaluation-delivery/spec.md) | EVA-02-comparacion, EVA-02-negativo | test-plan del cambio + docs/evidence/tdd/EVA-02-budgeted-live.md |
 | DEL-01 | Entrega preproductiva | [06-evaluation-delivery](../openspec/changes/06-evaluation-delivery/specs/evaluation-delivery/spec.md) | DEL-01-reproduccion, DEL-01-informe | test-plan del cambio + docs/evidence/tdd/DEL-01.md |
 
 ## Prioridades

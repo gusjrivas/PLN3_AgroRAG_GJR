@@ -3,10 +3,10 @@
 **Trabajo integrador - Procesamiento de Lenguaje Natural III**
 
 Autor y responsable académico: Gustavo Julián Rivas
-Versión técnica: 28/10/2026
+Versión técnica: 29/10/2026
 Repositorio: https://github.com/gusjrivas/PLN3_AgroRAG_GJR
 
-Estado del documento: entrega técnica reproducible con evaluación científica definitiva pendiente.
+Estado del documento: entrega técnica reproducible con evaluación EVA-02 ejecutada y limitaciones explícitas.
 
 ## 1. Objetivo, problema y alcance
 
@@ -131,10 +131,10 @@ validador implementado exige exactamente esa distribución, qrels resolubles y S
 Los 36 casos respondibles integran promedios IR; los otros 24 se evalúan en abstención y
 aclaración, sin contaminar el denominador de recuperación.
 
-Existe un paquete candidato de 60 casos con ese balance y evidencias resolubles contra el corpus
-activo. Todas sus filas están marcadas `pending_human`. Un validador separado comprueba el borrador
-sin permitir que el cargador científico lo acepte como `reviewed`; cada respuesta, claim, página e
-ID todavía debe contrastarse manualmente con la fuente.
+El paquete final de 60 casos fue revisado humanamente y congelado con todas sus filas en estado
+`reviewed`. La corrida asistida por navegador obtuvo 49 PASS y 11 FAIL de contenido/citas, con
+60/60 estados observados correctos. El hash SHA-256 del benchmark es
+`b12253c38bec4e2e58b20ddb4ec1303c515a360001db37c56e6e54246bdcba69`.
 
 | Experimento | Variantes congeladas | Dimensión principal |
 |---|---|---|
@@ -179,9 +179,29 @@ borrador. El reranker consumió aproximadamente 30,56 segundos p95 sólo en retr
 incompatible con el objetivo de 30 segundos para la respuesta completa. La perfección aparente del
 reranker sobre ocho preguntas pequeñas no se generaliza y no autoriza activarlo.
 
-No existen todavía resultados definitivos de E1, E2 o E3. El paquete candidato de 60 casos no fue
-revisado por una persona, no se midió soporte factual final y no se ejecutaron tres pasadas
-fría/caliente. Por eso la API pública permanece en BM25 y este informe no declara mejora científica.
+### Corrida EVA-02 presupuestada
+
+El 28/10/2026 se ejecutaron E1 y E2 sobre los 18 casos respondibles de `dev`; `test` permaneció
+cerrado. Hybrid RRF obtuvo Recall@20 0,9722 y p95 215,98 ms. El reranker elevó MRR a 0,9259 y
+nDCG@10 a 0,8908, pero su p95 fue 47.012,40 ms sólo para retrieval, por encima del objetivo de la
+respuesta completa.
+
+E2 completó 18 pares reales. Sin verificador consumió 33.213 tokens de entrada, 1.795 de salida y
+USD 0,100982; con verificador consumió 66.736, 2.197 y USD 0,188810. Ambos modos produjeron el
+estado esperado 18/18. El verificador aprobó todos los casos, no pidió revisiones y cambió cinco
+textos.
+
+La revisión humana posterior de los 18 pares registró 12 PASS y 6 FAIL. Los FAIL fueron
+`dev-r-002`, `dev-r-003`, `dev-r-004`, `dev-r-011`, `dev-r-012` y `dev-r-013`. La planilla asigna
+un dictamen al par y no una puntuación independiente a cada variante, por lo que estos datos no
+demuestran una mejora causal del verificador. También se conserva una revisión dirigida previa de
+los cinco cambios, que encontró tres omisiones; la discrepancia no se oculta.
+
+E3 se limitó a una consulta con tres repeticiones frías y tres calientes. La mediana bajó de 1.562
+a 1.406 ms, sin reducir tokens ni costo porque la caché guarda retrieval, no generación. El gasto
+real total de EVA-02, incluido el piloto duplicado de estimación, fue USD 0,334369. La API pública
+permanece en BM25 por la latencia del reranker, el alcance limitado a `dev` y la ausencia de una
+mejora factual causalmente atribuible al verificador.
 
 ## 7. Seguridad, operación y costos
 
@@ -198,10 +218,9 @@ La auditoría registra request ID, versión del corpus, decisión, revisiones, d
 tokens, estimación y cache hit. No registra pregunta, prompt, evidencia, URL, clave o mensaje de
 excepción. El request ID del error HTTP coincide con el evento interno sin exponer detalles.
 
-No se informa un costo económico final porque las corridas definitivas no se realizaron. OpenAI,
-Pinecone y las descargas pueden generar uso externo; el operador debe revisar su cuenta y
-presupuesto. Ollama se ejecuta localmente. El reporte EVA-02 admite `estimated_cost` separado y
-obliga a fechar cualquier tarifa.
+La corrida EVA-02 registró USD 0,334369 con tarifas fechadas y quedó por debajo del tope autorizado
+de USD 0,50. OpenAI, Pinecone y las descargas pueden generar uso externo; el operador debe revisar
+su cuenta y presupuesto. Ollama se ejecuta localmente. El reporte separa costo real y estimado.
 
 ## 8. Reproducción
 
@@ -228,8 +247,8 @@ uv run python scripts/build_report.py
 
 El verificador offline calcula hashes de los artefactos, comprueba comandos, secciones, duración
 del guion y presencia del PDF sin leer `.env` ni llamar a Internet. La release definitiva sólo
-puede etiquetarse después de incorporar el benchmark humano, ejecutar E1/E2/E3 y repetir la
-instalación en un checkout limpio.
+puede etiquetarse después de la revisión final del diff/PDF y de repetir la instalación en un
+checkout limpio.
 
 ## 9. Demo de 15 minutos
 
@@ -262,14 +281,15 @@ adaptadores semánticos se integraron en un namespace aislado y demostraron que 
 medirse. El runtime permite una activación explícita y fail-closed para corridas controladas, sin
 cambiar BM25 como default ni confundir capacidad técnica con validación científica.
 
-La principal conclusión técnica es que mayor score preliminar no implica una mejor decisión de
-producto. El reranker fue demasiado lento y los qrels no tienen revisión humana. Mantener BM25 en
-la API es una decisión conservadora sustentada por evidencia, no una omisión silenciosa.
+La principal conclusión técnica es que mayor score de ranking no implica una mejor decisión de
+producto. El reranker fue demasiado lento y el verificador no mostró una mejora factual causal en
+la revisión disponible. Mantener BM25 en la API es una decisión conservadora sustentada por
+evidencia, no una omisión silenciosa.
 
-Para cerrar científicamente el trabajo faltan: revisar humanamente los 60 casos candidatos, congelar dev/test,
-ejecutar E1/E2/E3 con proveedores reales, revisar soporte factual y citas, repetir mediciones,
-registrar hardware/costo y actualizar este PDF con resultados definitivos. También debe confirmarse
-la fecha calendario de Teoría 7 y la modalidad académica.
+El alcance científico sigue limitado: `test` permanece cerrado, E3 cubre una sola consulta y el
+dictamen humano E2 no separa la calidad de cada variante. Antes de la entrega faltan la revisión
+final del diff/PDF, un ensayo reproducible y confirmar la fecha calendario de Teoría 7 y la
+modalidad académica.
 
 ## 12. Referencias
 
