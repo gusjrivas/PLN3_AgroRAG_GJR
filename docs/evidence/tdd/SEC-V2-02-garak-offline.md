@@ -4,6 +4,8 @@ Fecha: 30/10/2026. Responsable y revisión: misma sesión coordinadora; revisió
 MR #30. Rama: `feat/v2-container-foundation`. Propiedad: `Dockerfile.garak`, perfil security,
 adaptador/gate, configuración, gateway, pruebas, runbook y esta evidencia.
 
+Commit de implementación: `42d6817` (`feat: add isolated garak release gate`).
+
 ## RED
 
 Se escribieron primero los contratos de adaptador, política y arquitectura. Pytest detuvo la
