@@ -51,6 +51,13 @@ terminaron con exit 0; mypy revisó 38 archivos y los dos contratos de imports s
 suite completa terminó con exit 0: `263 passed, 3 deselected, 1 warning in 15.58s`.
 `git diff --check` también terminó con exit 0.
 
+El HEAD `a4dc07a` aprobó en GitHub
+[quality 41001703891](https://github.com/gusjrivas/PLN3_AgroRAG_GJR/actions/runs/41001703891):
+offline, OpenSpec y browser terminaron `success`. También aprobó
+[container supply chain 41001703866](https://github.com/gusjrivas/PLN3_AgroRAG_GJR/actions/runs/41001703866):
+build de las tres imágenes, identidades, E2E Compose, SBOM, Trivy, política y artefacto terminaron
+`success`. Login/publicación se omitieron correctamente porque el evento fue `pull_request`.
+
 ## Límite y siguiente evidencia
 
 No se ejecutaron los workflows manuales ni un ataque real. No hay staging/dominio/TLS, credenciales
