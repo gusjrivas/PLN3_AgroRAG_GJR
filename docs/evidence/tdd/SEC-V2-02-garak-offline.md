@@ -1,8 +1,9 @@
 # Evidencia TDD: runner y gate Garak offline
 
-Fecha: 30/10/2026. Responsable y revisión: misma sesión coordinadora; revisión humana pendiente en
-MR #30. Rama: `feat/v2-container-foundation`. Propiedad: `Dockerfile.garak`, perfil security,
-adaptador/gate, configuración, gateway, pruebas, runbook y esta evidencia.
+Fecha: 30/10/2026. Responsable y revisión técnica: misma sesión coordinadora. MR #30 integrado por
+`gusjrivas` sin una review formal registrada en GitHub. Rama de implementación:
+`feat/v2-container-foundation`. Propiedad: `Dockerfile.garak`, perfil security, adaptador/gate,
+configuración, gateway, pruebas, runbook y esta evidencia.
 
 Commit de implementación: `42d6817` (`feat: add isolated garak release gate`).
 
@@ -52,3 +53,21 @@ Dos resoluciones consecutivas mostraron drift en dependencias transitivas. Se co
 aprobado en `infra/garak/requirements.lock` (197 paquetes exactos) y el build ahora verifica
 `garak==0.17.0`. Como ese lock incluye wheels CUDA, el runner falla cerrado fuera de `linux/amd64`;
 una imagen ARM64 requiere su propio lock, build y scan.
+
+## Publicación inmutable post-merge
+
+Se ejecutó manualmente `garak-runner-supply-chain` con reconocimiento explícito del build grande
+sobre el commit integrado `5a11a29a8e0e8b3ce4c1dce9e5ecf7a221d24af6`. El
+[run 41062609444](https://github.com/gusjrivas/PLN3_AgroRAG_GJR/actions/runs/41062609444)
+terminó `success`: build único, Garak 0.17.0, UID 10003, label OCI, SBOM, Trivy, política, upload de
+evidencia, login, publicación y manifiesto aprobaron.
+
+El artefacto `garak-runner-manifest-5a11a29a8e0e8b3ce4c1dce9e5ecf7a221d24af6` declaró:
+
+```text
+ghcr.io/gusjrivas/pln3_agrorag_gjr/garak-runner@sha256:9a56fcacf404a0668496747820c9529bfb1de880853fe9de2123ff1ea4270e61
+```
+
+`docker buildx imagetools inspect` resolvió esa referencia desde esta máquina, devolvió exit 0 y
+confirmó el digest exacto. Esto completa la publicación del runner, no el primer scan autorizado:
+el baseline, triage y dictamen siguen pendientes de staging real.

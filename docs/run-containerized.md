@@ -256,8 +256,9 @@ staging debe consumir exactamente esas referencias, no reconstruirlas.
 Construye `Dockerfile.garak` con Garak 0.17.0 y un lock exacto de 197 paquetes, corre como UID/GID
 10003 sin puertos, capabilities ni
 credenciales de proveedor, y escribe evidencia fuera del contenedor. La distribución oficial de
-Garak arrastra PyTorch/CUDA: la imagen local validada mide 3.292.465.354 bytes. Debe publicarse y
-cachearse por separado; nunca se incorpora a API/UI/gateway.
+Garak arrastra PyTorch/CUDA: la imagen local validada mide 3.292.465.354 bytes. El run
+`41062609444` publicó la candidata del merge por digest; debe cachearse por separado y nunca se
+incorpora a API/UI/gateway.
 
 El lock actual incluye wheels CUDA y el Dockerfile falla cerrado fuera de `linux/amd64`. Soportar
 ARM64 exige resolver/escanear un lock e imagen propios; no se presume portabilidad binaria.
@@ -312,6 +313,17 @@ aislada del runner. Sólo después publica ese mismo objeto como
 `ghcr.io/<owner>/<repo>/garak-runner:sha-<commit>` y entrega un manifiesto con referencia por digest;
 no crea `latest`. Ejecutarlo desde Actions con `acknowledge_large_build=true` y conservar el
 manifiesto de 90 días para el siguiente paso.
+
+La ejecución autorizada
+[41062609444](https://github.com/gusjrivas/PLN3_AgroRAG_GJR/actions/runs/41062609444) terminó
+`success` para `5a11a29a8e0e8b3ce4c1dce9e5ecf7a221d24af6`. El manifiesto fijó:
+
+```text
+ghcr.io/gusjrivas/pln3_agrorag_gjr/garak-runner@sha256:9a56fcacf404a0668496747820c9529bfb1de880853fe9de2123ff1ea4270e61
+```
+
+Usar exactamente esa referencia en el primer scan de esta candidata; no usar el tag SHA como
+identidad de promoción.
 
 Crear en GitHub el environment protegido `staging-security`, con reviewer humano y estos secrets:
 

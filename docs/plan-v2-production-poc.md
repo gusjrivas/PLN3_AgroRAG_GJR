@@ -122,9 +122,9 @@ Cada corte se integra por separado. Las tareas funcionales se abren en OpenSpec 
 ADR-015. Los tests de contenedor no consultan LLMs pagos ni descargan pesos.
 
 Estado al 30/10/2026: MR #30 integrado como `5a11a29`; fases 0–4, supply chain del producto y gate
-Garak offline completos. API/UI/gateway fueron publicados por digest desde el push a `main`.
-La publicación manual del runner y el scan autorizado quedaron automatizados con imagen por digest,
-secrets de environment, evidencia cruda cifrada y resumen sanitizado. Permanecen abiertos el
+Garak offline completos. API/UI/gateway y el runner Garak fueron publicados por digest desde el
+mismo commit de `main`. El scan autorizado quedó automatizado con imagen por digest, secrets de
+environment, evidencia cruda cifrada y resumen sanitizado. Permanecen abiertos el
 despliegue Linux limpio, la ejecución Garak real, el triage humano y la promoción de los mismos
 digests. Ninguna fase abierta se considera satisfecha por la documentación o por un workflow no
 ejecutado.
