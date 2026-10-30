@@ -22,6 +22,13 @@ Copy-Item .env.example .env
 
 Si `.env` ya existe, conservarlo y editarlo. Generar una clave local con `uv run python -c "import secrets; print(secrets.token_urlsafe(32))"` y colocarla en `AGRO_READER_KEY` de `.env`. Backend y frontend leen ese archivo, que está ignorado por Git. No enviar la clave a los modelos ni versionarla.
 
+V2 también admite secretos montados por archivo: `AGRO_READER_KEY_FILE`,
+`OPENAI_API_KEY_FILE` y `PINECONE_API_KEY_FILE`. Esta convención está destinada a Compose/secret
+stores; el valor se lee en startup, se recorta el salto final y nunca aparece en `repr`. Configurar
+simultáneamente el valor directo y su `*_FILE`, o apuntar a un archivo ausente/vacío, bloquea el
+arranque con un error sanitizado. Para ejecución local continuar usando `.env` y no definir las
+variables `*_FILE`.
+
 ```powershell
 uv run agro-rag download data/manifest.json
 uv run agro-rag ingest data/manifest.json --output data/processed/catalogue
@@ -46,6 +53,11 @@ uv run streamlit run src/agro_rag_ui/app.py --server.address 127.0.0.1 --server.
 Abrir http://127.0.0.1:8501. En **Explorar fuentes** probar: “¿Cuándo es crítico evitar la falta de agua en tomate?”. Este modo devuelve fragmentos, no una respuesta redactada. Expandir la fuente para ver página, edición y pasaje. Después de un resultado, usar **Nueva consulta** para descartarlo y mostrar un formulario vacío. No se utiliza un LLM en este modo.
 
 OpenAPI: http://127.0.0.1:8000/docs. Los endpoints de datos requieren header `X-API-Key`. `GET /health/live` verifica sólo el proceso. `GET /health/ready` requiere corpus y modelo disponible. La API no descarga URLs recibidas en consultas.
+
+El entrypoint `agro-rag-healthcheck` consulta readiness mediante HTTP, usa
+`AGRO_HEALTHCHECK_URL` (default local `http://127.0.0.1:8000/health/ready`) y la misma reader key o
+archivo montado. Devuelve exit 0 únicamente ante `{"status":"ready"}` y no imprime detalles de
+conexión ni secretos. Está pensado para el healthcheck de la imagen; no reemplaza `/health/live`.
 
 ## Activar generación real
 

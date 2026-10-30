@@ -5,12 +5,26 @@ Autor y responsable académico: Gustavo Julián Rivas. Fecha del plan: 21/10/202
 
 Repositorio independiente: https://github.com/gusjrivas/PLN3_AgroRAG_GJR
 
-**Estado: primera versión local y paquete de entrega técnica implementados: corpus piloto, búsqueda, API, interfaz, flujo investigador/verificador, informe PDF reproducible y guion de demo. El benchmark de 60 casos quedó revisado y congelado en `data/evaluation/benchmark-60.jsonl`; la corrida aceptada obtuvo 49 PASS y 11 FAIL de contenido/citas, con 60/60 estados observados correctos. E1/E2 y el piloto mínimo E3 se ejecutaron sobre `dev` con proveedores reales y revisión humana de los 18 pares E2: 12 PASS y 6 FAIL. BM25 permanece como default por la latencia CPU del reranker, el alcance limitado a `dev` y la falta de evidencia causal de mejora por el verificador.**
+**Estado: V1 local y paquete de entrega técnica implementados. V2 containerizada en ejecución bajo
+ADR-015/OpenSpec 07: settings por secret files, imágenes API/UI/gateway no root, Compose local,
+catálogo persistente/read-only y overlay productivo endurecido ya tienen evidencia; CI de imágenes,
+identidad de release, logs HTTP JSON y rollback validado ya tienen evidencia; supply chain aprobó
+en GitHub y el runner Garak 0.17.0 aprobó sus contratos offline. La publicación inmutable del runner
+y el scan manual autorizado ya tienen workflows fail-closed. El smoke de staging también ata
+manifiesto, identidad, catálogo y una consulta citada en evidencia sanitizada. El preflight de host
+valida digests, identidad OCI, volumen y secretos antes de levantar producción; el despliegue y la
+ejecución reales en staging siguen abiertos.
+El benchmark congelado de 60 casos conserva 49 PASS y 11
+FAIL de contenido/citas, con 60/60 estados observados correctos. E1/E2 y el piloto mínimo E3 se
+ejecutaron sobre `dev`; BM25 permanece como default.**
 Engram 3.5.2 está instalado y verificado en el entorno de trabajo remoto; `.engram/config.json` identifica este proyecto. La instalación en la notebook y la activación de los clientes permanecen pendientes. Ver [evidencia](docs/evidence/engram-setup.md). Los ADR son propuestas técnicas; TDD y Python son requisitos expresos del usuario.
 
 ## Empezar aquí
 
-**Para ejecutarlo:** seguir [run-local](docs/run-local.md). **Para continuar el desarrollo:** [start-here](docs/start-here.md). Repositorio independiente: `PLN3_AgroRAG_GJR`.
+**Para ejecutarlo localmente:** seguir [run-local](docs/run-local.md). **La V2 containerizada está
+en implementación incremental:** consultar [run-containerized](docs/run-containerized.md). **Para
+continuar el desarrollo:** [start-here](docs/start-here.md). Repositorio independiente:
+`PLN3_AgroRAG_GJR`.
 
 1. [Plan de ejecución](docs/plan.md): secuencia, dependencias y puertas de salida.
 2. [Requisitos y trazabilidad](docs/requirements.md): consigna → cambio → prueba → evidencia.
@@ -22,7 +36,7 @@ Engram 3.5.2 está instalado y verificado en el entorno de trabajo remoto; `.eng
 ## Stack propuesto
 
 Python 3.12; FastAPI + Pydantic v2 en backend; Streamlit en frontend Python; httpx como cliente HTTP; LangGraph encapsulado para el flujo de agentes; pdfplumber, BM25, Sentence Transformers, Pinecone y Cross-Encoder para RAG; SQLite para catálogo de evidencias y JSONL para auditoría.
-pytest, pytest-cov, Hypothesis, Streamlit AppTest y Playwright Python para pruebas; Ruff, mypy e import-linter para calidad. uv y uv.lock para resolver/fijar dependencias durante el primer cambio. Docker Compose para dos procesos locales. Ninguna versión de librería del producto se presenta como ya validada.
+pytest, pytest-cov, Hypothesis, Streamlit AppTest y Playwright Python para pruebas; Ruff, mypy e import-linter para calidad. uv y uv.lock fijan dependencias. Docker Compose ensambla API, UI, gateway y jobs explícitos sin cambiar los límites del monolito modular. Ninguna versión de librería del producto se presenta como validada fuera de la evidencia registrada.
 
 OpenSpec 1.14.3 es la versión de tooling seleccionada para validar esta planificación. Engram usa una versión estable registrada al instalar. Son herramientas del desarrollo y quedan fuera del contenedor del producto.
 

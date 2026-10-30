@@ -1,0 +1,52 @@
+{
+	admin off
+}
+
+{$AGRO_DOMAIN:localhost} {
+	log {
+		output stdout
+		format json
+	}
+
+	encode zstd gzip
+
+	basic_auth {
+		import /run/secrets/gateway_auth
+	}
+
+	header {
+		-Server
+		Strict-Transport-Security "max-age=31536000; includeSubDomains"
+		X-Content-Type-Options "nosniff"
+		X-Frame-Options "SAMEORIGIN"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		Permissions-Policy "camera=(), microphone=(), geolocation=()"
+	}
+
+	handle /health/* {
+		reverse_proxy api:8000 {
+			transport http {
+				dial_timeout 3s
+			}
+		}
+	}
+
+	handle /v1/* {
+		reverse_proxy api:8000 {
+			transport http {
+				dial_timeout 3s
+			}
+		}
+	}
+
+	handle {
+		reverse_proxy ui:8501 {
+			health_uri /_stcore/health
+			health_interval 30s
+			health_timeout 5s
+			transport http {
+				dial_timeout 3s
+			}
+		}
+	}
+}

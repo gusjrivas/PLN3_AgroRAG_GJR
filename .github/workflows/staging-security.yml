@@ -1,0 +1,178 @@
+name: staging-garak-security-gate
+
+on:
+  workflow_dispatch:
+    inputs:
+      target_url:
+        description: Endpoint HTTPS autorizado, terminado exactamente en /v1/query
+        required: true
+        type: string
+      release_id:
+        description: Identificador de la release candidata desplegada
+        required: true
+        type: string
+      garak_image:
+        description: Runner GHCR inmutable (ghcr.io/.../garak-runner@sha256:...)
+        required: true
+        type: string
+      authorization_confirmed:
+        description: Confirmo autorización para ejecutar pruebas adversariales sobre el target
+        required: true
+        type: boolean
+        default: false
+
+concurrency:
+  group: staging-garak-${{ inputs.release_id }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  packages: read
+
+jobs:
+  authorized-scan:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    environment: staging-security
+    env:
+      AGRO_GARAK_IMAGE: ${{ inputs.garak_image }}
+      AGRO_GARAK_TARGET_URL: ${{ inputs.target_url }}
+      AGRO_GARAK_RELEASE_ID: ${{ inputs.release_id }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Validate authorization and immutable inputs
+        env:
+          AUTHORIZATION_CONFIRMED: ${{ inputs.authorization_confirmed }}
+        run: |
+          set -euo pipefail
+          test "$AUTHORIZATION_CONFIRMED" = "true"
+          repository="$(echo "$GITHUB_REPOSITORY" | tr '[:upper:]' '[:lower:]')"
+          expected_image="ghcr.io/${repository}/garak-runner"
+          [[ "$AGRO_GARAK_IMAGE" == "${expected_image}"@sha256:* ]]
+          digest="${AGRO_GARAK_IMAGE#"${expected_image}"@sha256:}"
+          [[ "$digest" =~ ^[0-9a-f]{64}$ ]]
+          [[ "$AGRO_GARAK_RELEASE_ID" =~ ^[A-Za-z0-9_.-]{1,80}$ ]]
+          python3 - <<'PY'
+          import os
+          from urllib.parse import urlsplit
+
+          target = urlsplit(os.environ["AGRO_GARAK_TARGET_URL"])
+          if (
+              target.scheme != "https"
+              or not target.hostname
+              or target.path != "/v1/query"
+              or target.query
+              or target.fragment
+              or target.username
+              or target.password
+          ):
+              raise SystemExit("target_url debe ser HTTPS y terminar exactamente en /v1/query")
+          PY
+
+      - name: Login to GHCR
+        uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6 # v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Pull and inspect exact runner
+        run: |
+          set -euo pipefail
+          docker pull "$AGRO_GARAK_IMAGE"
+          test "$(docker image inspect "$AGRO_GARAK_IMAGE" --format '{{.Config.User}}')" = "10003:10003"
+          test "$(docker image inspect "$AGRO_GARAK_IMAGE" --format '{{index .Config.Labels "org.opencontainers.image.version"}}')" = "0.17.0"
+
+      - name: Re-scan exact runner
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          image-ref: ${{ inputs.garak_image }}
+          format: json
+          output: garak-runner-trivy.json
+          severity: CRITICAL,HIGH
+          ignore-unfixed: true
+          exit-code: '0'
+          scanners: vuln,secret
+          version: v0.76.1
+
+      - name: Re-enforce runner vulnerability policy
+        run: >-
+          python3 scripts/check_vulnerability_policy.py
+          --report garak-runner=garak-runner-trivy.json
+          --exceptions configs/security/garak-runner-vulnerability-exceptions.json
+
+      - name: Prepare ephemeral secret files and output
+        env:
+          GARAK_GATEWAY_AUTHORIZATION: ${{ secrets.GARAK_GATEWAY_AUTHORIZATION }}
+          GARAK_READER_KEY: ${{ secrets.GARAK_READER_KEY }}
+          GARAK_REPORT_ENCRYPTION_KEY: ${{ secrets.GARAK_REPORT_ENCRYPTION_KEY }}
+        run: |
+          set -euo pipefail
+          scan_root="$RUNNER_TEMP/agrorag-garak-$GITHUB_RUN_ID"
+          test -n "$GARAK_GATEWAY_AUTHORIZATION"
+          test -n "$GARAK_READER_KEY"
+          test -n "$GARAK_REPORT_ENCRYPTION_KEY"
+          install -d -m 0700 "$scan_root/secrets" "$scan_root/evidence"
+          install -d -m 0750 "$scan_root/output/raw" "$scan_root/output/summary"
+          printf '%s' "$GARAK_GATEWAY_AUTHORIZATION" > "$scan_root/secrets/gateway_authorization"
+          printf '%s' "$GARAK_READER_KEY" > "$scan_root/secrets/reader_key"
+          printf '%s' "$GARAK_REPORT_ENCRYPTION_KEY" > "$scan_root/secrets/report_encryption_key"
+          chmod 0600 "$scan_root"/secrets/*
+          sudo chown -R 10003:10003 "$scan_root/output"
+          echo "SCAN_ROOT=$scan_root" >> "$GITHUB_ENV"
+          echo "AGRO_GARAK_SECRETS_DIR=$scan_root/secrets" >> "$GITHUB_ENV"
+          echo "AGRO_GARAK_OUTPUT_DIR=$scan_root/output" >> "$GITHUB_ENV"
+
+      - name: Execute authorized Garak gate
+        id: garak_scan
+        continue-on-error: true
+        run: >-
+          docker compose -f compose.security.yaml --profile security
+          run --rm --no-deps --no-build garak
+
+      - name: Encrypt raw Garak evidence
+        if: always()
+        run: |
+          set -euo pipefail
+          test -d "$SCAN_ROOT/output/raw"
+          test -n "$(find "$SCAN_ROOT/output/raw" -type f -print -quit)"
+          tar -C "$SCAN_ROOT/output" -cf - raw | openssl enc -aes-256-cbc -pbkdf2 -iter 250000 -salt \
+            -pass file:"$SCAN_ROOT/secrets/report_encryption_key" \
+            -out "$SCAN_ROOT/evidence/garak-raw.tar.enc"
+          chmod 0600 "$SCAN_ROOT/evidence/garak-raw.tar.enc"
+          sha256sum "$SCAN_ROOT/evidence/garak-raw.tar.enc" > "$SCAN_ROOT/evidence/garak-raw.tar.enc.sha256"
+
+      - name: Upload encrypted raw evidence
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: garak-raw-encrypted-${{ inputs.release_id }}
+          path: ${{ env.SCAN_ROOT }}/evidence/
+          if-no-files-found: warn
+          retention-days: 7
+
+      - name: Upload sanitized summary
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: garak-summary-${{ inputs.release_id }}
+          path: ${{ env.SCAN_ROOT }}/output/summary/
+          if-no-files-found: warn
+          retention-days: 90
+
+      - name: Enforce final scan result
+        if: always()
+        env:
+          SCAN_OUTCOME: ${{ steps.garak_scan.outcome }}
+        run: |
+          set -euo pipefail
+          test "$SCAN_OUTCOME" = "success"
+          test -n "$(find "$SCAN_ROOT/output/summary" -type f -name '*.json' -print -quit)"
+
+      - name: Remove target credentials and local evidence
+        if: always()
+        run: sudo rm -rf -- "$SCAN_ROOT"

@@ -1,11 +1,17 @@
+import json
+import logging
+import sys
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
+from time import perf_counter
 from typing import Annotated
+from uuid import uuid4
 
 import httpx
 from fastapi import FastAPI, Header, HTTPException, Request
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, Response
+from starlette.middleware.base import RequestResponseEndpoint
 
 from agro_rag.api.health import router
 from agro_rag.api.query import error, query_router
@@ -17,6 +23,18 @@ from agro_rag.infrastructure.audit import LoggingAuditSink
 from agro_rag.infrastructure.corpus import load_catalogue
 from agro_rag.infrastructure.ollama import OllamaModel
 from agro_rag.infrastructure.openai import OpenAIModel
+
+
+def _http_logger() -> logging.Logger:
+    logger = logging.getLogger("agro_rag.http")
+    if not any(getattr(handler, "agro_json", False) for handler in logger.handlers):
+        handler = logging.StreamHandler(sys.stdout)
+        handler.setFormatter(logging.Formatter("%(message)s"))
+        handler.agro_json = True  # type: ignore[attr-defined]
+        logger.addHandler(handler)
+    logger.setLevel(logging.INFO)
+    logger.propagate = False
+    return logger
 
 
 def build_model(config: Settings, client: httpx.AsyncClient) -> OllamaModel | OpenAIModel | None:
@@ -39,6 +57,7 @@ def create_app(
     service: QueryService | None = None,
 ) -> FastAPI:
     config = settings or Settings()
+    http_logger = _http_logger()
     if catalogue is None and (config.catalogue_path / "active.json").exists():
         catalogue = load_catalogue(config.catalogue_path)
     retrieval_runtime = build_retrieval_runtime(config, catalogue) if catalogue else None
@@ -64,7 +83,29 @@ def create_app(
             if retrieval_runtime is not None:
                 retrieval_runtime.close()
 
-    app = FastAPI(title="AgroRAG", version="0.1.0", lifespan=lifespan)
+    app = FastAPI(title="AgroRAG", version=config.release_version, lifespan=lifespan)
+
+    @app.middleware("http")
+    async def structured_http_log(request: Request, call_next: RequestResponseEndpoint) -> Response:
+        request_id = str(uuid4())
+        started = perf_counter()
+        status_code = 500
+        try:
+            response = await call_next(request)
+            status_code = response.status_code
+            response.headers["X-Request-ID"] = request_id
+            return response
+        finally:
+            payload = {
+                "event": "http_request_completed",
+                "request_id": request_id,
+                "method": request.method,
+                "path": request.url.path,
+                "status_code": status_code,
+                "duration_ms": max(0, round((perf_counter() - started) * 1000)),
+            }
+            http_logger.info(json.dumps(payload, ensure_ascii=True, separators=(",", ":")))
+
     app.include_router(router)
     app.include_router(
         query_router(
@@ -99,5 +140,14 @@ def create_app(
         if service is None or (model is not None and not await model.ready()):
             raise error(503, "NOT_READY", "Corpus o modelo no disponible")
         return {"status": "ready"}
+
+    @app.get("/health/version")
+    async def version() -> dict[str, str | None]:
+        return {
+            "version": config.release_version,
+            "commit": config.commit_sha,
+            "image_digest": config.image_digest,
+            "corpus_version": catalogue.version if catalogue is not None else None,
+        }
 
     return app

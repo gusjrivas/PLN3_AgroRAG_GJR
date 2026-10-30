@@ -52,5 +52,12 @@ Una repetición previa de pytest sin `--basetemp` terminó con exit 1: Windows n
 directorio temporal global y dos tests no alcanzaron a ejecutarse. La repetición aislada dentro del
 workspace aprobó; no hubo una falla de aserción ni un cambio de producto.
 
-La revisión de consistencia del diff fue realizada por la misma sesión. El ADR permanece en estado
-`Propuesto` y requiere revisión humana antes de iniciar la implementación.
+La revisión de consistencia del diff fue realizada por la misma sesión. Gustavo Julián Rivas aprobó
+iniciar la ejecución el 29/10/2026; ADR-015 pasó a `Aceptado para implementación` y el contrato se
+registró en `openspec/changes/07-containerized-production-poc/` sobre la rama
+`feat/v2-container-foundation`.
+
+Validación adicional al iniciar la ejecución:
+
+- `npx --yes @fission-ai/openspec@1.14.3 validate 07-containerized-production-poc --strict`:
+  exit 0, cambio válido.

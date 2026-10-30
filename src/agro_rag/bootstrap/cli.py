@@ -9,6 +9,7 @@ import httpx
 from agro_rag.bootstrap.settings import Settings
 from agro_rag.evaluation.benchmark import load_benchmark, load_benchmark_draft
 from agro_rag.evaluation.delivery import validate_delivery
+from agro_rag.infrastructure.backup import backup_catalogue, restore_catalogue
 from agro_rag.infrastructure.corpus import Manifest, build_catalogue, load_catalogue
 from agro_rag.infrastructure.download import download_file
 from agro_rag.infrastructure.pinecone import E5Embedder, connect_pinecone, index_catalogue
@@ -29,7 +30,47 @@ def main(argv: list[str] | None = None, *, settings: Settings | None = None) -> 
     benchmark = commands.add_parser("validate-benchmark")
     benchmark.add_argument("path", type=Path)
     benchmark.add_argument("--draft", action="store_true")
+    backup = commands.add_parser("backup-catalogue")
+    backup.add_argument("--catalogue", type=Path, required=True)
+    backup.add_argument("--destination", type=Path, required=True)
+    backup.add_argument("--release", required=True)
+    backup.add_argument("--commit", required=True)
+    backup.add_argument("--image", required=True)
+    restore = commands.add_parser("restore-catalogue")
+    restore.add_argument("--archive", type=Path, required=True)
+    restore.add_argument("--catalogue", type=Path, required=True)
     args = parser.parse_args(argv)
+    if args.command == "backup-catalogue":
+        metadata = backup_catalogue(
+            args.catalogue,
+            args.destination,
+            release=args.release,
+            commit=args.commit,
+            image=args.image,
+        )
+        print(
+            json.dumps(
+                {
+                    "archive": str(args.destination),
+                    "corpus_version": metadata.corpus_version,
+                    "evidence_count": metadata.evidence_count,
+                },
+                sort_keys=True,
+            )
+        )
+        return 0
+    if args.command == "restore-catalogue":
+        catalogue = restore_catalogue(args.archive, args.catalogue)
+        print(
+            json.dumps(
+                {
+                    "corpus_version": catalogue.version,
+                    "evidence_count": len(catalogue.evidence),
+                },
+                sort_keys=True,
+            )
+        )
+        return 0
     if args.command == "verify-delivery":
         validation = validate_delivery(args.root)
         print(

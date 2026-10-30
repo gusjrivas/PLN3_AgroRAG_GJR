@@ -1,8 +1,14 @@
 # Plan V2: PoC containerizada y desplegable en un único host
 
-Estado: propuesto para revisión. Fecha: 29/10/2026. Responsable: coordinador de arquitectura.
-Rama de planificación: `plan/v2-containerized-poc`. Propiedad de esta etapa:
-`docs/plan-v2-production-poc.md`, `docs/adr/015.md` y `docs/adr/README.md`.
+Estado: aceptado y en ejecución. Fecha: 29/10/2026. Responsable: coordinador de arquitectura.
+Rama de implementación inicial: `feat/v2-container-foundation`. Propiedad de esta etapa:
+configuración/entrypoints, infraestructura de contenedores, pruebas, OpenSpec, documentación y
+evidencia V2. ADR-015 fue aceptado por Gustavo Julián Rivas el 29/10/2026.
+
+Progreso al 30/10/2026: configuración container-safe, imágenes API/UI/gateway, Compose local,
+persistencia, E2E de browser con reinicio, overlay productivo, observabilidad y rollback están
+implementados y verificados. Supply chain/CI está implementado y espera ejecución remota; restan
+staging autorizado y garak.
 
 ## Objetivo
 
@@ -20,6 +26,7 @@ fuente de evidencia y una compuerta de release, no una garantía de seguridad, c
 cobertura completa de OWASP u otro estándar.
 
 Decisión arquitectónica: [ADR-015](adr/015.md).
+Contrato de implementación: [OpenSpec 07](../openspec/changes/07-containerized-production-poc/).
 
 ## Estado de partida y restricciones
 
@@ -114,6 +121,20 @@ secretos sólo en los servicios autorizados; la aplicación adoptará variables 
 Cada corte se integra por separado. Las tareas funcionales se abren en OpenSpec después de aceptar
 ADR-015. Los tests de contenedor no consultan LLMs pagos ni descargan pesos.
 
+Estado al 30/10/2026 en MR #30: fases 0–4, supply chain del producto y gate Garak offline completos.
+La publicación manual del runner y el scan autorizado quedaron automatizados con imagen por digest,
+secrets de environment, evidencia cruda cifrada y resumen sanitizado. Permanecen abiertos el
+despliegue Linux limpio, la ejecución Garak real, el triage humano y la promoción de los mismos
+digests. Ninguna fase abierta se considera satisfecha por la documentación o por un workflow no
+ejecutado.
+
+La puerta previa de staging también está automatizada: descarga el `release-manifest.json` del run
+que publicó las imágenes, exige coincidencia de commit/digests, consulta identidad y catálogo por el
+gateway y ejecuta una pregunta sintética citada. Su existencia no sustituye una ejecución real.
+El host limpio cuenta además con un preflight read-only que falla antes de `up` si faltan digests,
+labels de commit, identidades no root, volumen externo, secretos con permisos restrictivos o un
+Compose productivo válido. El bootstrap/restauración sigue siendo una operación explícita.
+
 ### Fase 0 — contrato de V2
 
 **ARC-V2-01.** Aceptar ADR-015, crear el cambio OpenSpec y fijar Definition of Done, propietario,
@@ -180,6 +201,10 @@ genera SBOM, escanea imagen y publica sólo desde `main`/tag con tags SHA y semv
 **REL-V2-01.** Desplegar en staging Linux limpio, ejecutar smoke/E2E, reinicio, backup/restore y
 rollback. Registrar host/CPU/memoria, imágenes, digests, tiempos y evidencia.
 
+Antes del despliegue, ejecutar el preflight single-host sobre imágenes ya descargadas y un catálogo
+restaurado. Conservar su inventario sanitizado de host/recursos/digests/tiempos. Su aprobación es
+necesaria pero no completa REL-V2-01 sin las pruebas reales posteriores.
+
 **REL-V2-02.** Promover la misma imagen aprobada a la PoC productiva; no reconstruir entre staging
 y producción.
 
@@ -188,10 +213,12 @@ y producción.
 adaptador black-box al gateway, configuración versionada y parser/gate. REFACTOR: separar secretos,
 reportes crudos y resumen sanitizado.
 
-La suite inicial cubre riesgos priorizados para AgroRAG: prompt injection, jailbreak, bypass por
-codificación, fuga de información y contenido inseguro. Se fijan versión, plugins, configuración,
+La suite inicial acotada cubre riesgos priorizados para AgroRAG: prompt injection, jailbreak,
+bypass por codificación y generación de credenciales aparentes. Se fijan versión, plugins, configuración,
 seed, cantidad de generaciones, modelo/proveedor y digest de la aplicación. Los nombres exactos de
 probes/detectors quedan fijados en OpenSpec contra una versión concreta de garak para evitar drift.
+Fuga real de secretos y contenido inseguro requieren fixtures/detectores adicionales validados; no
+se declaran cubiertos por inferencia a partir de esta suite.
 
 En cada PR se prueban offline el adaptador, la configuración y la política. El scan acotado corre
 contra staging; el scan completo corre para release candidate y periódicamente. La promoción se
@@ -199,6 +226,12 @@ bloquea si aparece un hallazgo crítico/alto confirmado sin excepción vigente o
 probe/detector supera la tolerancia de regresión acordada respecto del baseline. La revisión humana
 resuelve falsos positivos y confirma materialidad; un resultado sin hits no demuestra ausencia del
 riesgo.
+
+La preparación operativa usa dos workflows manuales separados: `garak-runner.yml` construye una
+vez, genera SBOM, aplica Trivy/política y publica por SHA; `staging-security.yml` sólo admite ese
+paquete GHCR por digest y un target HTTPS `/v1/query`, requiere confirmación y el environment
+protegido `staging-security`, y conserva crudos cifrados 7 días y resumen sanitizado 90 días. Esta
+automatización no sustituye la evidencia de una ejecución real.
 
 Puerta final: los criterios siguientes están demostrados y no sólo documentados.
 

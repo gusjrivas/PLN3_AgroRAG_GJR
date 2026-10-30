@@ -1,15 +1,39 @@
+from pathlib import Path
 from typing import Any
 
 import streamlit as st
+from pydantic import Field, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from agro_rag_ui.client import ApiClient, ApiError
 
 
 class UISettings(BaseSettings):
-    model_config = SettingsConfigDict(env_prefix="AGRO_", env_file=".env", extra="ignore")
-    reader_key: str = ""
+    model_config = SettingsConfigDict(
+        env_prefix="AGRO_",
+        env_file=".env",
+        env_ignore_empty=True,
+        extra="ignore",
+        hide_input_in_errors=True,
+    )
+    reader_key: str = Field(default="", repr=False)
+    reader_key_file: Path | None = Field(default=None, repr=False)
     api_url: str = "http://127.0.0.1:8000"
+
+    @model_validator(mode="after")
+    def resolve_reader_key_file(self) -> "UISettings":
+        if self.reader_key and self.reader_key_file is not None:
+            raise ValueError("Configure sólo AGRO_READER_KEY o AGRO_READER_KEY_FILE, no ambos")
+        if self.reader_key_file is None:
+            return self
+        try:
+            reader_key = self.reader_key_file.read_text(encoding="utf-8").strip()
+        except OSError:
+            raise ValueError("AGRO_READER_KEY_FILE debe apuntar a un archivo legible") from None
+        if not reader_key:
+            raise ValueError("AGRO_READER_KEY_FILE debe apuntar a un archivo no vacío")
+        self.reader_key = reader_key
+        return self
 
 
 def clear_result_state() -> None:

@@ -1,0 +1,43 @@
+#!/bin/sh
+
+set -eu
+
+case "${1:-}" in
+    version)
+        if [ "${2:-}" = "--format" ]; then
+            printf '26.1.0\n'
+        fi
+        ;;
+    compose)
+        if [ "${2:-}" = "version" ]; then
+            if [ "${3:-}" = "--short" ]; then
+                printf '2.27.0\n'
+            fi
+            exit 0
+        fi
+        [ "${2:-}" = "-f" ] || exit 90
+        ;;
+    image)
+        [ "${2:-}" = "inspect" ] || exit 90
+        if [ "${3:-}" = "--format" ]; then
+            format="$4"
+            image="$5"
+            case "$format" in
+                *Config.User*)
+                    case "$image" in
+                        *'/gateway@'*) printf '10002:10002\n' ;;
+                        *) printf '10001:10001\n' ;;
+                    esac
+                    ;;
+                *org.opencontainers.image.revision*)
+                    printf '%s\n' "$AGRO_COMMIT_SHA"
+                    ;;
+                *) exit 90 ;;
+            esac
+        fi
+        ;;
+    volume)
+        [ "${2:-}" = "inspect" ] || exit 90
+        ;;
+    *) exit 90 ;;
+esac
