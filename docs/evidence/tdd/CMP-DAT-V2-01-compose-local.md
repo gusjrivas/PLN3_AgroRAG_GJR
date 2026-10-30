@@ -65,3 +65,4 @@ Verificación de cierre del corte: suite offline `236 passed, 2 deselected`; Ruf
 mypy estricto (37 archivos), 2 contratos import-linter, Compose config y OpenSpec 07 terminaron con
 exit 0. La revisión del diff fue realizada por la misma sesión; revisión humana pendiente en MR #30.
 Commit funcional: `6bc86b1`.
+Commit E2E Compose: `361569e` (`test: verify browser flow through compose`).
