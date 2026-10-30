@@ -1,0 +1,181 @@
+name: container-supply-chain
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+    tags: ['v*']
+
+concurrency:
+  group: containers-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build-test-scan-publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@37802adc94f370d6bfd71619e3f0bf239e1f3b78 # v7
+        with:
+          version: '0.13.5'
+          enable-cache: true
+
+      - name: Install browser test dependencies
+        run: |
+          uv sync --frozen --python 3.12
+          uv run playwright install --with-deps chromium
+
+      - name: Build release images once
+        env:
+          APP_VERSION: ${{ github.ref_type == 'tag' && github.ref_name || format('0.2.0-sha.{0}', github.sha) }}
+        run: |
+          set -euo pipefail
+          docker build --target api --build-arg APP_VERSION="$APP_VERSION" --build-arg VCS_REF="$GITHUB_SHA" -t agrorag-api:ci .
+          docker build --target ui --build-arg APP_VERSION="$APP_VERSION" --build-arg VCS_REF="$GITHUB_SHA" -t agrorag-ui:ci .
+          docker build --target gateway --build-arg APP_VERSION="$APP_VERSION" --build-arg VCS_REF="$GITHUB_SHA" -t agrorag-gateway:ci .
+
+      - name: Inspect runtime identities
+        run: |
+          test "$(docker run --rm --entrypoint id agrorag-api:ci -u)" = "10001"
+          test "$(docker run --rm --entrypoint id agrorag-ui:ci -u)" = "10001"
+          test "$(docker run --rm --entrypoint id agrorag-gateway:ci -u)" = "10002"
+
+      - name: Browser through Compose using candidate images
+        env:
+          AGRO_E2E_API_IMAGE: agrorag-api:ci
+          AGRO_E2E_UI_IMAGE: agrorag-ui:ci
+        run: uv run pytest -m e2e tests/e2e/test_compose_browser.py -q
+
+      - name: Create artifact directory
+        run: mkdir -p artifacts
+
+      - name: API SBOM
+        uses: anchore/sbom-action@66cbf4bc1f1c0d2edc94016e65bc221b6bb0ad6c # v0.24.3
+        with:
+          image: agrorag-api:ci
+          format: spdx-json
+          output-file: artifacts/api.spdx.json
+          upload-artifact: false
+
+      - name: UI SBOM
+        uses: anchore/sbom-action@66cbf4bc1f1c0d2edc94016e65bc221b6bb0ad6c # v0.24.3
+        with:
+          image: agrorag-ui:ci
+          format: spdx-json
+          output-file: artifacts/ui.spdx.json
+          upload-artifact: false
+
+      - name: Gateway SBOM
+        uses: anchore/sbom-action@66cbf4bc1f1c0d2edc94016e65bc221b6bb0ad6c # v0.24.3
+        with:
+          image: agrorag-gateway:ci
+          format: spdx-json
+          output-file: artifacts/gateway.spdx.json
+          upload-artifact: false
+
+      - name: Scan API
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          image-ref: agrorag-api:ci
+          format: json
+          output: artifacts/api-trivy.json
+          severity: CRITICAL,HIGH
+          ignore-unfixed: true
+          exit-code: '0'
+          scanners: vuln,secret
+          version: v0.76.1
+
+      - name: Scan UI
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          image-ref: agrorag-ui:ci
+          format: json
+          output: artifacts/ui-trivy.json
+          severity: CRITICAL,HIGH
+          ignore-unfixed: true
+          exit-code: '0'
+          scanners: vuln,secret
+          version: v0.76.1
+
+      - name: Scan gateway
+        uses: aquasecurity/trivy-action@ed142fd0673e97e23eac54620cfb913e5ce36c25 # v0.36.0
+        with:
+          image-ref: agrorag-gateway:ci
+          format: json
+          output: artifacts/gateway-trivy.json
+          severity: CRITICAL,HIGH
+          ignore-unfixed: true
+          exit-code: '0'
+          scanners: vuln,secret
+          version: v0.76.1
+
+      - name: Enforce vulnerability policy
+        run: >-
+          uv run python scripts/check_vulnerability_policy.py
+          --report api=artifacts/api-trivy.json
+          --report ui=artifacts/ui-trivy.json
+          --report gateway=artifacts/gateway-trivy.json
+          --exceptions configs/security/vulnerability-exceptions.json
+
+      - name: Upload supply-chain evidence
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: supply-chain-${{ github.sha }}
+          path: artifacts/
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Login to GHCR
+        if: github.event_name == 'push'
+        uses: docker/login-action@81c6f93d4bc991e510b342a00b419b3bb4efc5c6 # v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish immutable images
+        if: github.event_name == 'push'
+        run: |
+          set -euo pipefail
+          repository="$(echo "$GITHUB_REPOSITORY" | tr '[:upper:]' '[:lower:]')"
+          if [[ "$GITHUB_REF" == refs/tags/* ]] && [[ ! "$GITHUB_REF_NAME" =~ ^v[0-9]+\.[0-9]+\.[0-9]+([.-][0-9A-Za-z.-]+)?$ ]]; then
+            echo "La publicación semver exige un tag vMAJOR.MINOR.PATCH" >&2
+            exit 1
+          fi
+          for component in api ui gateway; do
+            local_image="agrorag-${component}:ci"
+            remote="ghcr.io/${repository}/${component}"
+            sha_tag="${remote}:sha-${GITHUB_SHA}"
+            docker tag "$local_image" "$sha_tag"
+            docker push "$sha_tag"
+            if [[ "$GITHUB_REF" == refs/tags/v* ]]; then
+              version="${GITHUB_REF_NAME#v}"
+              docker tag "$local_image" "${remote}:${version}"
+              docker push "${remote}:${version}"
+            fi
+          done
+          api_ref="$(docker image inspect "ghcr.io/${repository}/api:sha-${GITHUB_SHA}" --format '{{index .RepoDigests 0}}')"
+          ui_ref="$(docker image inspect "ghcr.io/${repository}/ui:sha-${GITHUB_SHA}" --format '{{index .RepoDigests 0}}')"
+          gateway_ref="$(docker image inspect "ghcr.io/${repository}/gateway:sha-${GITHUB_SHA}" --format '{{index .RepoDigests 0}}')"
+          jq -n --arg commit "$GITHUB_SHA" --arg api "$api_ref" --arg ui "$ui_ref" --arg gateway "$gateway_ref" \
+            '{commit:$commit,images:{api:$api,ui:$ui,gateway:$gateway}}' > artifacts/release-manifest.json
+
+      - name: Upload immutable release manifest
+        if: github.event_name == 'push'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: release-manifest-${{ github.sha }}
+          path: artifacts/release-manifest.json
+          if-no-files-found: error
+          retention-days: 90

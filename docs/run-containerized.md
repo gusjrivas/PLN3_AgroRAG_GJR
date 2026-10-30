@@ -1,7 +1,8 @@
 # Ejecutar AgroRAG V2 con contenedores
 
 Estado: implementación incremental. Imágenes, Compose local, gateway productivo, identidad/logs de
-release y rollback de catálogo/imagen están verificados; CI de supply chain y garak continúan.
+release y rollback de catálogo/imagen están verificados; el workflow supply chain está implementado
+y aguarda su ejecución en GitHub; staging y garak continúan.
 
 ## Requisitos
 
@@ -108,8 +109,8 @@ limpia sus recursos. No usa el catálogo ni volumen local del usuario.
 
 - La ejecución del E2E dentro del workflow CI sigue pendiente; localmente el recorrido Compose,
   reinicio y compatibilidad V1 están verificados.
-- El scan Docker Scout local requiere autenticación y no se consideró ejecutado; el gate de CI debe
-  usar un scanner no interactivo y registrar hallazgos/excepciones.
+- Docker Scout local requiere autenticación y no se usó como evidencia. Trivy 0.76.1 sí se ejecutó
+  sin login y el workflow conserva JSON/SBOM; consultar la política y evidencia CI-V2-01.
 - Estas imágenes contienen el perfil BM25 base. El job semántico/administrativo se define de forma
   separada para no incorporar dependencias pesadas al runtime API/UI.
 
@@ -125,7 +126,8 @@ Construir/publicar el gateway versionado antes de desplegar:
 docker build --target gateway --build-arg VCS_REF=<commit> -t <registry>/agrorag-gateway:<commit> .
 ```
 
-La imagen usa Caddy 2.11.4 fijado por digest, UID/GID 10002 y Caddyfile versionado. API/UI usan UID
+La imagen usa Caddy 2.11.7 fijado por digest, actualiza paquetes Alpine corregibles durante build,
+UID/GID 10002 y Caddyfile versionado. API/UI usan UID
 10001. Los tres servicios tienen root filesystem read-only, tmpfs acotado, `cap_drop: ALL`,
 `no-new-privileges`, límites de procesos/CPU/memoria y restart policy. Gateway recibe únicamente
 `NET_BIND_SERVICE` para 80/443 y persiste certificados/configuración en volúmenes separados.
@@ -135,7 +137,7 @@ Crear fuera del repositorio un directorio de secretos con archivos `reader_key`,
 interactiva para no dejar la contraseña en el historial:
 
 ```powershell
-docker run --rm -it caddy:2.11.4-alpine caddy hash-password
+docker run --rm -it caddy:2.11.7-alpine caddy hash-password
 ```
 
 Asignar las variables del ambiente o secret store: `AGRO_API_IMAGE`, `AGRO_UI_IMAGE` y
@@ -157,6 +159,20 @@ sin exponer API directamente.
 La sintaxis, separación de secretos y hardening fueron probados. La emisión TLS real queda pendiente
 de dominio/DNS y la promoción por digest depende de seleccionar registry; no se declara un deploy
 productivo real hasta ejecutar staging.
+
+## Supply chain y política de vulnerabilidades
+
+`.github/workflows/containers.yml` construye API/UI/gateway una sola vez, ejecuta el E2E Compose
+sobre esos tags, genera SBOM SPDX JSON, escanea vulnerabilidades y secretos con Trivy 0.76.1, y
+publica las mismas imágenes sólo en `main` o tags semver. No crea `latest`: conserva tag SHA,
+digest y `release-manifest.json`; semver es una etiqueta adicional sobre los mismos bytes.
+
+Toda acción externa está fijada a un commit completo. `scripts/check_vulnerability_policy.py`
+bloquea siempre CRITICAL y secretos; HIGH exige una entrada completa y no vencida en
+`configs/security/vulnerability-exceptions.json`. Las excepciones actuales corresponden únicamente
+al binario oficial Caddy 2.11.7, tienen responsable y vencen el 15/11/2026. Vencidas o ausentes
+bloquean automáticamente; deben eliminarse al publicar Caddy corregido. No son una declaración de
+ausencia de riesgo ni autorizan promoción sin triage humano.
 
 ## Backup y rollback
 

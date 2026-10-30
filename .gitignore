@@ -41,3 +41,4 @@ output/pdf/agro-rag-benchmark-results-2026-10-28.pdf
 
 coverage.xml
 .import_linter_cache/
+artifacts/

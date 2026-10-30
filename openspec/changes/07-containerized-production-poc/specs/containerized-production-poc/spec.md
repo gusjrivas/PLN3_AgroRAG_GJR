@@ -67,6 +67,17 @@ El overlay productivo MUST minimizar exposición, privilegios, secretos y estado
 - **THEN** expone identidad de release/catálogo y emite eventos JSON correlacionables sin query,
   credenciales, cuerpo ni secretos.
 
+### Requirement: CI-V2 Supply chain verificable
+CI MUST probar una release candidate una vez, conservar SBOM/scan y publicar exactamente las mismas
+imágenes mediante referencias inmutables.
+
+#### Scenario: CI-V2-supply-chain
+- **GIVEN** un commit o tag semver candidato.
+- **WHEN** el workflow construye API/UI/gateway.
+- **THEN** E2E, SBOM y scan operan sobre esos tags; CRITICAL/secretos bloquean, HIGH sólo admite una
+  excepción completa/no vencida, y la publicación produce SHA, digest y manifiesto sin `latest` ni
+  rebuild.
+
 ### Requirement: GARAK-V2 Evaluación adversarial trazable
 La release candidate MUST superar una política garak versionada sobre el gateway desplegado, sin
 presentar el resultado como garantía o certificación.

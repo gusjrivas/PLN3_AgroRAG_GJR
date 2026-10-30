@@ -25,10 +25,14 @@ como secrets y no aparecen en `docker compose config`. API/UI no publican puerto
 filesystem read-only, tmpfs, capabilities eliminadas, no-new-privileges y límites; gateway recupera
 únicamente `NET_BIND_SERVICE`.
 
-El gateway es un target no root (UID 10002) basado en Caddy 2.11.4 fijado al digest
-`sha256:6aeddd44c3078b0f9a35206472a11420648a79c184603ef95957d0a20044cb2b`. Incluye configuración
+El gateway es un target no root (UID 10002) basado actualmente en Caddy 2.11.7 fijado al digest
+`sha256:eb4d35b7452d1ab6171fbdbe8d9275b2301dad6dad92115d91e19fb9b24d510f`. Incluye configuración
 versionada para TLS automático, basic auth importado desde secret, headers, reverse proxy a UI,
 health y logs JSON.
+
+Durante CI-V2-01 el scan detectó deuda corregible en la base anterior. La actualización a 2.11.7
+y `apk upgrade --no-cache` eliminó los hallazgos Alpine CRITICAL/HIGH. Los HIGH del binario Caddy
+quedan controlados por excepciones explícitas, cortas y bloqueantes al vencer; ver CI-V2-01.
 
 Resultado contractual: exit 0, `2 passed` para producción; suite dirigida completa de contenedores,
 Compose y healthcheck: `12 passed`.

@@ -40,6 +40,8 @@ def test_img_v2_uses_oci_labels_and_never_declares_secret_build_inputs() -> None
         dockerfile,
         re.MULTILINE | re.IGNORECASE,
     )
+    assert "caddy:2.11.7-alpine@sha256:" in dockerfile
+    assert "apk upgrade --no-cache" in dockerfile
 
 
 def test_img_v2_build_context_excludes_private_and_development_artifacts() -> None:

@@ -8,8 +8,9 @@ Repositorio independiente: https://github.com/gusjrivas/PLN3_AgroRAG_GJR
 **Estado: V1 local y paquete de entrega técnica implementados. V2 containerizada en ejecución bajo
 ADR-015/OpenSpec 07: settings por secret files, imágenes API/UI/gateway no root, Compose local,
 catálogo persistente/read-only y overlay productivo endurecido ya tienen evidencia; CI de imágenes,
-identidad de release, logs HTTP JSON y rollback validado ya tienen evidencia; CI de imágenes,
-staging y garak siguen abiertos. El benchmark congelado de 60 casos conserva 49 PASS y 11
+identidad de release, logs HTTP JSON y rollback validado ya tienen evidencia; el workflow de
+supply chain está implementado y espera ejecución remota, mientras staging y garak siguen abiertos.
+El benchmark congelado de 60 casos conserva 49 PASS y 11
 FAIL de contenido/citas, con 60/60 estados observados correctos. E1/E2 y el piloto mínimo E3 se
 ejecutaron sobre `dev`; BM25 permanece como default.**
 Engram 3.5.2 está instalado y verificado en el entorno de trabajo remoto; `.engram/config.json` identifica este proyecto. La instalación en la notebook y la activación de los clientes permanecen pendientes. Ver [evidencia](docs/evidence/engram-setup.md). Los ADR son propuestas técnicas; TDD y Python son requisitos expresos del usuario.
