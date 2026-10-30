@@ -4,6 +4,8 @@ Fecha: 30/10/2026. Responsable y revisión: misma sesión coordinadora; revisió
 MR #30. Rama: `feat/v2-container-foundation`. Propiedad: workflows, gateway base, política de
 vulnerabilidades, contratos, runbook y esta evidencia.
 
+Commit de implementación: `f0c9c05` (`ci: build scan and publish immutable images`).
+
 ## RED
 
 El contrato `tests/architecture/test_container_ci_contract.py` falló con `3 failed` porque
