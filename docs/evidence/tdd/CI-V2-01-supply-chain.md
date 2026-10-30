@@ -59,3 +59,9 @@ evidencia aprobaron. La suite `quality` del mismo commit `99d7474` también term
 Login, push GHCR y manifiesto remoto aparecen `skipped` porque el evento fue `pull_request`, tal como
 exige el contrato: sólo un push integrado a `main` o tag semver publica. El workflow y sus pruebas
 quedan completos; la existencia real de paquetes/digests se registrará tras integrar, no se inventa.
+
+La ejecución final del código `cc7cae7` también aprobó
+[quality 41000755455](https://github.com/gusjrivas/PLN3_AgroRAG_GJR/actions/runs/41000755455) y
+[supply chain 41000755487](https://github.com/gusjrivas/PLN3_AgroRAG_GJR/actions/runs/41000755487).
+GitHub advirtió que `upload-artifact` v4 apuntaba a Node 20 y lo forzaba sobre Node 24; se actualizó
+a la release oficial v7.0.2, fijada al commit completo, para eliminar esa deuda antes del merge.
