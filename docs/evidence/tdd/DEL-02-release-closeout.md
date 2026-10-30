@@ -30,6 +30,27 @@ usuario conserva 18/18 filas con revisor y fecha.
 
 ## Cierre y verificación
 
-Los comandos finales, sus códigos de salida, el commit, el MR y el tag se completan al terminar la
-verificación de rama y CI. El punto académico humano —ensayo de 15 minutos, modalidad, fecha de
-Teoría 7 y eventual correo— permanece deliberadamente fuera de este cierre técnico.
+Commit de implementación: `4faf306533d40f56da068ef78cc207036f9b2fda`. MR:
+[#28](https://github.com/gusjrivas/PLN3_AgroRAG_GJR/pull/28).
+
+Se creó un worktree detached limpio en una ruta temporal, sin `.env`, y se verificó exactamente ese
+commit:
+
+- `uv sync --frozen`: exit 0, 95 paquetes instalados.
+- `pytest -q`: exit 0, `220 passed, 2 deselected`.
+- mypy ampliado: exit 0, 40 archivos sin errores.
+- Ruff check y format check: exit 0, 73 archivos ya formateados.
+- import-linter: exit 0, 2 contratos mantenidos.
+- OpenSpec `validate --all --strict`: exit 0, 7/7 ítems válidos.
+- `agro-rag verify-delivery --root .`: exit 0, 8 artefactos.
+- integridad ZIP de los tres `.xlsx`: exit 0.
+- `git status --short` en el worktree: salida vacía.
+
+La primera suite en el árbol principal tuvo un único fallo porque el `.env` privado local contiene
+la clave que el test de “clave ausente” intenta retirar sólo del entorno del proceso. El mismo test
+y la suite completa aprobaron en el checkout limpio; no se cambió el producto para ocultar esa
+contaminación local.
+
+El punto académico humano —ensayo de 15 minutos, modalidad, fecha de Teoría 7 y eventual correo—
+permanece deliberadamente fuera de este cierre técnico. El tag `v0.1.0` se crea únicamente sobre el
+merge aprobado del MR final.
