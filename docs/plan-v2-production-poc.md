@@ -15,6 +15,10 @@ secretos fuera de la imagen, procesos no root, estado persistente explícito, he
 recursos, logs estructurados, CI de contenedores y rollback reproducible. No significa alta
 disponibilidad, escalado horizontal, multitenancy ni cumplimiento regulatorio.
 
+La V2 incorpora garak como evaluación adversarial reproducible del sistema desplegado. Es una
+fuente de evidencia y una compuerta de release, no una garantía de seguridad, certificación ni
+cobertura completa de OWASP u otro estándar.
+
 Decisión arquitectónica: [ADR-015](adr/015.md).
 
 ## Estado de partida y restricciones
@@ -44,6 +48,8 @@ flowchart LR
   API --> PC[Pinecone opcional]
   ADM[Job admin: download/ingest/index] -->|escritura controlada| CAT
   ADM --> PC
+  GARAK[Runner garak, perfil security] -->|black-box sobre release candidata| G
+  GARAK --> REP[(Reportes restringidos)]
   API --> LOG[stdout JSON / colector del host]
   UI --> LOG
 ```
@@ -57,6 +63,7 @@ flowchart LR
 | `api` | FastAPI, catálogo, retrieval, agentes y proveedores. | Red interna; una réplica en V2. Catálogo montado read-only. |
 | `catalogue-admin` | Descarga, ingesta e indexación explícitas. | Job one-shot bajo perfil `admin`; volumen read-write. Nunca arranca con el runtime. |
 | `ollama` | Generación local para desarrollo/demos. | Perfil `local-model`; ausente del overlay productivo por defecto. |
+| `garak` | Pruebas adversariales black-box de la experiencia desplegada. | Job one-shot del perfil `security`; se ejecuta en staging/release candidate, nunca como servicio de runtime. |
 
 ### Archivos objetivo
 
@@ -66,6 +73,10 @@ flowchart LR
 - `compose.dev.yaml`: puertos locales y opciones de desarrollo, sin redefinir el contrato base.
 - `compose.production.yaml`: imágenes de registry por digest/tag inmutable, gateway, políticas de
   restart, recursos, filesystem read-only y logging.
+- `compose.security.yaml`: runner garak aislado, sin puertos publicados y con salida a un volumen de
+  reportes; apunta al gateway de staging, no directamente al modelo.
+- `Dockerfile.garak` e `infra/garak/`: versión fijada, adaptador HTTP AgroRAG, selección de probes,
+  baseline y política de evaluación. Sus dependencias no entran en las imágenes API/UI.
 - `infra/gateway/`: configuración versionada sin certificados ni secretos.
 - `docs/run-containerized.md`: build, administración del catálogo, despliegue, backup y rollback.
 
@@ -92,6 +103,11 @@ secretos sólo en los servicios autorizados; la aplicación adoptará variables 
 9. Logs operativos salen por stdout/stderr en JSON sin pregunta, prompts, pasajes ni secretos.
 10. Cada imagen expone versión de aplicación, commit y digest; el despliegue y rollback usan una
     referencia inmutable, nunca `latest`.
+11. Garak prueba la release candidata por el gateway con un usuario de ensayo y datos sintéticos.
+    Su credencial no se registra y los reportes crudos, que contienen prompts y respuestas, son
+    artefactos restringidos con retención definida.
+12. La seguridad generativa se decide por hallazgos y regresiones por probe/detector, no por un
+    promedio global. Todo hallazgo aceptado documenta riesgo, responsable, vencimiento y control.
 
 ## Plan de implementación TDD
 
@@ -167,6 +183,23 @@ rollback. Registrar host/CPU/memoria, imágenes, digests, tiempos y evidencia.
 **REL-V2-02.** Promover la misma imagen aprobada a la PoC productiva; no reconstruir entre staging
 y producción.
 
+**SEC-V2-02.** RED: tests del adaptador y de política demuestran que aún no se puede evaluar
+`/v1/query` ni convertir un reporte garak en una decisión reproducible. GREEN: imagen garak fijada,
+adaptador black-box al gateway, configuración versionada y parser/gate. REFACTOR: separar secretos,
+reportes crudos y resumen sanitizado.
+
+La suite inicial cubre riesgos priorizados para AgroRAG: prompt injection, jailbreak, bypass por
+codificación, fuga de información y contenido inseguro. Se fijan versión, plugins, configuración,
+seed, cantidad de generaciones, modelo/proveedor y digest de la aplicación. Los nombres exactos de
+probes/detectors quedan fijados en OpenSpec contra una versión concreta de garak para evitar drift.
+
+En cada PR se prueban offline el adaptador, la configuración y la política. El scan acotado corre
+contra staging; el scan completo corre para release candidate y periódicamente. La promoción se
+bloquea si aparece un hallazgo crítico/alto confirmado sin excepción vigente o si un
+probe/detector supera la tolerancia de regresión acordada respecto del baseline. La revisión humana
+resuelve falsos positivos y confirma materialidad; un resultado sin hits no demuestra ausencia del
+riesgo.
+
 Puerta final: los criterios siguientes están demostrados y no sólo documentados.
 
 ## Criterios de aceptación de V2
@@ -183,6 +216,9 @@ Puerta final: los criterios siguientes están demostrados y no sólo documentado
   activa hasta terminar validaciones.
 - Suite offline, E2E Compose, Ruff, mypy, import-linter, OpenSpec, escaneo de secretos e imágenes
   aprueban en CI.
+- La release candidate tiene reporte garak JSONL, digest HTML/AVID o equivalente, resumen
+  sanitizado, versiones/configuración y dictamen trazable. No hay hallazgos críticos/altos
+  confirmados abiertos ni regresiones fuera de tolerancia.
 - La imagen desplegada tiene digest, commit, SBOM y procedimiento de rollback probado.
 - El gateway/ingress productivo autentica usuarios o restringe acceso; no se publica una UI anónima
   con una API key compartida como único control.
@@ -207,6 +243,9 @@ Puerta final: los criterios siguientes están demostrados y no sólo documentado
 | Secretos filtrados por Compose/CI | Secret files, logs redactados, escaneo centinela y sin `ARG`/`ENV` de build. |
 | Diferencia dev/prod | Compose base común y overlays mínimos; misma imagen por digest en CI, staging y prod. |
 | Host sin recursos para reranker/Ollama | Perfiles opcionales y límites de recursos; proveedor externo en el camino productivo. |
+| Garak produce falsos positivos/negativos o resultados variables | Probes priorizados, configuración/seed/versiones fijadas, baseline por detector, repetición y triage humano; no presentarlo como certificación. |
+| El reporte adversarial filtra prompts, respuestas o credenciales | Datos sintéticos, cuenta aislada, artefacto cifrado/restringido, retención corta y resumen sanitizado. |
+| Scan adversarial consume tiempo o APIs pagas | Suite acotada en staging, completa sólo en release/periodicidad acordada y presupuesto explícito. |
 
 ## Decisiones pendientes antes de implementar
 
@@ -216,5 +255,7 @@ Puerta final: los criterios siguientes están demostrados y no sólo documentado
 4. CPU, memoria y disco disponibles; presupuesto y proveedor generativo productivo.
 5. Política de backup/retención del catálogo y logs.
 6. SLO de disponibilidad/latencia aceptable para la PoC.
+7. Riesgos garak prioritarios, severidad/tolerancia por probe, periodicidad, presupuesto y
+   responsables de triage/excepciones.
 
 Estas decisiones parametrizan el despliegue; no autorizan ampliar V2 a una plataforma distribuida.
