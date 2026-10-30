@@ -33,7 +33,7 @@ misma sesión durante implementación; revisión humana requerida antes de cada 
 
 - [x] 4.1 SEC-V2-01: gateway único, segmentación, secretos mínimos y hardening.
 - [x] 4.2 OPS-V2-01: readiness, versión de release y logs estructurados.
-- [ ] 4.3 OPS-V2-02: backup/restore y rollback probado.
+- [x] 4.3 OPS-V2-02: backup/restore y rollback probado.
 
 ## 5. CI, staging y garak
 

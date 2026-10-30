@@ -1,7 +1,7 @@
 # Ejecutar AgroRAG V2 con contenedores
 
-Estado: implementación incremental. Imágenes, Compose local, gateway productivo e identidad/logs de
-release están verificados; rollback, CI de supply chain y garak continúan en fases posteriores.
+Estado: implementación incremental. Imágenes, Compose local, gateway productivo, identidad/logs de
+release y rollback de catálogo/imagen están verificados; CI de supply chain y garak continúan.
 
 ## Requisitos
 
@@ -143,3 +143,43 @@ sin exponer API directamente.
 La sintaxis, separación de secretos y hardening fueron probados. La emisión TLS real queda pendiente
 de dominio/DNS y la promoción por digest depende de seleccionar registry; no se declara un deploy
 productivo real hasta ejecutar staging.
+
+## Backup y rollback
+
+`compose.ops.yaml` agrega jobs offline y no forma parte del runtime. El backup monta el catálogo
+read-only y el directorio de destino read-write; restore invierte únicamente el permiso del catálogo
+y monta el backup read-only. Ambos ejecutan sin red, capabilities ni privilegios adicionales.
+
+Antes de promover una candidata, conservar en el registro restringido de release los tres digests
+API/UI/gateway y el Compose renderizado. Configurar un directorio absoluto fuera del repositorio y
+crear un backup nombrado de forma inmutable:
+
+```powershell
+$env:AGRO_BACKUP_DIR = 'D:\backups\agrorag'
+$env:AGRO_BACKUP_FILE = 'catalogue-2.0.0-20261030.zip'
+$env:AGRO_RELEASE_VERSION = '2.0.0'
+$env:AGRO_COMMIT_SHA = '<commit-completo>'
+$env:AGRO_API_IMAGE = '<registry>/agrorag-api@sha256:<digest>'
+docker compose --profile backup -f compose.yaml -f compose.ops.yaml run --rm catalogue-backup
+```
+
+El ZIP contiene sólo `active.json`, el SQLite activo y metadata con hashes, versión de corpus,
+release, commit e imagen API. Copiarlo además a almacenamiento con retención/acceso controlados y
+probar restore periódicamente; tener un ZIP en el mismo host no es una estrategia de recuperación.
+
+Si falla la candidata, detener el stack antes de cambiar el puntero. Restaurar valida nombres y
+SHA-256, publica el snapshot si falta y reemplaza `active.json` al final; no elimina snapshots:
+
+```powershell
+docker compose -f compose.yaml -f compose.production.yaml down
+docker compose --profile restore -f compose.yaml -f compose.ops.yaml run --rm catalogue-restore
+$env:AGRO_API_IMAGE = '<digest-api-anterior>'
+$env:AGRO_UI_IMAGE = '<digest-ui-anterior>'
+$env:AGRO_GATEWAY_IMAGE = '<digest-gateway-anterior>'
+docker compose -f compose.yaml -f compose.production.yaml up -d --wait --no-build
+docker compose -f compose.yaml -f compose.production.yaml exec api agro-rag-healthcheck
+```
+
+Confirmar luego `/health/version`, `/v1/corpus` y un caso funcional por gateway. Si el restore falla
+integridad, no forzar ni editar el ZIP: mantener el stack detenido y usar el backup anterior. Nunca
+usar `down -v` durante rollback.

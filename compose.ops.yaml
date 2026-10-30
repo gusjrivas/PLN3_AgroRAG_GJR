@@ -1,0 +1,62 @@
+services:
+  catalogue-backup:
+    image: ${AGRO_API_IMAGE:-agrorag-api:dev}
+    profiles: [backup]
+    command:
+      - agro-rag
+      - backup-catalogue
+      - --catalogue
+      - /var/lib/agrorag/catalogue
+      - --destination
+      - /backup/${AGRO_BACKUP_FILE:-catalogue-backup.zip}
+      - --release
+      - ${AGRO_RELEASE_VERSION:?Defina la versión respaldada}
+      - --commit
+      - ${AGRO_COMMIT_SHA:?Defina el commit respaldado}
+      - --image
+      - ${AGRO_API_IMAGE:-agrorag-api:dev}
+    volumes:
+      - type: volume
+        source: catalogue
+        target: /var/lib/agrorag/catalogue
+        read_only: true
+      - type: bind
+        source: ${AGRO_BACKUP_DIR:?Defina el directorio absoluto de backup}
+        target: /backup
+    network_mode: none
+    read_only: true
+    tmpfs:
+      - /tmp:size=32m,mode=1777
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    pids_limit: 64
+    cpus: 1.0
+    mem_limit: 256m
+
+  catalogue-restore:
+    image: ${AGRO_API_IMAGE:-agrorag-api:dev}
+    profiles: [restore]
+    command:
+      - agro-rag
+      - restore-catalogue
+      - --archive
+      - /backup/${AGRO_BACKUP_FILE:-catalogue-backup.zip}
+      - --catalogue
+      - /var/lib/agrorag/catalogue
+    volumes:
+      - type: volume
+        source: catalogue
+        target: /var/lib/agrorag/catalogue
+      - type: bind
+        source: ${AGRO_BACKUP_DIR:?Defina el directorio absoluto de backup}
+        target: /backup
+        read_only: true
+    network_mode: none
+    read_only: true
+    tmpfs:
+      - /tmp:size=32m,mode=1777
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    pids_limit: 64
+    cpus: 1.0
+    mem_limit: 256m

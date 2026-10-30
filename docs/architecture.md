@@ -35,6 +35,11 @@ JSON sanitizado por request. Readiness continúa autenticada y valida corpus/pro
 depende de red. La referencia observable no sustituye la verificación del digest en el manifiesto de
 Compose ni la evidencia de promoción.
 
+El backup de catálogo es un artefacto autocontenido con hashes: manifiesto activo, único snapshot
+referenciado y metadata de release. Restore verifica todo antes de escribir, conserva snapshots ya
+presentes y activa el puntero en último lugar. El rollback combina ese restore con los tres digests
+anteriores conservados por release; no reconstruye corpus durante startup ni elimina el volumen.
+
 ```mermaid
 flowchart LR
   USER[Usuario] --> GW[Gateway TLS + auth]

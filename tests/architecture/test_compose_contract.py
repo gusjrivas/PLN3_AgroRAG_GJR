@@ -8,7 +8,7 @@ ROOT = Path(__file__).resolve().parents[2]
 
 
 def _compose_config(*files: str, extra_env: dict[str, str] | None = None) -> dict[str, Any]:
-    command = ["docker", "compose", "--profile", "admin"]
+    command = ["docker", "compose", "--profile", "*"]
     for file in files:
         command.extend(("-f", file))
     command.extend(("config", "--format", "json"))
@@ -156,3 +156,31 @@ def test_sec_v2_production_limits_secrets_and_privileges(tmp_path: Path) -> None
     assert api["environment"]["AGRO_HEALTHCHECK_EXPECTED_STATUS"] == "ready"
     rendered = json.dumps(config)
     assert "synthetic" not in rendered
+
+
+def test_ops_v2_backup_and_restore_jobs_have_explicit_write_boundaries(tmp_path: Path) -> None:
+    backup_dir = tmp_path / "backups"
+    backup_dir.mkdir()
+    config = _compose_config(
+        "compose.yaml",
+        "compose.ops.yaml",
+        extra_env={
+            "AGRO_BACKUP_DIR": str(backup_dir),
+            "AGRO_RELEASE_VERSION": "2.0.0-rc.1",
+            "AGRO_COMMIT_SHA": "a" * 40,
+        },
+    )
+    backup, restore = (
+        config["services"][name] for name in ("catalogue-backup", "catalogue-restore")
+    )
+
+    assert backup["profiles"] == ["backup"]
+    assert restore["profiles"] == ["restore"]
+    assert backup["network_mode"] == "none"
+    assert restore["network_mode"] == "none"
+    assert backup["command"][0:2] == ["agro-rag", "backup-catalogue"]
+    assert restore["command"][0:2] == ["agro-rag", "restore-catalogue"]
+    assert _mount(backup, "/var/lib/agrorag/catalogue")["read_only"] is True
+    assert _mount(restore, "/var/lib/agrorag/catalogue").get("read_only", False) is False
+    assert _mount(backup, "/backup").get("read_only", False) is False
+    assert _mount(restore, "/backup")["read_only"] is True
