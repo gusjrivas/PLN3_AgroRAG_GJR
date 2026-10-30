@@ -87,7 +87,8 @@ continúa disponible por el gateway, sin conservar entradas ni salidas sensibles
   catálogo externo restaurado.
 - **WHEN** se valida el host antes de levantar la candidata.
 - **THEN** falla cerrado ante Engine/Compose no disponible, tag mutable, commit/usuario de imagen
-  divergente, volumen ausente, permisos laxos o Compose inválido, sin imprimir secretos.
+  divergente, volumen ausente, permisos laxos o Compose inválido; al aprobar emite inventario
+  sanitizado de ambiente, recursos, tiempos y digests sin imprimir secretos.
 
 #### Scenario: REL-V2-staging-smoke
 - **GIVEN** un manifiesto publicado por un run exitoso y esos digests desplegados en staging.

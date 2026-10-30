@@ -56,6 +56,14 @@ jobs:
           -v "$PWD/scripts/preflight_single_host.sh:/tmp/preflight_single_host.sh:ro"
           agrorag-gateway:ci -n /tmp/preflight_single_host.sh
 
+      - name: Exercise single-host preflight contract
+        run: >-
+          docker run --rm --entrypoint sh
+          -v "$PWD:/workspace:ro"
+          agrorag-gateway:ci
+          /workspace/tests/container/run_preflight_contract.sh
+          /workspace/scripts/preflight_single_host.sh
+
       - name: Initialize supply-chain evidence
         run: |
           mkdir -p artifacts

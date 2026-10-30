@@ -52,7 +52,8 @@ presentes y activa el puntero en último lugar. El rollback combina ese restore 
 anteriores conservados por release; no reconstruye corpus durante startup ni elimina el volumen.
 En un host limpio, el operador crea y restaura explícitamente el volumen externo antes del runtime.
 Un preflight fail-closed y read-only comprueba Linux, Engine/Compose, imágenes locales por digest,
-commit OCI, usuarios no root, volumen y permisos de archivos secretos antes de permitir `up`.
+commit OCI, usuarios no root, volumen y permisos de archivos secretos antes de permitir `up`; al
+aprobar emite inventario sanitizado de recursos, tiempos y digests para la evidencia de staging.
 
 ```mermaid
 flowchart LR

@@ -4,6 +4,7 @@ ROOT = Path(__file__).resolve().parents[2]
 PREFLIGHT = ROOT / "scripts" / "preflight_single_host.sh"
 ENV_EXAMPLE = ROOT / "infra" / "deploy" / "production.env.example"
 CONTAINER_WORKFLOW = ROOT / ".github" / "workflows" / "containers.yml"
+PREFLIGHT_CONTRACT = ROOT / "tests" / "container" / "run_preflight_contract.sh"
 
 
 def test_single_host_preflight_fails_closed_before_compose_up() -> None:
@@ -23,6 +24,7 @@ def test_single_host_preflight_fails_closed_before_compose_up() -> None:
         "AGRO_SECRETS_DIR",
         "AGRO_RELEASE_VERSION",
         "AGRO_COMMIT_SHA",
+        "AGRO_DEPLOYMENT_ID",
     ):
         assert variable in script
     assert "@sha256:" in script
@@ -35,6 +37,28 @@ def test_single_host_preflight_fails_closed_before_compose_up() -> None:
     assert "compose.production.yaml config --quiet" in script
     assert "cat " not in script
     assert "\nenv\n" not in script
+
+
+def test_single_host_preflight_emits_sanitized_inventory_evidence() -> None:
+    script = PREFLIGHT.read_text(encoding="utf-8")
+
+    for field in (
+        "schema=agrorag.single-host-preflight.v1",
+        "checked_at_utc=",
+        "duration_seconds=",
+        "deployment_id=",
+        "kernel=",
+        "architecture=",
+        "cpu_count=",
+        "memory_bytes=",
+        "api_image=",
+        "ui_image=",
+        "gateway_image=",
+    ):
+        assert field in script
+    assert "printf 'domain=" not in script
+    assert "printf 'model=" not in script
+    assert "printf 'secrets_dir=" not in script
 
 
 def test_single_host_environment_template_has_only_placeholders() -> None:
@@ -50,6 +74,7 @@ def test_single_host_environment_template_has_only_placeholders() -> None:
         "AGRO_SECRETS_DIR",
         "AGRO_RELEASE_VERSION",
         "AGRO_COMMIT_SHA",
+        "AGRO_DEPLOYMENT_ID",
     ):
         assert f"{variable}=" in template
     assert "reader_key=" not in template.lower()
@@ -65,3 +90,12 @@ def test_container_ci_parses_the_linux_preflight_with_a_release_image() -> None:
     assert "scripts/preflight_single_host.sh:/tmp/preflight_single_host.sh:ro" in workflow
     assert "--entrypoint sh" in workflow
     assert "agrorag-gateway:ci -n /tmp/preflight_single_host.sh" in workflow
+
+
+def test_container_ci_executes_the_approved_preflight_branch() -> None:
+    workflow = CONTAINER_WORKFLOW.read_text(encoding="utf-8")
+
+    assert PREFLIGHT_CONTRACT.is_file()
+    assert "name: Exercise single-host preflight contract" in workflow
+    assert "$PWD:/workspace:ro" in workflow
+    assert "run_preflight_contract.sh" in workflow

@@ -145,7 +145,9 @@ docker run --rm -it caddy:2.11.7-alpine caddy hash-password
 Asignar las variables del ambiente o secret store: `AGRO_API_IMAGE`, `AGRO_UI_IMAGE` y
 `AGRO_GATEWAY_IMAGE` con referencias `@sha256:...`; `AGRO_CATALOGUE_VOLUME`, `AGRO_DOMAIN`,
 `AGRO_OPENAI_MODEL`, `AGRO_SECRETS_DIR`, `AGRO_RELEASE_VERSION` (semver) y `AGRO_COMMIT_SHA`.
-El overlay pasa `AGRO_API_IMAGE` también como identidad observable de la imagen.
+Agregar `AGRO_DEPLOYMENT_ID` como identificador operacional no sensible del host/ambiente, por
+ejemplo `staging-a`; no usar hostname, IP ni nombre de una persona. El overlay pasa
+`AGRO_API_IMAGE` también como identidad observable de la imagen.
 
 ### Bootstrap y preflight de un host Linux limpio
 
@@ -174,14 +176,18 @@ usuarios no root, volumen externo, permisos de secretos y renderizado Compose si
 sensibles:
 
 ```sh
-sh scripts/preflight_single_host.sh
+umask 077
+sh scripts/preflight_single_host.sh > /ruta/restringida/preflight.env
 docker compose -f compose.yaml -f compose.production.yaml up -d --wait --no-build
 ```
 
 Un resultado `status=approved` sólo aprueba las precondiciones locales; no sustituye el smoke por
 gateway, TLS real, backup/restore ni Garak. Si falla, corregir la precondición indicada y no ejecutar
 `up`. Para una actualización con catálogo ya existente, omitir la creación/restauración y conservar
-el backup previo.
+el backup previo. El archivo resultante registra esquema, instante/duración, deployment ID,
+kernel/arquitectura, CPU, memoria, versiones Docker/Compose, release, commit, volumen y los tres
+digests; omite dominio, modelo, ruta de secretos y contenido sensible. Adjuntarlo a la evidencia de
+5.3 con acceso restringido según la política del ambiente.
 
 Como comprobación adicional o diagnóstico, validar sin revelar contenido:
 

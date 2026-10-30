@@ -202,7 +202,8 @@ genera SBOM, escanea imagen y publica sólo desde `main`/tag con tags SHA y semv
 rollback. Registrar host/CPU/memoria, imágenes, digests, tiempos y evidencia.
 
 Antes del despliegue, ejecutar el preflight single-host sobre imágenes ya descargadas y un catálogo
-restaurado. Su aprobación es necesaria pero no completa REL-V2-01 sin las pruebas reales posteriores.
+restaurado. Conservar su inventario sanitizado de host/recursos/digests/tiempos. Su aprobación es
+necesaria pero no completa REL-V2-01 sin las pruebas reales posteriores.
 
 **REL-V2-02.** Promover la misma imagen aprobada a la PoC productiva; no reconstruir entre staging
 y producción.
