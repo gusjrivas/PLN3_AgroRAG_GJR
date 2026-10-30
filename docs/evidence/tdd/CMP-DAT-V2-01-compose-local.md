@@ -55,3 +55,4 @@ backup/rollback y garak tampoco se declaran terminados.
 Verificación de cierre del corte: suite offline `236 passed, 2 deselected`; Ruff check/formato,
 mypy estricto (37 archivos), 2 contratos import-linter, Compose config y OpenSpec 07 terminaron con
 exit 0. La revisión del diff fue realizada por la misma sesión; revisión humana pendiente en MR #30.
+Commit funcional: `6bc86b1`.
