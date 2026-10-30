@@ -25,8 +25,8 @@ misma sesión durante implementación; revisión humana requerida antes de cada 
 
 ## 3. Compose y catálogo
 
-- [ ] 3.1 CMP-V2-01: base/dev, red, healthchecks y arranque healthy.
-- [ ] 3.2 DAT-V2-01: volumen persistente, API read-only y job admin idempotente.
+- [x] 3.1 CMP-V2-01: base/dev, red, healthchecks y arranque healthy.
+- [x] 3.2 DAT-V2-01: volumen persistente, API read-only y job admin idempotente.
 - [ ] 3.3 CMP-V2-02: E2E offline, reinicio y compatibilidad V1.
 
 ## 4. Producción y seguridad

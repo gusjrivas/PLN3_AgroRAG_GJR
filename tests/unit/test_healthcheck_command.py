@@ -42,3 +42,22 @@ def test_healthcheck_fails_closed_without_reader_key() -> None:
     from agro_rag.bootstrap.healthcheck import check_readiness
 
     assert not check_readiness(Settings(reader_key=""))
+
+
+def test_liveness_probe_does_not_require_or_send_reader_key() -> None:
+    from agro_rag.bootstrap.healthcheck import check_readiness
+
+    seen: list[httpx.Request] = []
+
+    def live(request: httpx.Request) -> httpx.Response:
+        seen.append(request)
+        return httpx.Response(200, json={"status": "ok"})
+
+    settings = Settings(
+        reader_key="",
+        healthcheck_url="http://127.0.0.1:8000/health/live",
+        healthcheck_expected_status="ok",
+    )
+
+    assert check_readiness(settings, transport=httpx.MockTransport(live))
+    assert "X-API-Key" not in seen[0].headers

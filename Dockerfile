@@ -28,7 +28,9 @@ LABEL org.opencontainers.image.title="AgroRAG" \
       org.opencontainers.image.revision="${VCS_REF}"
 
 RUN groupadd --gid 10001 app \
-    && useradd --uid 10001 --gid 10001 --no-create-home --shell /usr/sbin/nologin app
+    && useradd --uid 10001 --gid 10001 --no-create-home --shell /usr/sbin/nologin app \
+    && mkdir -p /var/lib/agrorag/catalogue \
+    && chown -R 10001:10001 /var/lib/agrorag
 
 ENV PATH=/opt/venv/bin:$PATH \
     PYTHONUNBUFFERED=1 \

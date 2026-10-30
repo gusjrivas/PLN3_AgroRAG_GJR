@@ -70,6 +70,7 @@ class Settings(BaseSettings):
     semantic_local_files_only: bool = True
     catalogue_path: Path = Path("data/processed/catalogue")
     healthcheck_url: str = "http://127.0.0.1:8000/health/ready"
+    healthcheck_expected_status: Literal["ok", "ready"] = "ready"
     model_provider: Literal["ollama", "openai"] = "ollama"
     ollama_url: str = "http://127.0.0.1:11434"
     model: str = ""

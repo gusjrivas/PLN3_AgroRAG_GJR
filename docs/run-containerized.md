@@ -1,8 +1,7 @@
 # Ejecutar AgroRAG V2 con contenedores
 
-Estado: implementación incremental. Este runbook documenta sólo capacidades verificadas; Compose,
-gateway productivo, catálogo administrativo, rollback y garak se completan en fases posteriores del
-cambio OpenSpec 07.
+Estado: implementación incremental. Imágenes y Compose local están verificados; gateway productivo,
+rollback, CI de supply chain y garak se completan en fases posteriores del cambio OpenSpec 07.
 
 ## Requisitos
 
@@ -51,9 +50,45 @@ Los despliegues usarán archivos montados y una única variable por secreto:
 Definir a la vez el valor directo y `*_FILE`, o montar un archivo ausente/vacío, bloquea startup.
 La imagen no contiene secretos, catálogo, certificados ni configuración productiva.
 
+## Compose local
+
+Preparar `.env` como en el runbook local y conservar al menos `AGRO_READER_KEY`. El overlay dev
+publica API/UI exclusivamente en loopback. Los puertos se pueden cambiar con `AGRO_API_PORT` y
+`AGRO_UI_PORT`.
+
+Primero publicar el catálogo en el volumen. El job usa `data/manifest.json` y los PDF ya descargados
+en `data/raw`; el bind es read-only y el job no tiene red:
+
+```powershell
+docker compose --profile admin -f compose.yaml -f compose.dev.yaml run --rm catalogue-admin
+```
+
+La operación es idempotente: repetirla con los mismos archivos conserva versión y cantidad. Luego:
+
+```powershell
+docker compose -f compose.yaml -f compose.dev.yaml up --build --wait
+```
+
+Abrir `http://127.0.0.1:8501`. UI llama a `http://api:8000` por la red Compose; sólo los puertos
+loopback del overlay dev son visibles desde el host. El healthcheck local verifica liveness para
+permitir exploración BM25 sin modelo; `/health/ready` continúa devolviendo no-ready hasta configurar
+catálogo y proveedor generativo completos. El overlay productivo usará readiness autenticada.
+
+`api` monta `/var/lib/agrorag/catalogue` read-only y `catalogue-admin` lo monta read-write. Reiniciar
+o recrear servicios conserva el volumen. Detener sin eliminar datos:
+
+```powershell
+docker compose -f compose.yaml -f compose.dev.yaml down
+```
+
+`down -v` elimina de forma irreversible el volumen activo y sólo debe usarse después de backup o
+para un volumen de prueba explícito. Para aislar ensayos, definir por ejemplo
+`AGRO_CATALOGUE_VOLUME=agrorag_catalogue_v2_test` antes de ejecutar Compose.
+
 ## Limitaciones todavía abiertas
 
-- Aún no hay archivos Compose ni volumen de catálogo en este corte.
+- El recorrido browser→UI→API dentro de Compose y su ejecución en CI siguen pendientes; el smoke
+  actual verificó UI health y API HTTP real con preview BM25.
 - El scan Docker Scout local requiere autenticación y no se consideró ejecutado; el gate de CI debe
   usar un scanner no interactivo y registrar hallazgos/excepciones.
 - Estas imágenes contienen el perfil BM25 base. El job semántico/administrativo se define de forma

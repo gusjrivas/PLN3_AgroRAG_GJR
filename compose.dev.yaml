@@ -1,0 +1,45 @@
+services:
+  api:
+    environment:
+      AGRO_READER_KEY: ${AGRO_READER_KEY:?Defina AGRO_READER_KEY en .env o en el proceso}
+    ports:
+      - name: api-http
+        target: 8000
+        published: ${AGRO_API_PORT:-8000}
+        host_ip: 127.0.0.1
+        protocol: tcp
+
+  ui:
+    environment:
+      AGRO_READER_KEY: ${AGRO_READER_KEY:?Defina AGRO_READER_KEY en .env o en el proceso}
+    ports:
+      - name: ui-http
+        target: 8501
+        published: ${AGRO_UI_PORT:-8501}
+        host_ip: 127.0.0.1
+        protocol: tcp
+
+  catalogue-admin:
+    profiles: [admin]
+    image: ${AGRO_API_IMAGE:-agrorag-api:dev}
+    build:
+      context: .
+      target: api
+      args:
+        APP_VERSION: ${AGRO_APP_VERSION:-0.2.0-dev}
+        VCS_REF: ${AGRO_VCS_REF:-working-tree}
+    command:
+      - agro-rag
+      - ingest
+      - /workspace/data/manifest.json
+      - --output
+      - /var/lib/agrorag/catalogue
+    volumes:
+      - type: volume
+        source: catalogue
+        target: /var/lib/agrorag/catalogue
+      - type: bind
+        source: ./data
+        target: /workspace/data
+        read_only: true
+    network_mode: none

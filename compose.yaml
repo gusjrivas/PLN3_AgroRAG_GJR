@@ -1,0 +1,63 @@
+name: agrorag
+
+services:
+  api:
+    image: ${AGRO_API_IMAGE:-agrorag-api:dev}
+    build:
+      context: .
+      target: api
+      args:
+        APP_VERSION: ${AGRO_APP_VERSION:-0.2.0-dev}
+        VCS_REF: ${AGRO_VCS_REF:-working-tree}
+    environment:
+      AGRO_CATALOGUE_PATH: /var/lib/agrorag/catalogue
+      AGRO_HEALTHCHECK_URL: http://127.0.0.1:8000/health/live
+      AGRO_HEALTHCHECK_EXPECTED_STATUS: ok
+    healthcheck:
+      test: ["CMD", "agro-rag-healthcheck"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 10s
+    volumes:
+      - type: volume
+        source: catalogue
+        target: /var/lib/agrorag/catalogue
+        read_only: true
+    networks: [application]
+
+  ui:
+    image: ${AGRO_UI_IMAGE:-agrorag-ui:dev}
+    build:
+      context: .
+      target: ui
+      args:
+        APP_VERSION: ${AGRO_APP_VERSION:-0.2.0-dev}
+        VCS_REF: ${AGRO_VCS_REF:-working-tree}
+    environment:
+      AGRO_API_URL: http://api:8000
+    depends_on:
+      api:
+        condition: service_healthy
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - >-
+          import httpx; client=httpx.Client(trust_env=False, timeout=5.0);
+          response=client.get('http://127.0.0.1:8501/_stcore/health'); client.close();
+          raise SystemExit(0 if response.status_code == 200 else 1)
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 10s
+    networks: [application]
+
+volumes:
+  catalogue:
+    name: ${AGRO_CATALOGUE_VOLUME:-agrorag_catalogue}
+
+networks:
+  application:
+    name: agrorag_application
