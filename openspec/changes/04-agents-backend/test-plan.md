@@ -1,6 +1,7 @@
 # Pruebas de aceptación: 04-agents-backend
 
-Estado: pendientes. Cada caso ejecutable se desarrolla con TDD. Las verificaciones de instalación/publicación manual se documentan con evidencia operacional.
+Estado: escenarios ejecutables implementados con TDD; integración real Ollama/OpenAI y corrida E2
+documentadas. Los límites metodológicos de la evaluación permanecen explícitos.
 
 | Escenario | Test previsto | Nivel / evidencia |
 |---|---|---|

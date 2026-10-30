@@ -1,6 +1,7 @@
 # Tasks: Evaluación y entrega académica reproducibles
 
-Responsable: Evaluador y coordinador. Dependencias: 05-frontend-hardening; anotación puede iniciar tras 02. Todas las tareas están pendientes de ejecución.
+Responsable: Evaluador y coordinador. Dependencias: 05-frontend-hardening; anotación iniciada tras
+02. Implementación y cierre técnico verificados.
 
 ## 1. Preparación
 
@@ -35,5 +36,6 @@ Responsable: Evaluador y coordinador. Dependencias: 05-frontend-hardening; anota
 - [x] 3.3 Revisión del diff por revisor disponible, registrar autor y riesgos; integrar cuando Definition of Done esté satisfecha.
   Revisión realizada por la misma sesión coordinadora al no disponer de un revisor distinto. Suite
   afectada, Ruff, mypy contractual, OpenSpec, verificador offline y PDF aprobaron. Riesgos abiertos:
-  `test` cerrado, E3 de una consulta, dictamen E2 por par y deuda de typing en `build_report.py`.
-- [ ] 3.4 Archivar el cambio y promover deltas a specs sólo después de verificar implementación real.
+  `test` cerrado, E3 de una consulta y dictamen E2 por par. La deuda de typing de
+  `build_report.py` quedó resuelta en `DEL-02-release-closeout.md`.
+- [x] 3.4 Archivar el cambio y promover deltas a specs después de verificar implementación real.

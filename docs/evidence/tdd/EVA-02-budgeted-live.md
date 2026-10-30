@@ -111,12 +111,12 @@ el verificador haya mejorado soporte factual en esta muestra dirigida.
 
 ### Revisión humana independiente de los 18 pares
 
-El usuario completó la revisión en la planilla local
-`outputs/agro-rag-review/e2-revision-humana-18-pares.xlsx` el 29/10/2026. El resumen calculado del
+El usuario completó la revisión en la planilla versionada
+`docs/evidence/workbooks/e2-revision-humana-18-pares.xlsx` el 29/10/2026. El resumen calculado del
 libro quedó `COMPLETA`, con 18 casos, 0 pendientes, 12 PASS y 6 FAIL. Los FAIL fueron
 `dev-r-002`, `dev-r-003`, `dev-r-004`, `dev-r-011`, `dev-r-012` y `dev-r-013`; en esas filas la
 observación humana registra un fallo en la búsqueda de **Explorar fuentes**. SHA-256 del archivo:
-`3461469d230d45e59c571ef44c60109a9e3a160bcc651b51a23363371cb3607a`.
+`cc5df046921b63f945b1d8e636da6672d2ff9e3312df1b4fa6d8e06c9701bd53`.
 
 Sobre los cinco textos que el verificador modificó, el dictamen humano fue PASS para `dev-r-001`,
 `dev-r-009`, `dev-r-016` y `dev-r-018`, y FAIL para `dev-r-011`. Esto difiere de la revisión
@@ -125,9 +125,8 @@ registros sin reemplazar el dictamen humano ni ocultar el desacuerdo.
 
 La planilla registra un único dictamen humano por par, no una puntuación independiente para cada
 respuesta con/sin verificador. Por ello permite cerrar la revisión de los 18 casos, pero no medir
-un delta causal de soporte atribuible al verificador. Además, `Revisado por` sólo está completo en
-dos filas y `Fecha` quedó vacía; esta limitación de metadatos se documenta en vez de rellenarla
-retroactivamente.
+un delta causal de soporte atribuible al verificador. `Revisado por` y `Fecha` quedaron completos
+en las 18 filas por el usuario: `Gus Rivas`, 29/10/2026.
 
 ## E3 real presupuestado, una consulta y tres repeticiones
 

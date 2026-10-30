@@ -1,6 +1,8 @@
 # Tasks: API y colaboración de dos agentes
 
-Responsable: Backend/agentes. Dependencias: 03-retrieval. Primera implementación parcial en PR #4. Evidencia: docs/evidence/tdd/03-05-first-version.md. Mantener casillas abiertas hasta cubrir todos los escenarios, incluidos proveedores reales, índice híbrido y hardening pendientes.
+Responsable: Backend/agentes. Dependencias: 03-retrieval. API, flujo investigador/verificador,
+presupuestos, estados y proveedores Ollama/OpenAI están implementados y probados. Hubo consultas
+reales con ambos proveedores; el archivo formal de 04 se deja para una auditoría separada de 00–05.
 
 ## Corte independiente: proveedor OpenAI
 
@@ -11,7 +13,8 @@ ADR-014 y evidencia `docs/evidence/tdd/AGT-04-openai-provider.md`.
 - [x] O.1 RED: adaptador y selección de proveedor inexistentes (`7 failed`).
 - [x] O.2 GREEN: Responses API estructurada, readiness sin generación y Ollama preservado.
 - [x] O.3 REFACTOR: suite, typing, arquitectura, OpenSpec y revisión local.
-- [ ] O.4 LIVE: ejecutar una consulta real sólo con key, acceso y costo autorizados.
+- [x] O.4 LIVE: ejecutar una consulta real sólo con key, acceso y costo autorizados.
+  Evidencia: `docs/evidence/tdd/UI-03-visible-openai-answer.md` y corrida E2 presupuestada.
 
 ## Corte independiente: decisión previa de estado
 
@@ -34,12 +37,17 @@ benchmark, pruebas y evidencia `docs/evidence/tdd/AGT-EVAL-generative-stability.
 - [x] G.2 GREEN: aclaración determinista, prompts de estado, `temperature=0` y resumen estable.
 - [x] G.3 REFACTOR: suite offline, typing, arquitectura y documentación sin llamadas live extra.
 
-## 1. Preparación
+## Lista maestra original (histórica)
+
+Las casillas por corte y sus evidencias reflejan el trabajo ejecutado. La plantilla siguiente se
+conserva para trazabilidad y no reemplaza ese registro.
+
+### 1. Preparación
 
 - [ ] 1.1 Leer ADR aplicables, fijar archivos de propiedad y comprobar dependencias.
 - [ ] 1.2 Preparar fixtures/contratos sin servicios pagos; identificar qué checks requieren integración real.
 
-## 2. Implementación mediante TDD
+### 2. Implementación mediante TDD
 
 - [ ] 2.1.1 RED: escribir y ejecutar pruebas de los escenarios de API-01; guardar fallo funcional esperado.
 - [ ] 2.1.2 GREEN: implementar mínimo comportamiento de API-01 y ejecutar las mismas pruebas.
@@ -54,7 +62,7 @@ benchmark, pruebas y evidencia `docs/evidence/tdd/AGT-EVAL-generative-stability.
 - [ ] 2.4.2 GREEN: implementar mínimo comportamiento de AGT-03 y ejecutar las mismas pruebas.
 - [ ] 2.4.3 REFACTOR: mejorar diseño, ejecutar suite afectada/typing/imports y registrar evidencia de AGT-03.
 
-## 3. Cierre
+### 3. Cierre
 
 - [ ] 3.1 Ejecutar tests de integración/seguridad pertinentes y checks estáticos; distinguir mocks de proveedores reales.
 - [ ] 3.2 Actualizar documentación, trazabilidad y handoff; enlazar evidencia y commit.

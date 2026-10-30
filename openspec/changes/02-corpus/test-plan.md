@@ -1,6 +1,7 @@
 # Pruebas de aceptación: 02-corpus
 
-Estado: pendientes. Cada caso ejecutable se desarrolla con TDD. Las verificaciones de instalación/publicación manual se documentan con evidencia operacional.
+Estado: COR-01, COR-02 y la parte local de COR-03 implementadas con TDD. La activación atómica con
+índice remoto permanece abierta y se documenta como límite operacional.
 
 | Escenario | Test previsto | Nivel / evidencia |
 |---|---|---|

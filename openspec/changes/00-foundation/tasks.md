@@ -2,6 +2,9 @@
 
 Responsable: Coordinador/backend. Dependencias: Ninguna; primera etapa de implementación. Implementación y controles locales completados. Evidencia: docs/evidence/tdd/00-foundation.md. El merge requiere CI remota verde.
 
+Reconciliación 29/10/2026: implementación y CI están integradas. Sólo queda el archivo formal del
+cambio; se difiere a una auditoría de archivo conjunta de 00–05 para no mezclarla con el cierre 06.
+
 ## 1. Preparación
 
 - [x] 1.1 Leer ADR aplicables, fijar archivos de propiedad y comprobar dependencias.

@@ -5,13 +5,17 @@ from __future__ import annotations
 import html
 import re
 from pathlib import Path
+from typing import cast
 
 from reportlab.lib import colors
 from reportlab.lib.enums import TA_CENTER, TA_JUSTIFY
 from reportlab.lib.pagesizes import A4
-from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
+from reportlab.lib.styles import ParagraphStyle, StyleSheet1, getSampleStyleSheet
 from reportlab.lib.units import mm
+from reportlab.pdfgen.canvas import Canvas
 from reportlab.platypus import (
+    BaseDocTemplate,
+    Flowable,
     PageBreak,
     Paragraph,
     Preformatted,
@@ -30,7 +34,7 @@ def _inline(value: str) -> str:
     return value
 
 
-def _styles():
+def _styles() -> StyleSheet1:
     styles = getSampleStyleSheet()
     styles.add(
         ParagraphStyle(
@@ -92,7 +96,7 @@ def _styles():
     return styles
 
 
-def _footer(canvas, document) -> None:
+def _footer(canvas: Canvas, document: BaseDocTemplate) -> None:
     canvas.saveState()
     width, _ = A4
     canvas.setStrokeColor(colors.HexColor("#B8C8C2"))
@@ -104,7 +108,7 @@ def _footer(canvas, document) -> None:
     canvas.restoreState()
 
 
-def _table(lines: list[str], body_style) -> Table:
+def _table(lines: list[str], body_style: ParagraphStyle) -> Table:
     rows = [[_inline(cell) for cell in line.strip().strip("|").split("|")] for line in lines]
     if len(rows) > 1 and all(set(cell) <= {"-", ":"} for cell in rows[1]):
         rows.pop(1)
@@ -135,7 +139,7 @@ def build_pdf(source: Path, target: Path) -> None:
     lines = source.read_text(encoding="utf-8").splitlines()
     target.parent.mkdir(parents=True, exist_ok=True)
     styles = _styles()
-    story = []
+    story: list[Flowable] = []
     paragraph: list[str] = []
     code: list[str] = []
     in_code = False
@@ -180,7 +184,8 @@ def build_pdf(source: Path, target: Path) -> None:
             while index < len(lines) and lines[index].startswith("|"):
                 table_lines.append(lines[index])
                 index += 1
-            story.extend((_table(table_lines, styles["BodyJustified"]), Spacer(1, 7)))
+            body_style = cast(ParagraphStyle, styles["BodyJustified"])
+            story.extend((_table(table_lines, body_style), Spacer(1, 7)))
             continue
         if line.startswith("# "):
             flush_paragraph()

@@ -1,6 +1,8 @@
 # Tasks: Interfaz Python, seguridad y optimización
 
-Responsable: Frontend y revisor. Dependencias: 04-agents-backend; UI puede preparar fixtures desde contratos congelados. Primera implementación parcial en PR #4. Evidencia: docs/evidence/tdd/03-05-first-version.md. Mantener casillas abiertas hasta cubrir todos los escenarios, incluidos proveedores reales, índice híbrido y hardening pendientes.
+Responsable: Frontend y revisor. Dependencias: 04-agents-backend. UI HTTP, sesiones, errores,
+seguridad, caché, auditoría y recorridos AppTest/Playwright están implementados. Los 60 casos fueron
+ejecutados y revisados; el archivo formal de 05 se deja para una auditoría separada de 00–05.
 
 ## Corte independiente: caché observable de retrieval
 
@@ -77,15 +79,21 @@ documentación y evidencia `docs/evidence/tdd/UI-05-benchmark-playwright.md`.
 - [x] P.2 GREEN: generar un PDF AcroForm de 31 páginas e implementar el recorrido incremental.
 - [x] P.3 REFACTOR: verificar visualmente portada y muestra de casos; documentar el límite entre
   estado automatizado y evaluación factual humana.
-- [ ] P.4 LIVE: ejecutar y revisar los 60 casos con proveedor real; requiere decisión explícita por
-  costo/latencia y completar el PDF por una persona.
+- [x] P.4 LIVE: ejecutar y revisar los 60 casos con proveedor real.
+  Resultado aceptado: 49 PASS y 11 FAIL de contenido/citas, con 60/60 estados observados correctos.
+  Libros originales: `docs/evidence/workbooks/`.
 
-## 1. Preparación
+## Lista maestra original (histórica)
+
+Las casillas por corte y los libros versionados reflejan el trabajo ejecutado. La plantilla
+siguiente se conserva para trazabilidad y no reemplaza ese registro.
+
+### 1. Preparación
 
 - [ ] 1.1 Leer ADR aplicables, fijar archivos de propiedad y comprobar dependencias.
 - [ ] 1.2 Preparar fixtures/contratos sin servicios pagos; identificar qué checks requieren integración real.
 
-## 2. Implementación mediante TDD
+### 2. Implementación mediante TDD
 
 - [ ] 2.1.1 RED: escribir y ejecutar pruebas de los escenarios de UI-01; guardar fallo funcional esperado.
 - [ ] 2.1.2 GREEN: implementar mínimo comportamiento de UI-01 y ejecutar las mismas pruebas.
@@ -100,7 +108,7 @@ documentación y evidencia `docs/evidence/tdd/UI-05-benchmark-playwright.md`.
 - [ ] 2.4.2 GREEN: implementar mínimo comportamiento de OPS-01 y ejecutar las mismas pruebas.
 - [ ] 2.4.3 REFACTOR: mejorar diseño, ejecutar suite afectada/typing/imports y registrar evidencia de OPS-01.
 
-## 3. Cierre
+### 3. Cierre
 
 - [ ] 3.1 Ejecutar tests de integración/seguridad pertinentes y checks estáticos; distinguir mocks de proveedores reales.
 - [ ] 3.2 Actualizar documentación, trazabilidad y handoff; enlazar evidencia y commit.

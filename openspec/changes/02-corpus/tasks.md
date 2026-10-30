@@ -2,6 +2,11 @@
 
 Responsable: RAG/datos. Dependencias: 00-foundation y 01-engram; puede continuar desde Git si memoria tiene bloqueo documentado. Implementación piloto y evidencia en docs/evidence/tdd/02-corpus.md. Admisión, tablas revisadas, catálogo local y ampliación institucional implementados. COR-03 remoto permanece pendiente; no archivar.
 
+Reconciliación 29/10/2026: COR-01 y COR-02 tienen RED/GREEN/REFACTOR; COR-03 tiene idempotencia y
+snapshot local verificados. La activación atómica catálogo+índice remoto continúa abierta. Las
+casillas por corte de arriba son el estado ejecutado; la lista maestra original de abajo se conserva
+como plantilla histórica y sus casillas no sustituyen esa evidencia.
+
 ## Corte COR-EXP-01: ampliación institucional
 
 Responsable: coordinador/RAG, misma sesión. Rama: `feat/corpus-expansion`. Propiedad:
@@ -29,12 +34,17 @@ Evidencia: `docs/evidence/tdd/WIN-SQLITE-SNAPSHOT.md`.
 - [x] W.2c GREEN: interceptar sólo el transporte HTTP de proveedores en el test de liveness.
 - [x] W.3 REFACTOR: suite completa, calidad, evidencia y validación local; CI/revisión remota en PR.
 
-## 1. Preparación
+## Lista maestra original (histórica)
+
+No usar las casillas siguientes como resumen de avance; fueron reemplazadas por los cortes
+evidenciados y por la puerta COR-03 remota indicada arriba.
+
+### 1. Preparación
 
 - [ ] 1.1 Leer ADR aplicables, fijar archivos de propiedad y comprobar dependencias.
 - [ ] 1.2 Preparar fixtures/contratos sin servicios pagos; identificar qué checks requieren integración real.
 
-## 2. Implementación mediante TDD
+### 2. Implementación mediante TDD
 
 - [ ] 2.1.1 RED: escribir y ejecutar pruebas de los escenarios de COR-01; guardar fallo funcional esperado.
 - [ ] 2.1.2 GREEN: implementar mínimo comportamiento de COR-01 y ejecutar las mismas pruebas.
@@ -46,7 +56,7 @@ Evidencia: `docs/evidence/tdd/WIN-SQLITE-SNAPSHOT.md`.
 - [ ] 2.3.2 GREEN: implementar mínimo comportamiento de COR-03 y ejecutar las mismas pruebas.
 - [ ] 2.3.3 REFACTOR: mejorar diseño, ejecutar suite afectada/typing/imports y registrar evidencia de COR-03.
 
-## 3. Cierre
+### 3. Cierre
 
 - [ ] 3.1 Ejecutar tests de integración/seguridad pertinentes y checks estáticos; distinguir mocks de proveedores reales.
 - [ ] 3.2 Actualizar documentación, trazabilidad y handoff; enlazar evidencia y commit.

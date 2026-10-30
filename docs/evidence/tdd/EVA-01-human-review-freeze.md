@@ -9,7 +9,7 @@ revisor independiente antes de integrar.
 - `data/evaluation/benchmark-60.jsonl`
 - `tests/unit/test_benchmark_contract.py`
 - `README.md`, `docs/plan.md`, `docs/evaluation.md`, `docs/requirements.md`
-- `openspec/changes/06-evaluation-delivery/tasks.md`
+- `openspec/changes/archive/2026-10-29-06-evaluation-delivery/tasks.md`
 - este archivo de evidencia
 
 El usuario declaró cerradas las pruebas humanas sobre la planilla local de 60 casos. El primer caso

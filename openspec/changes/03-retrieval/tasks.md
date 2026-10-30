@@ -1,6 +1,9 @@
 # Tasks: Recuperación híbrida y reranking evaluables
 
-Responsable: RAG/datos. Dependencias: 02-corpus. Primera implementación parcial en PR #4. Evidencia: docs/evidence/tdd/03-05-first-version.md. Mantener casillas abiertas hasta cubrir todos los escenarios, incluidos proveedores reales, índice híbrido y hardening pendientes.
+Responsable: RAG/datos. Dependencias: 02-corpus. Contratos, adaptadores, activación configurable,
+hardening y corrida real E1/E2/E3 sobre `dev` están implementados. BM25 permanece como default por
+la latencia del reranker y la evidencia de calidad; esto es una decisión documentada, no un fallback
+silencioso. El archivo formal de 03 requiere una auditoría independiente del cierre 06.
 
 ## Corte independiente: contratos offline
 
@@ -98,7 +101,8 @@ No cambia BM25 como default ni acredita evaluación humana.
 - [x] T.1 RED: exigir composición semántica fail-closed, tokenizer fijado, modo observable y cierre.
 - [x] T.2 GREEN: conectar los cuatro modos al bootstrap sin I/O de proveedor en modo BM25.
 - [x] T.3 REFACTOR: suite completa, calidad, OpenSpec, evidencia y revisión del diff.
-- [ ] T.4 LIVE: activar con namespace/modelos reales y repetir E1/E2/E3 tras qrels humanos.
+- [x] T.4 LIVE: activar con namespace/modelos reales y repetir E1/E2/E3 tras qrels humanos.
+  E1/E2 y el piloto mínimo E3 se ejecutaron en `dev`; `test` quedó cerrado y E3 cubre una consulta.
 
 ## Corte independiente: recuperación de los tres FAIL respondibles
 
@@ -110,12 +114,17 @@ ADR-013 y evidencia `docs/evidence/tdd/RET-BENCHMARK-FAILS.md`.
 - [x] B.2 GREEN: vocabulario agronómico bilingüe acotado y amplitud BM25 configurable.
 - [x] B.3 REFACTOR: suite, typing, arquitectura y repetición live de los tres casos.
 
-## 1. Preparación
+## Lista maestra original (histórica)
+
+Las casillas por corte de arriba y sus evidencias son el estado ejecutado. La plantilla siguiente se
+conserva para trazabilidad y no debe leerse como si los escenarios siguieran sin implementación.
+
+### 1. Preparación
 
 - [ ] 1.1 Leer ADR aplicables, fijar archivos de propiedad y comprobar dependencias.
 - [ ] 1.2 Preparar fixtures/contratos sin servicios pagos; identificar qué checks requieren integración real.
 
-## 2. Implementación mediante TDD
+### 2. Implementación mediante TDD
 
 - [ ] 2.1.1 RED: escribir y ejecutar pruebas de los escenarios de RET-01; guardar fallo funcional esperado.
 - [ ] 2.1.2 GREEN: implementar mínimo comportamiento de RET-01 y ejecutar las mismas pruebas.
@@ -127,7 +136,7 @@ ADR-013 y evidencia `docs/evidence/tdd/RET-BENCHMARK-FAILS.md`.
 - [ ] 2.3.2 GREEN: implementar mínimo comportamiento de RET-03 y ejecutar las mismas pruebas.
 - [ ] 2.3.3 REFACTOR: mejorar diseño, ejecutar suite afectada/typing/imports y registrar evidencia de RET-03.
 
-## 3. Cierre
+### 3. Cierre
 
 - [ ] 3.1 Ejecutar tests de integración/seguridad pertinentes y checks estáticos; distinguir mocks de proveedores reales.
 - [ ] 3.2 Actualizar documentación, trazabilidad y handoff; enlazar evidencia y commit.

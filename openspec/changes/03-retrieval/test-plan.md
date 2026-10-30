@@ -1,6 +1,7 @@
 # Pruebas de aceptación: 03-retrieval
 
-Estado: pendientes. Cada caso ejecutable se desarrolla con TDD. Las verificaciones de instalación/publicación manual se documentan con evidencia operacional.
+Estado: escenarios ejecutables implementados con TDD; adaptadores y corrida real `dev` documentados.
+BM25 continúa como default y `test` permanece cerrado por decisión metodológica.
 
 | Escenario | Test previsto | Nivel / evidencia |
 |---|---|---|
