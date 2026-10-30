@@ -7,17 +7,19 @@ API/UI, investigador/verificador, caché, auditoría redactada, proveedores Olla
 adaptadores E5/Pinecone/reranker, contratos de evaluación, informe PDF y guion de demo. La suite
 rápida tiene evidencia vigente y el verificador offline reconoce los ocho artefactos de entrega.
 
-Corte activo: `eval/eva02-budgeted-run`, responsable coordinador/evaluador. Propiedad: runners E1,
-E2 y E3, integración del proveedor, documentación y evidencia EVA-02. El benchmark final contiene
+Cierre técnico: PR #27 integrado y rama final `chore/release-closeout`, responsable
+coordinador/evaluador. Propiedad: archivo OpenSpec 06, typing del generador PDF, documentación de
+cierre y libros Excel de evidencia. El benchmark final contiene
 60 casos `reviewed`, split 30/30, 36 respondibles y 24 de abstención, con hash SHA-256
 `b12253c38bec4e2e58b20ddb4ec1303c515a360001db37c56e6e54246bdcba69`. E1/E2 y el piloto mínimo E3
 se ejecutaron sobre `dev`; la revisión humana de los 18 pares E2 obtuvo 12 PASS y 6 FAIL.
 
-Siguiente puerta académica: regenerar y revisar el informe con estos resultados, completar la
-revisión del diff del PR y ensayar la exposición de 15 minutos. `test` permanece cerrado y E3 sólo
-demuestra el comportamiento de caché para una consulta. Después corresponde confirmación de
-modalidad/fecha y envío a ambos docentes sólo con autorización del usuario. La secuencia original de
-abajo queda como mapa de dependencias, no como estado de implementación.
+El cierre técnico incluye informe revisado, typing completo del generador, libros de prueba
+versionados, spec 06 promovida y verificación reproducible. La siguiente puerta es exclusivamente
+académica/humana: ensayar la exposición de 15 minutos, confirmar modalidad y fecha de Teoría 7 y
+enviar a ambos docentes sólo con autorización del usuario. `test` permanece cerrado y E3 sólo
+demuestra el comportamiento de caché para una consulta. La secuencia original de abajo queda como
+mapa de dependencias, no como estado de implementación.
 
 ## Decisión de organización
 

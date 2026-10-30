@@ -57,6 +57,7 @@ Ver [fuentes](docs/sources.md), [protocolo de evaluación](docs/evaluation.md) y
 Informe técnico: [PDF](output/pdf/agro-rag-report.pdf) y [fuente versionada](docs/report.md).
 Exposición: [guion reproducible de 15 minutos](docs/demo.md). Verificación offline:
 `uv run agro-rag verify-delivery --root .`.
+Libros Excel originales de pruebas y revisión: [docs/evidence/workbooks](docs/evidence/workbooks/README.md).
 
 ## Ejecutar la base
 

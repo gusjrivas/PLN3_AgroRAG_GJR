@@ -2,7 +2,8 @@
 
 ## Context
 
-Proyecto nuevo PLN3_AgroRAG_GJR. Contratos comunes: docs/architecture.md y docs/contracts.md. Requisitos: EVA-01, EVA-02, DEL-01. Estado: propuesta, sin comportamiento implementado.
+Proyecto PLN3_AgroRAG_GJR. Contratos comunes: docs/architecture.md y docs/contracts.md. Requisitos:
+EVA-01, EVA-02, DEL-01. Estado: implementación verificada y lista para archivo.
 
 ## Goals / Non-Goals
 

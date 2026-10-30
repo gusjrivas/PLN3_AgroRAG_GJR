@@ -1,6 +1,7 @@
 # Pruebas de aceptación: 05-frontend-hardening
 
-Estado: pendientes. Cada caso ejecutable se desarrolla con TDD. Las verificaciones de instalación/publicación manual se documentan con evidencia operacional.
+Estado: escenarios ejecutables implementados con TDD; recorrido Playwright de 60 casos y revisión
+humana documentados en `docs/evidence/workbooks/`.
 
 | Escenario | Test previsto | Nivel / evidencia |
 |---|---|---|

@@ -2,9 +2,10 @@
 
 Estado técnico al 29/10/2026: informe reproducible, guion y runtime configurable de retrieval
 semántico implementados; benchmark de 60 casos congelado; E1/E2 y piloto mínimo E3 ejecutados en
-`dev`; revisión humana E2 cerrada con 12 PASS y 6 FAIL. La entrega académica definitiva todavía
-requiere revisión final del diff/PDF, ensayo, modalidad y fecha calendario de Teoría 7. No se envió
-correo ni se publicó fuera del repositorio.
+`dev`; revisión humana E2 cerrada con 12 PASS y 6 FAIL. La revisión técnica final del diff/PDF está
+cerrada y los libros de prueba están versionados. La entrega académica definitiva todavía requiere
+ensayo, modalidad y fecha calendario de Teoría 7. No se envió correo ni se publicó fuera del
+repositorio.
 
 La cátedra solicita repositorio funcional, informe técnico PDF y exposición final de 15 minutos. Fecha máxima: clase Teoría 7; fecha calendario aún por confirmar. Entrega por correo a ambos docentes cuando el usuario lo autorice. El plan no envía mensajes.
 
@@ -34,5 +35,6 @@ grabación; no se presentan fixtures como inferencia en vivo.
 
 README y `docs/run-local.md` contienen requisitos, `uv sync --frozen`, configuración sin secretos,
 obtención del corpus, ingesta, arranque API/UI y pruebas. `agro-rag verify-delivery --root .`
-comprueba offline ocho artefactos y emite sus hashes. El release tag queda pendiente hasta completar
-la evaluación científica; las instrucciones no dependen de rutas absolutas de una notebook.
+comprueba offline ocho artefactos y emite sus hashes. `v0.1.0` identifica el cierre técnico; no
+implica que se haya realizado el ensayo ni el envío académico. Las instrucciones no dependen de
+rutas absolutas de una notebook.

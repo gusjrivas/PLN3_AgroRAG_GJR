@@ -29,6 +29,13 @@ playwright-report/
 test-results/
 output/evaluation/
 
+# Artefactos auxiliares locales de revisión; los libros finales viven en docs/evidence/workbooks.
+~$*.xlsx
+*.xlsx.inspect.ndjson
+outputs/agro-rag-review/*-preview.png
+outputs/agro-rag-review/e2-revision-humana-18-pares.xlsx
+output/pdf/agro-rag-benchmark-results-2026-10-28.pdf
+
 # Herramientas locales; no versionar binarios ni archivos descargados
 .tools/
 

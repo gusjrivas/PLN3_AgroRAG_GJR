@@ -45,8 +45,8 @@ Criterio de éxito: nadie interpreta los fixtures o el smoke como evaluación ci
 ## 13:00 a 15:00 - conclusiones y límites
 
 - Resumir: corpus trazable, API/UI, agentes acotados, citas, seguridad, caché y auditoría.
-- Enumerar límites: `test` cerrado, E3 no generalizable, metadatos incompletos en la planilla y
-  revisión final del diff/PDF pendiente.
+- Enumerar límites: `test` cerrado, E3 no generalizable y dictamen E2 único por par, sin puntuación
+  separada para estimar el efecto causal del verificador. Revisor y fecha están completos.
 - Declarar asistencia de IA y responsabilidad humana.
 - Cerrar con la decisión principal: no activar una mejora aparente sin calidad y latencia validadas.
 
