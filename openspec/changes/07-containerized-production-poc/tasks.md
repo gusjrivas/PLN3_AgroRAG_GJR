@@ -14,8 +14,8 @@ misma sesión durante implementación; revisión humana requerida antes de cada 
 
 - [x] 1.1 CFG-V2-01 RED: secretos `*_FILE`, conflicto, archivo ausente/vacío y redacción.
 - [x] 1.2 CFG-V2-01 GREEN: resolución tipada y fail-closed en API/UI.
-- [ ] 1.3 ARC-V2-02: caracterizar URL/rutas existentes y proteger límites/runtime read-only.
-- [ ] 1.4 REFACTOR: tests afectados, typing, arquitectura, docs y evidencia.
+- [x] 1.3 ARC-V2-02: caracterizar URL/rutas existentes y proteger límites/runtime read-only.
+- [x] 1.4 REFACTOR: tests afectados, typing, arquitectura, docs y evidencia.
 
 ## 2. Imágenes
 
@@ -27,7 +27,7 @@ misma sesión durante implementación; revisión humana requerida antes de cada 
 
 - [x] 3.1 CMP-V2-01: base/dev, red, healthchecks y arranque healthy.
 - [x] 3.2 DAT-V2-01: volumen persistente, API read-only y job admin idempotente.
-- [ ] 3.3 CMP-V2-02: E2E offline, reinicio y compatibilidad V1.
+- [x] 3.3 CMP-V2-02: E2E offline, reinicio y compatibilidad V1.
 
 ## 4. Producción y seguridad
 

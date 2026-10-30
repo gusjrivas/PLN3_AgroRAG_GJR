@@ -90,10 +90,24 @@ docker compose -f compose.yaml -f compose.dev.yaml down
 para un volumen de prueba explícito. Para aislar ensayos, definir por ejemplo
 `AGRO_CATALOGUE_VOLUME=agrorag_catalogue_v2_test` antes de ejecutar Compose.
 
+## E2E Compose reproducible
+
+El E2E de browser es opt-in porque requiere Docker y Chromium de Playwright. CI debe construir las
+imágenes una vez y ejecutar exactamente esos tags:
+
+```powershell
+$env:AGRO_E2E_API_IMAGE = '<imagen-api-candidata>'
+$env:AGRO_E2E_UI_IMAGE = '<imagen-ui-candidata>'
+uv run pytest -m e2e tests/e2e/test_compose_browser.py
+```
+
+El test genera datos sintéticos, usa puertos/volumen únicos, no llama proveedores, prueba reinicio y
+limpia sus recursos. No usa el catálogo ni volumen local del usuario.
+
 ## Limitaciones todavía abiertas
 
-- El recorrido browser→UI→API dentro de Compose y su ejecución en CI siguen pendientes; el smoke
-  actual verificó UI health y API HTTP real con preview BM25.
+- La ejecución del E2E dentro del workflow CI sigue pendiente; localmente el recorrido Compose,
+  reinicio y compatibilidad V1 están verificados.
 - El scan Docker Scout local requiere autenticación y no se consideró ejecutado; el gate de CI debe
   usar un scanner no interactivo y registrar hallazgos/excepciones.
 - Estas imágenes contienen el perfil BM25 base. El job semántico/administrativo se define de forma

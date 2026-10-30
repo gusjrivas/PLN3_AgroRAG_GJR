@@ -49,8 +49,17 @@ Los contenedores/red se eliminaron y `down -v` se aplicó únicamente a los vol�
 `agrorag_catalogue_v2_test` y `agrorag_catalogue_v2_idempotence`, creados por esta sesión. El volumen
 local/productivo por defecto no fue tocado.
 
-CMP-V2-02 permanece abierto hasta automatizar browser→UI→API en Compose y CI. El overlay productivo,
-backup/rollback y garak tampoco se declaran terminados.
+CMP-V2-02 se cerró el 30/10/2026 con `tests/e2e/test_compose_browser.py`. Es una caracterización de
+comportamiento ya existente, por lo que no se fabricó un RED funcional. El primer intento del nuevo
+harness falló de forma legítima: un volumen montado en `/catalogue` quedó con ownership root. El test
+se corrigió para usar la ruta contractual `/var/lib/agrorag/catalogue`, cuyo ownership no root está
+preparado en la imagen.
+
+La ejecución opt-in construyó un PDF sintético, publicó un catálogo de una evidencia en un volumen
+único, levantó imágenes API/UI con `--no-build`, navegó Browser→Streamlit→API, expandió el fragmento
+exacto, reinició ambos servicios, confirmó nuevamente health, UI y `/v1/corpus`, y eliminó el
+volumen por nombre. Resultado: exit 0, `1 passed in 26.51s`. No hubo red de proveedor ni LLM pago.
+Esto caracteriza URL interna, persistencia tras reinicio y compatibilidad funcional V1.
 
 Verificación de cierre del corte: suite offline `236 passed, 2 deselected`; Ruff check/formato,
 mypy estricto (37 archivos), 2 contratos import-linter, Compose config y OpenSpec 07 terminaron con

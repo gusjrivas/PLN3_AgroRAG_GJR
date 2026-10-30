@@ -5,6 +5,10 @@ Rama de implementación inicial: `feat/v2-container-foundation`. Propiedad de es
 configuración/entrypoints, infraestructura de contenedores, pruebas, OpenSpec, documentación y
 evidencia V2. ADR-015 fue aceptado por Gustavo Julián Rivas el 29/10/2026.
 
+Progreso al 30/10/2026: configuración container-safe, imágenes API/UI/gateway, Compose local,
+persistencia, E2E de browser con reinicio, overlay productivo, observabilidad y rollback están
+implementados y verificados. Restan supply chain/CI, staging autorizado y garak.
+
 ## Objetivo
 
 Evolucionar AgroRAG V1 hacia una V2 que se construya, pruebe y ejecute íntegramente con imágenes
