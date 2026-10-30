@@ -48,8 +48,8 @@ E2 o E3, consultas pareadas, configuración y procedencia explícitas, resultado
 pregunta, tokens, latencia p50/p95 y métricas separadas por recuperación, generación, agentes y
 operación. Una ejecución `real` no puede mezclarse con `test_double` y exige revisión humana. El
 comparador conserva deltas negativos y publica el denominador y los IDs excluidos. E1/E2/E3
-definitivo ya no está bloqueado por EVA-01; queda pendiente acordar presupuesto, ejecutar las
-variantes reales y revisar soporte.
+definitivo ya no está bloqueado por EVA-01. La corrida presupuestada sobre `dev` quedó ejecutada y
+revisada; `test` permanece cerrado y no se usa para ajustar parámetros.
 
 ### Corrida presupuestada EVA-02 del 28/10/2026
 
@@ -58,9 +58,13 @@ respondibles de `dev`; `test` permaneció cerrado. E1 favoreció a hybrid RRF co
 Recall@20 0,9722 y p95 215,98 ms: el reranker mejoró MRR/nDCG, pero alcanzó p95 47.012,40 ms.
 E2 completó 18 pares con/sin verificador y consumió USD 0,289792; el gasto total con el piloto de
 estimación fue USD 0,300764. Ambos modos acertaron el estado 18/18, pero el verificador cambió cinco
-textos sin pedir revisiones. Falta revisión humana antes de interpretar esos cambios como mejora
-factual; una revisión documental dirigida de esos cinco cambios encontró tres incompletos y dos
-aceptables. E3 se ejecutó como piloto de una consulta con tres mediciones frías y tres calientes:
+textos sin pedir revisiones. La revisión humana independiente registró 12 PASS y 6 FAIL; los FAIL
+fueron `dev-r-002`, `dev-r-003`, `dev-r-004`, `dev-r-011`, `dev-r-012` y `dev-r-013`. Entre los
+cinco textos modificados por el verificador, el dictamen humano fue 4 PASS y 1 FAIL, mientras que
+la revisión documental previa de la sesión agente había marcado 2 PASS y 3 FAIL. Se conservan ambos
+registros: la planilla emite un dictamen por par y no puntúa por separado cada variante, por lo que
+no permite atribuir causalmente una mejora factual al verificador. E3 se ejecutó como piloto de una
+consulta con tres mediciones frías y tres calientes:
 la mediana bajó de 1.562 a 1.406 ms, sin ahorro de tokens porque sólo se cachea retrieval. El gasto
 total de EVA-02 quedó en USD 0,334369. Evidencia completa en
 `docs/evidence/tdd/EVA-02-budgeted-live.md`.

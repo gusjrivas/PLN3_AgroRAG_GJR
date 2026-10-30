@@ -24,6 +24,33 @@ ruff: All checks passed
 mypy src y scripts de evaluación: Success
 ```
 
+Al incorporar los resultados al informe, la revisión visual detectó una octava página casi vacía.
+Se agregó primero el límite observable de siete páginas a
+`test_del_01_informe_builds_a_readable_pdf`: RED con `assert 8 <= 7`; después se retiró el salto
+forzado anterior a **Reproducción**: GREEN, `1 passed`. El contenido no se redujo ni ocultó para
+cumplir la puerta.
+
+Verificación final del corte:
+
+```text
+pytest suite afectada: 60 passed
+ruff check: All checks passed
+ruff format --check: 12 files already formatted
+mypy src + runners E1/E2/E3: Success, 39 source files
+OpenSpec 06-evaluation-delivery --strict: valid
+verify-delivery: 8 artefactos, exit 0
+PDF: 7 páginas renderizadas e inspeccionadas sin recortes ni solapamientos
+```
+
+Un intento de ampliar mypy a `scripts/build_report.py` expuso deuda previa: faltan stubs de
+ReportLab y anotaciones en ese script. El gate versionado no lo incluía; no se ocultó el hallazgo
+con `ignore-errors` ni se agregaron dependencias fuera de alcance.
+
+La revisión final del diff fue realizada por la misma sesión coordinadora, porque no había un
+revisor distinto disponible. No encontró defectos bloqueantes adicionales. Se conservan como
+riesgos explícitos `test` cerrado, E3 limitado a una consulta, el dictamen humano por par y la deuda
+de typing del generador PDF.
+
 El modo normal conserva el verificador. La ablación explícita valida la salida del investigador,
 hace una sola llamada y publica `verification.decision=not_run`; no simula una aprobación. El
 runner reserva el peor costo contractual antes de cada par: cuatro llamadas máximas, 768 tokens de
@@ -82,6 +109,26 @@ pasajes citados; no se presenta como revisión humana independiente.
 El verificador aprobó también los tres resultados incompletos. Por tanto, no hay evidencia de que
 el verificador haya mejorado soporte factual en esta muestra dirigida.
 
+### Revisión humana independiente de los 18 pares
+
+El usuario completó la revisión en la planilla local
+`outputs/agro-rag-review/e2-revision-humana-18-pares.xlsx` el 29/10/2026. El resumen calculado del
+libro quedó `COMPLETA`, con 18 casos, 0 pendientes, 12 PASS y 6 FAIL. Los FAIL fueron
+`dev-r-002`, `dev-r-003`, `dev-r-004`, `dev-r-011`, `dev-r-012` y `dev-r-013`; en esas filas la
+observación humana registra un fallo en la búsqueda de **Explorar fuentes**. SHA-256 del archivo:
+`3461469d230d45e59c571ef44c60109a9e3a160bcc651b51a23363371cb3607a`.
+
+Sobre los cinco textos que el verificador modificó, el dictamen humano fue PASS para `dev-r-001`,
+`dev-r-009`, `dev-r-016` y `dev-r-018`, y FAIL para `dev-r-011`. Esto difiere de la revisión
+documental dirigida de la sesión agente, que había marcado tres omisiones. Se preservan ambos
+registros sin reemplazar el dictamen humano ni ocultar el desacuerdo.
+
+La planilla registra un único dictamen humano por par, no una puntuación independiente para cada
+respuesta con/sin verificador. Por ello permite cerrar la revisión de los 18 casos, pero no medir
+un delta causal de soporte atribuible al verificador. Además, `Revisado por` sólo está completo en
+dos filas y `Fecha` quedó vacía; esta limitación de metadatos se documenta en vez de rellenarla
+retroactivamente.
+
 ## E3 real presupuestado, una consulta y tres repeticiones
 
 Se usó `dev-r-001`, retrieval hybrid, investigador sin verificador y salida máxima de 256 tokens.
@@ -103,8 +150,8 @@ USD 0,334369; quedaron USD 0,165631 sin usar.
 
 ## Puertas restantes
 
-- revisión humana independiente de soporte/citas de los 18 pares E2; la revisión dirigida de los
-  cinco cambios encontró tres FAIL;
 - ampliar E3 a más consultas sólo si se necesita generalización; el protocolo mínimo de tres
   repeticiones quedó ejecutado sobre una consulta;
+- conservar como limitación que la revisión humana puntúa el par y no cada variante por separado,
+  y que la planilla no repite revisor/fecha en todas las filas;
 - mantener `test` fuera de ajustes: todas estas corridas usaron únicamente `dev`.

@@ -18,10 +18,10 @@ Responsable: Evaluador y coordinador. Dependencias: 05-frontend-hardening; anota
 - [x] 2.2.1 RED: escribir y ejecutar pruebas del contrato de reporte EVA-02; guardar fallo funcional esperado.
 - [x] 2.2.2 GREEN: implementar comparación pareada, procedencia y persistencia completa de EVA-02.
 - [x] 2.2.3 REFACTOR: mejorar diseño, ejecutar suite afectada/typing/imports y registrar evidencia del contrato EVA-02.
-- [ ] 2.2.4 Ejecutar E1/E2/E3 con benchmark humano congelado y proveedores reales; revisar soporte y publicar resultados completos, incluidos los negativos.
-  Avance presupuestado: E1 y E2 completos en `dev` respondible; E3 mínimo con tres repeticiones
-  frías/calientes sobre una consulta. Pendiente revisión humana independiente de soporte y
-  generalización E3 antes de cerrar.
+- [x] 2.2.4 Ejecutar E1/E2/E3 con benchmark humano congelado y proveedores reales; revisar soporte y publicar resultados completos, incluidos los negativos.
+  E1 y E2 se completaron en `dev` respondible; E3 mínimo usó tres repeticiones frías/calientes
+  sobre una consulta. La revisión humana de los 18 pares obtuvo 12 PASS y 6 FAIL. E3 no se
+  generaliza más allá de esa consulta y el dictamen por par no estima un efecto causal separado.
 - [x] 2.2.5 Implementar repetición y resumen de estabilidad con pruebas offline; la nueva corrida
   live queda pendiente de autorización de costo.
 - [x] 2.3.1 Definir verificación observable de DEL-01; generador PDF y verificador comenzaron con prueba RED.
@@ -32,5 +32,8 @@ Responsable: Evaluador y coordinador. Dependencias: 05-frontend-hardening; anota
 
 - [x] 3.1 Ejecutar tests offline/integración local y checks estáticos; los proveedores reales y qrels humanos siguen separados.
 - [x] 3.2 Actualizar documentación, trazabilidad, informe y handoff; enlazar evidencia y commit.
-- [ ] 3.3 Revisión del diff por revisor disponible, registrar autor y riesgos; integrar cuando Definition of Done esté satisfecha.
+- [x] 3.3 Revisión del diff por revisor disponible, registrar autor y riesgos; integrar cuando Definition of Done esté satisfecha.
+  Revisión realizada por la misma sesión coordinadora al no disponer de un revisor distinto. Suite
+  afectada, Ruff, mypy contractual, OpenSpec, verificador offline y PDF aprobaron. Riesgos abiertos:
+  `test` cerrado, E3 de una consulta, dictamen E2 por par y deuda de typing en `build_report.py`.
 - [ ] 3.4 Archivar el cambio y promover deltas a specs sólo después de verificar implementación real.

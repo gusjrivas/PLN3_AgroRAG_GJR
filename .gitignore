@@ -24,6 +24,7 @@ data/processed/
 models/
 logs/
 runs/
+.run/
 playwright-report/
 test-results/
 output/evaluation/

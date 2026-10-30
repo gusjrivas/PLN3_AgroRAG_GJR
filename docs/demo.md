@@ -32,17 +32,21 @@ está disponible, mostrar el error real y continuar con el modo lexical.
 ## 09:00 a 13:00 - evaluación, costo y resultado negativo
 
 - Presentar el protocolo 60 casos, split 30/30, familias aisladas y denominadores separados.
-- Mostrar el smoke de ocho qrels `pending_human`, identificado como preliminar.
-- Comparar BM25, vector, hybrid y reranker sin afirmar generalización.
-- Destacar dos negativos: RRF bajó Recall@5 frente al vector; reranker p95 fue 30,56 s sólo en retrieval.
-- Explicar por qué la API permanece en BM25 y qué falta para ejecutar E1/E2/E3 definitivos.
+- Mostrar E1 sobre los 18 casos respondibles de `dev`: hybrid RRF logró Recall@20 0,9722 con p95
+  215,98 ms; el reranker mejoró el orden pero alcanzó p95 47,01 s sólo en retrieval.
+- Mostrar E2: 18/18 estados correctos en ambas variantes, USD 0,289792 y revisión humana de los
+  pares con 12 PASS y 6 FAIL.
+- Explicar que el dictamen único por par no demuestra una mejora causal del verificador.
+- Mostrar E3 como piloto mínimo: una consulta, tres repeticiones frías/calientes y 156 ms menos de
+  mediana sin ahorro de tokens.
 
 Criterio de éxito: nadie interpreta los fixtures o el smoke como evaluación científica final.
 
 ## 13:00 a 15:00 - conclusiones y límites
 
 - Resumir: corpus trazable, API/UI, agentes acotados, citas, seguridad, caché y auditoría.
-- Enumerar pendientes: 60 casos humanos, soporte factual, tres pasadas, costos y revisión final.
+- Enumerar límites: `test` cerrado, E3 no generalizable, metadatos incompletos en la planilla y
+  revisión final del diff/PDF pendiente.
 - Declarar asistencia de IA y responsabilidad humana.
 - Cerrar con la decisión principal: no activar una mejora aparente sin calidad y latencia validadas.
 

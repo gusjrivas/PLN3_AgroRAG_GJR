@@ -48,6 +48,7 @@ def test_del_01_informe_builds_a_readable_pdf(tmp_path):
     with pdfplumber.open(target) as document:
         text = "\n".join(page.extract_text() or "" for page in document.pages)
         assert len(document.pages) >= 6
+        assert len(document.pages) <= 7
     assert "AgroRAG" in text
     assert "Resultados y evidencia" in text
     assert "Declaración de asistencia de IA" in text

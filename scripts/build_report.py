@@ -193,7 +193,7 @@ def build_pdf(source: Path, target: Path) -> None:
             )
         elif line.startswith("## "):
             flush_paragraph()
-            if story and section_count in {0, 5, 7, 10}:
+            if story and section_count in {0, 5, 10}:
                 story.append(PageBreak())
             section_count += 1
             story.append(Paragraph(_inline(line[3:]), styles["ReportH2"]))
