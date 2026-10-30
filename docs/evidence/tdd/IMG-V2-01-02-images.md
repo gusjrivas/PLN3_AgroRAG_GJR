@@ -42,3 +42,6 @@ hallazgo de la imagen. El escaneo no interactivo permanece puerta de CI-V2-01.
 
 No se suministraron claves al build, no se descargaron modelos y el catálogo no se incluyó. Compose,
 permisos read-only y E2E del stack permanecen para la fase siguiente.
+
+Commit funcional: `a0944ee`. La revisión del diff fue realizada por la misma sesión; revisión
+humana pendiente en el MR #30.
