@@ -4,6 +4,8 @@ Fecha: 29/10/2026. Responsable y revisión: misma sesión coordinadora; revisió
 MR #30. Rama: `feat/v2-container-foundation`. Propiedad: settings de release, bootstrap API,
 Dockerfile/Compose, contratos y documentación operativa.
 
+Commit de implementación: `75ffcd3` (`feat: expose release identity and structured logs`).
+
 ## RED
 
 El primer contrato observable añadió `/health/version` y un evento HTTP JSON sanitizado:
