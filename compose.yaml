@@ -3,12 +3,6 @@ name: agrorag
 services:
   api:
     image: ${AGRO_API_IMAGE:-agrorag-api:dev}
-    build:
-      context: .
-      target: api
-      args:
-        APP_VERSION: ${AGRO_APP_VERSION:-0.2.0-dev}
-        VCS_REF: ${AGRO_VCS_REF:-working-tree}
     environment:
       AGRO_CATALOGUE_PATH: /var/lib/agrorag/catalogue
       AGRO_HEALTHCHECK_URL: http://127.0.0.1:8000/health/live
@@ -28,12 +22,6 @@ services:
 
   ui:
     image: ${AGRO_UI_IMAGE:-agrorag-ui:dev}
-    build:
-      context: .
-      target: ui
-      args:
-        APP_VERSION: ${AGRO_APP_VERSION:-0.2.0-dev}
-        VCS_REF: ${AGRO_VCS_REF:-working-tree}
     environment:
       AGRO_API_URL: http://api:8000
     depends_on:

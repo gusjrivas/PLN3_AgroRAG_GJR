@@ -2,7 +2,11 @@
 
 ## Objetivo y estilo
 
-Monolito modular de backend con puertos y adaptadores, frontend Python separado por HTTP. Dos procesos locales: FastAPI y Streamlit. Evitar microservicios dentro del RAG. SQLite local mantiene el catálogo versionado; Pinecone almacena vectores. Un único proceso backend inicial simplifica recursos, caché y límites. Engram y OpenSpec pertenecen al plano de desarrollo.
+Monolito modular de backend con puertos y adaptadores, frontend Python separado por HTTP. Los
+módulos no se convierten en microservicios. V1 ejecuta FastAPI y Streamlit localmente; V2 empaqueta
+API/UI como procesos separados, añade gateway y jobs explícitos con Docker Compose. SQLite mantiene
+el catálogo versionado; Pinecone almacena vectores opcionales. Una réplica backend simplifica
+recursos, caché y límites. Engram y OpenSpec pertenecen al plano de desarrollo.
 
 ```mermaid
 flowchart TD
@@ -17,6 +21,28 @@ flowchart TD
   VER --> OUT["Respuesta, aclaración o abstención"]
   OUT --> API
 ```
+
+## Despliegue V2
+
+ADR-015 define una PoC productiva single-host. Sólo gateway publica 80/443; UI consume API por DNS
+Compose y API monta el catálogo read-only. `catalogue-admin` escribe el volumen únicamente en una
+operación explícita. Imágenes y configuración no contienen secretos; producción usa archivos
+montados por servicio. Garak será un job separado de release/staging y no una dependencia runtime.
+
+```mermaid
+flowchart LR
+  USER[Usuario] --> GW[Gateway TLS + auth]
+  GW --> UI2[Streamlit no root]
+  UI2 -->|HTTP interno| API2[FastAPI no root]
+  API2 --> CAT[(Catálogo read-only)]
+  ADMIN[Job catalogue-admin] -->|read-write| CAT
+  API2 --> EXT[OpenAI/Pinecone opcionales]
+  GARAK[Job garak] --> GW
+```
+
+El overlay local comprueba liveness para permitir exploración BM25; el productivo exige readiness
+autenticada y proveedor completo. Filesystems son read-only salvo tmpfs/volúmenes declarados. Ver
+`docs/run-containerized.md`, ADR-015 y OpenSpec 07 para estado y límites.
 
 ## Dependencias permitidas
 

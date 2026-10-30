@@ -1,6 +1,7 @@
 # syntax=docker/dockerfile:1.7
 
 ARG PYTHON_IMAGE=python:3.12-slim-bookworm@sha256:e697c81897302a4c4333bade000d98038fbb21eb064f8ee1fd42d02ebcd9d337
+ARG CADDY_IMAGE=caddy:2.11.4-alpine@sha256:6aeddd44c3078b0f9a35206472a11420648a79c184603ef95957d0a20044cb2b
 
 FROM ${PYTHON_IMAGE} AS builder
 
@@ -52,3 +53,13 @@ COPY --chown=10001:10001 src/agro_rag_ui/app.py /app/ui.py
 USER 10001:10001
 EXPOSE 8501
 CMD ["streamlit", "run", "/app/ui.py", "--server.address", "0.0.0.0", "--server.port", "8501", "--browser.gatherUsageStats", "false"]
+
+FROM ${CADDY_IMAGE} AS gateway
+
+RUN addgroup -g 10002 -S gateway \
+    && adduser -u 10002 -S -D -H -G gateway gateway \
+    && mkdir -p /data/caddy /config/caddy \
+    && chown -R 10002:10002 /data /config
+COPY --chown=10002:10002 infra/gateway/Caddyfile /etc/caddy/Caddyfile
+USER 10002:10002
+EXPOSE 80 443

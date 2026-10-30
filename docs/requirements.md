@@ -55,6 +55,11 @@ ubicación de evidencia; no cambiar sólo la etiqueta de estado.
 | EVA-01 | Benchmark congelado | [evaluation-delivery](../openspec/specs/evaluation-delivery/spec.md) | EVA-01-split, EVA-01-sin-soporte | [contrato](evidence/tdd/06-benchmark-contract.md) + [cierre humano](evidence/tdd/EVA-01-human-review-freeze.md) |
 | EVA-02 | Métricas y ablaciones reales | [evaluation-delivery](../openspec/specs/evaluation-delivery/spec.md) | EVA-02-comparacion, EVA-02-negativo | [cambio archivado](../openspec/changes/archive/2026-10-29-06-evaluation-delivery/test-plan.md) + docs/evidence/tdd/EVA-02-budgeted-live.md |
 | DEL-01 | Entrega preproductiva | [evaluation-delivery](../openspec/specs/evaluation-delivery/spec.md) | DEL-01-reproduccion, DEL-01-informe | [cambio archivado](../openspec/changes/archive/2026-10-29-06-evaluation-delivery/test-plan.md) + docs/evidence/tdd/DEL-01.md |
+| CFG-V2 | Configuración container-safe | [07-containerized-production-poc](../openspec/changes/07-containerized-production-poc/specs/containerized-production-poc/spec.md) | CFG-V2-secret-file, conflict, local-compatible | [CFG-V2-01](evidence/tdd/CFG-V2-01-container-settings.md) |
+| IMG-V2 | Imágenes reproducibles/mínimas | [07-containerized-production-poc](../openspec/changes/07-containerized-production-poc/specs/containerized-production-poc/spec.md) | IMG-V2-build, content | [IMG-V2-01/02](evidence/tdd/IMG-V2-01-02-images.md) |
+| CMP/DAT-V2 | Compose y catálogo persistente | [07-containerized-production-poc](../openspec/changes/07-containerized-production-poc/specs/containerized-production-poc/spec.md) | CMP-V2-e2e, DAT-V2-persistence | [CMP/DAT-V2-01](evidence/tdd/CMP-DAT-V2-01-compose-local.md) |
+| SEC-V2 | Overlay productivo endurecido | [07-containerized-production-poc](../openspec/changes/07-containerized-production-poc/specs/containerized-production-poc/spec.md) | SEC-V2-exposure, OPS-V2-rollback | [SEC-V2-01](evidence/tdd/SEC-V2-01-production-overlay.md) |
+| GARAK-V2 | Evaluación adversarial trazable | [07-containerized-production-poc](../openspec/changes/07-containerized-production-poc/specs/containerized-production-poc/spec.md) | GARAK-V2-gate, confidentiality | Evidencia pendiente de implementación/scan autorizado |
 
 ## Prioridades
 

@@ -116,6 +116,11 @@ secretos sólo en los servicios autorizados; la aplicación adoptará variables 
 Cada corte se integra por separado. Las tareas funcionales se abren en OpenSpec después de aceptar
 ADR-015. Los tests de contenedor no consultan LLMs pagos ni descargan pesos.
 
+Estado al 29/10/2026 en MR #30: contrato y CFG-V2-01 completos; imágenes API/UI/gateway construidas
+como no root; Compose local, catálogo persistente/read-only y overlay productivo endurecido
+implementados. Permanecen abiertos ARC-V2-02 final, browser E2E Compose, logs/release, rollback,
+CI/SBOM/escaneo, staging y garak. Ninguna fase abierta se considera satisfecha por la documentación.
+
 ### Fase 0 — contrato de V2
 
 **ARC-V2-01.** Aceptar ADR-015, crear el cambio OpenSpec y fijar Definition of Done, propietario,

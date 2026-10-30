@@ -1,5 +1,11 @@
 services:
   api:
+    build:
+      context: .
+      target: api
+      args:
+        APP_VERSION: ${AGRO_APP_VERSION:-0.2.0-dev}
+        VCS_REF: ${AGRO_VCS_REF:-working-tree}
     environment:
       AGRO_READER_KEY: ${AGRO_READER_KEY:?Defina AGRO_READER_KEY en .env o en el proceso}
     ports:
@@ -10,6 +16,12 @@ services:
         protocol: tcp
 
   ui:
+    build:
+      context: .
+      target: ui
+      args:
+        APP_VERSION: ${AGRO_APP_VERSION:-0.2.0-dev}
+        VCS_REF: ${AGRO_VCS_REF:-working-tree}
     environment:
       AGRO_READER_KEY: ${AGRO_READER_KEY:?Defina AGRO_READER_KEY en .env o en el proceso}
     ports:

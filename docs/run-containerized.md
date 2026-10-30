@@ -93,3 +93,46 @@ para un volumen de prueba explícito. Para aislar ensayos, definir por ejemplo
   usar un scanner no interactivo y registrar hallazgos/excepciones.
 - Estas imágenes contienen el perfil BM25 base. El job semántico/administrativo se define de forma
   separada para no incorporar dependencias pesadas al runtime API/UI.
+
+## Overlay productivo
+
+`compose.production.yaml` no contiene build ni bind mounts. Exige imágenes API/UI/gateway por
+digest, un volumen de catálogo prepublicado, dominio, modelo OpenAI y tres secretos externos. Sólo
+gateway publica 80/443; API y UI permanecen en la red Compose.
+
+Construir/publicar el gateway versionado antes de desplegar:
+
+```powershell
+docker build --target gateway --build-arg VCS_REF=<commit> -t <registry>/agrorag-gateway:<commit> .
+```
+
+La imagen usa Caddy 2.11.4 fijado por digest, UID/GID 10002 y Caddyfile versionado. API/UI usan UID
+10001. Los tres servicios tienen root filesystem read-only, tmpfs acotado, `cap_drop: ALL`,
+`no-new-privileges`, límites de procesos/CPU/memoria y restart policy. Gateway recibe únicamente
+`NET_BIND_SERVICE` para 80/443 y persiste certificados/configuración en volúmenes separados.
+
+Crear fuera del repositorio un directorio de secretos con archivos `reader_key`, `openai_api_key` y
+`gateway_auth`. Este último contiene una línea `usuario hash-bcrypt`; generar el hash de forma
+interactiva para no dejar la contraseña en el historial:
+
+```powershell
+docker run --rm -it caddy:2.11.4-alpine caddy hash-password
+```
+
+Asignar las variables del ambiente o secret store: `AGRO_API_IMAGE`, `AGRO_UI_IMAGE` y
+`AGRO_GATEWAY_IMAGE` con referencias `@sha256:...`; `AGRO_CATALOGUE_VOLUME`, `AGRO_DOMAIN`,
+`AGRO_OPENAI_MODEL` y `AGRO_SECRETS_DIR`. Validar sin revelar contenido:
+
+```powershell
+docker compose -f compose.yaml -f compose.production.yaml config --quiet
+docker compose -f compose.yaml -f compose.production.yaml up -d --wait --no-build
+```
+
+API usa readiness autenticada en este overlay; por eso una credencial/modelo/catálogo incompletos
+bloquean la cadena UI→gateway. Caddy aplica autenticación básica mínima, TLS automático, headers de
+seguridad y logs JSON. En un ambiente corporativo, reemplazar basic auth por el ingress/IdP aprobado
+sin exponer API directamente.
+
+La sintaxis, separación de secretos y hardening fueron probados. La emisión TLS real queda pendiente
+de dominio/DNS y la promoción por digest depende de seleccionar registry; no se declara un deploy
+productivo real hasta ejecutar staging.
