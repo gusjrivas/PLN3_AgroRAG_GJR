@@ -5,6 +5,9 @@ coordinadora; revisión humana pendiente. Rama: `fix/garak-harness-hardening`. B
 `8ca5a5f23d4f935b388c526c5740b10f509ad160`. Propiedad: adaptador/runner Garak, perfil security,
 contratos, runbook y esta evidencia. No se modificaron contratos funcionales de `/v1/query`.
 
+Commit de implementación: `8a992ecf482b55e187e16626cb17feb5c72a1636` (`fix: harden garak
+scan budget and evidence`). MR: #35.
+
 ## Hallazgo real que inicia el cambio
 
 La primera corrida local autorizada contra la release `41ba62f` comenzó el 31/10/2026 01:33:26Z y
@@ -104,6 +107,11 @@ Smokes dentro de esa imagen, todos con exit 0 y sin red de proveedor:
 Fuente primaria de precios consultada el 30/10/2026:
 https://developers.openai.com/api/docs/models/gpt-4o. No se infirió la tarifa desde memoria ni se
 realizó una llamada de prueba al proveedor.
+
+CI del MR #35 sobre el commit de implementación:
+
+- `quality`, run `41163000279`: `offline`, `specs` y `browser` aprobaron;
+- `container-supply-chain`, run `41163000386`: `build-test-scan-publish` aprobó en 2m33s.
 
 ## Estado y límites
 
