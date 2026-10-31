@@ -3,7 +3,8 @@
 Fecha: 31/10/2026. Responsable y operador autorizado: Gustavo Julián Rivas. Ejecución y revisión
 técnica: misma sesión coordinadora; revisión humana de hallazgos pendiente. Rama documental:
 `docs/garak-d388-budget-blocked`. Propiedad: evidencia sanitizada, estado OpenSpec y documentación
-de la corrida. Esta es evidencia operacional real, no una fase TDD ni una certificación.
+de la corrida. Registro inicial: `8e7b89f` (`docs: record budget-capped Garak scan`). Esta es
+evidencia operacional real, no una fase TDD ni una certificación.
 
 ## Autorización y candidata exacta
 
@@ -109,4 +110,24 @@ Para continuar se necesita una decisión explícita nueva: revisar localmente la
 acceso restringido y rediseñar la selección/orden de probes antes de solicitar presupuesto
 adicional. No se debe elevar el techo por corrida por encima de USD 0,20 ni convertir negativas del
 harness en evidencia de seguridad.
+
+Validación documental/offline posterior, sin llamadas a proveedor:
+
+```text
+uv run pytest tests/unit/test_garak_policy.py tests/unit/test_garak_adapter.py \
+  tests/unit/test_garak_runner.py tests/architecture/test_garak_container_contract.py \
+  tests/architecture/test_garak_release_workflows.py -q
+# exit 0: 30 passed, 1 skipped (bits POSIX no aplican en Windows)
+
+uv run ruff check .
+# exit 0
+
+npx --yes @fission-ai/openspec@1.14.3 validate 07-containerized-production-poc --strict
+# exit 0: change valid
+
+python -m json.tool docs/evidence/garak/d38814b4-summary.json
+python -m json.tool docs/evidence/garak/d38814b4-partial-policy.json
+git diff --check
+# exit 0 en los tres comandos
+```
 
