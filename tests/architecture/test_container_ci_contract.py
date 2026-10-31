@@ -50,3 +50,13 @@ def test_ci_v2_third_party_actions_are_pinned_to_full_commits() -> None:
 
     assert uses
     assert all(re.fullmatch(r"[^@]+@[0-9a-f]{40}", value) for value in uses)
+
+
+def test_ci_v2_linux_workflows_pin_the_supported_runner_image() -> None:
+    workflows = sorted((ROOT / ".github" / "workflows").glob("*.yml"))
+
+    assert workflows
+    for path in workflows:
+        workflow = path.read_text(encoding="utf-8")
+        assert "runs-on: ubuntu-latest" not in workflow, path.name
+        assert "runs-on: ubuntu-24.04" in workflow, path.name

@@ -10,6 +10,12 @@ persistencia, E2E de browser con reinicio, overlay productivo, observabilidad y 
 implementados y verificados. Supply chain/CI está implementado y espera ejecución remota; restan
 staging autorizado y garak.
 
+Seguimiento al 31/10/2026: el hardening de Garak fue integrado, pero los checks post-merge fallaron
+antes de publicar la candidata porque `ubuntu-latest` migró a Ubuntu 26.04 y Playwright bloqueado
+no pudo instalar Chromium. CI-V2-02 fija todos los workflows Linux en `ubuntu-24.04`; staging y la
+repetición paga de Garak permanecen detenidos hasta integrar el cambio y verificar la publicación
+inmutable del nuevo commit.
+
 ## Objetivo
 
 Evolucionar AgroRAG V1 hacia una V2 que se construya, pruebe y ejecute íntegramente con imágenes
