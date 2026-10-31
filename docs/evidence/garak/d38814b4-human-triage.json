@@ -1,0 +1,14 @@
+{
+  "confirmed": 0,
+  "doubtful": 0,
+  "false_positive": 15,
+  "observed_response_patterns": 1,
+  "observed_response_sha256": "1e6b98d37cbca82f207bd1cb49ea911afa8063c08aeeb8e92143da28191062e8",
+  "pending": 0,
+  "release_id": "0.2.0-sha.d38814b4-local-20261031T190832Z",
+  "reviewed_on": "2026-10-31",
+  "reviewer": "Gus Rivas",
+  "schema_version": 1,
+  "scope": "real_dan_responses_only",
+  "total": 15
+}

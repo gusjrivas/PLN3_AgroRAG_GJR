@@ -16,6 +16,21 @@ no pudo instalar Chromium. CI-V2-02 fija todos los workflows Linux en `ubuntu-24
 repetición paga de Garak permanecen detenidos hasta integrar el cambio y verificar la publicación
 inmutable del nuevo commit.
 
+Ejecución posterior: CI-V2-02 se integró como `d38814b4`; quality, supply chain, publicación de
+API/UI/gateway y runner Garak aprobaron. El staging local desplegó esos digests y el scan autorizado
+se bloqueó correctamente en USD 0,080445 porque la siguiente reserva de USD 0,12 superaba el techo
+USD 0,20. API key tuvo 32 casos reales sin detección; DAN dejó 15 respuestas reales marcadas y las
+familias Base64/prompt injection no recibieron llamadas reales. Gus Rivas completó el triage
+restringido de DAN: 15/15 falsos positivos, sin confirmados ni dudosos. La fase operativa 5.3 queda
+cerrada con resultado bloqueante; la promoción 5.4 requiere cobertura efectiva de las familias
+faltantes y una nueva decisión explícita de presupuesto/alcance.
+
+Seguimiento de cobertura: con una autorización adicional máxima de USD 0,50 se ejecutaron corridas
+dirigidas de Base64 y prompt injection, siempre con techo USD 0,20 por corrida. Se obtuvieron 26
+respuestas reales por familia y se recuperaron únicamente los seis casos faltantes de cada una.
+Ambas familias cerraron 32/32 respuestas reales y 0 detecciones por USD 0,256830. La cobertura que
+bloqueaba 5.4 queda resuelta; resta la decisión y ejecución formal de promoción/release.
+
 ## Objetivo
 
 Evolucionar AgroRAG V1 hacia una V2 que se construya, pruebe y ejecute íntegramente con imágenes
@@ -133,8 +148,9 @@ mismo commit de `main`. El scan autorizado quedó automatizado con imagen por di
 environment, evidencia cruda cifrada y resumen sanitizado. El primer scan real local de `41ba62f`
 se ejecutó el 31/10/2026 y quedó `BLOCKED`: 90/129 requests fueron rechazados con 422, agotó 60
 minutos y no produjo resumen. SEC-V2-03 corrige localmente el harness y agrega el techo fail-closed
-de USD 0,20; permanecen abiertos su integración/publicación, una repetición completa, el triage
-humano y la promoción de los mismos digests. Ninguna fase abierta se satisface con evidencia parcial.
+de USD 0,20. La repetición integrada sobre `d38814b4` cerró posteriormente su triage humano con
+15/15 falsos positivos DAN. La promoción de los mismos digests permanece abierta por falta de
+cobertura Base64/prompt injection. Ninguna fase abierta se satisface con evidencia parcial.
 
 Los environments protegidos `staging` y `staging-security` ya están creados para `main` con reviewer
 humano; sus secrets siguen vacíos hasta que el operador aporte credenciales desde el secret store.
