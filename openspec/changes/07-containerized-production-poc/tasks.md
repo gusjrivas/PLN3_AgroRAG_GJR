@@ -61,6 +61,11 @@ desde su primer byte, genera resumen bloqueante ante timeout/error y aplica ante
 techo fail-closed de USD 0,20. La tarea 5.3 sigue abierta hasta reconstruir el runner, repetir una
 única corrida autorizada dentro de ese techo y completar el triage humano.
 
+Corte CI-V2-02: los checks post-merge de `9de0171` detectaron drift de `ubuntu-latest` a Ubuntu
+26.04, incompatible con la versión bloqueada de Playwright, antes de publicar imágenes. Los cinco
+workflows Linux fijan `ubuntu-24.04` y un contrato impide volver a usar la etiqueta móvil. La tarea
+5.3 continúa abierta hasta integrar el corte, aprobar CI remoto y publicar la candidata exacta.
+
 Seguimiento solicitado por el usuario: después de cerrar y documentar esta corrida, revisar cómo
 implementar lo pedido por la profesora. Es un pendiente de relevamiento; no se asume alcance ni se
 marca como parte completada de 5.3 hasta contar con el pedido concreto.
