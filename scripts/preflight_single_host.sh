@@ -61,8 +61,9 @@ esac
 secret_dir_mode="$(stat -c '%a' -- "$AGRO_SECRETS_DIR")"
 [ "$secret_dir_mode" = "700" ] || fail "el directorio de secretos debe tener modo 0700"
 
-for secret_name in reader_key openai_api_key gateway_auth
-do
+check_secret() {
+    secret_name="$1"
+    expected_owner="$2"
     secret_path="$AGRO_SECRETS_DIR/$secret_name"
     [ -f "$secret_path" ] || fail "falta el archivo secreto $secret_name"
     [ ! -L "$secret_path" ] || fail "$secret_name no puede ser symlink"
@@ -72,7 +73,14 @@ do
         400|600) ;;
         *) fail "$secret_name debe tener modo 0400 o 0600" ;;
     esac
-done
+    secret_owner="$(stat -c '%u:%g' -- "$secret_path")"
+    [ "$secret_owner" = "$expected_owner" ] \
+        || fail "$secret_name debe pertenecer a $expected_owner"
+}
+
+check_secret reader_key '10001:10001'
+check_secret openai_api_key '10001:10001'
+check_secret gateway_auth '10002:10002'
 
 check_image() {
     variable="$1"

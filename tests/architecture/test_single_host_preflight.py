@@ -32,8 +32,11 @@ def test_single_host_preflight_fails_closed_before_compose_up() -> None:
     assert "10001:10001" in script
     assert "10002:10002" in script
     assert "docker volume inspect" in script
-    assert "reader_key openai_api_key gateway_auth" in script
     assert "400|600" in script
+    assert "stat -c '%u:%g'" in script
+    assert "check_secret reader_key '10001:10001'" in script
+    assert "check_secret openai_api_key '10001:10001'" in script
+    assert "check_secret gateway_auth '10002:10002'" in script
     assert "compose.production.yaml config --quiet" in script
     assert "cat " not in script
     assert "\nenv\n" not in script
@@ -97,5 +100,6 @@ def test_container_ci_executes_the_approved_preflight_branch() -> None:
 
     assert PREFLIGHT_CONTRACT.is_file()
     assert "name: Exercise single-host preflight contract" in workflow
+    assert "--user 0:0" in workflow
     assert "$PWD:/workspace:ro" in workflow
     assert "run_preflight_contract.sh" in workflow

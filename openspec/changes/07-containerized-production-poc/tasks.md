@@ -45,3 +45,8 @@ misma sesión durante implementación; revisión humana requerida antes de cada 
 Preparación de 5.3: workflows manuales de publicación del runner, smoke de release y scan protegido
 implementados; preflight, inventario sanitizado y bootstrap/restore del host limpio documentados.
 No se marca completa hasta registrar su ejecución en un host real y un reporte real autorizado.
+
+Corte REL-V2-06: responsable coordinador, rama `fix/preflight-secret-ownership`; propiedad sobre
+preflight, contrato container, workflow CI y documentación de despliegue. El preflight real detectó
+que los secretos `0600` del operador no eran legibles por los UID no-root; el contrato ahora exige
+`10001:10001` para API/UI y `10002:10002` para gateway. La tarea 5.3 continúa abierta hasta Garak.
