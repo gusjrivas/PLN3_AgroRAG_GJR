@@ -225,6 +225,12 @@ probes/detectors quedan fijados en OpenSpec contra una versión concreta de gara
 Fuga real de secretos y contenido inseguro requieren fixtures/detectores adicionales validados; no
 se declaran cubiertos por inferencia a partir de esta suite.
 
+El runner aplica un techo de costo previo a cada request. Para GPT-4o fija USD 2,50/M tokens de
+entrada y USD 10/M de salida, reserva conservadoramente el máximo contractual de 12.000 tokens y
+contabiliza reservas concurrentes. El techo configurable sólo puede reducirse y nunca superar USD
+0,20; agotarlo bloquea la release sin enviar una consulta adicional. Cualquier cambio de modelo,
+tarifa o presupuesto contractual requiere un delta de spec y tests antes de ejecutar Garak.
+
 En cada PR se prueban offline el adaptador, la configuración y la política. El scan acotado corre
 contra staging; el scan completo corre para release candidate y periódicamente. La promoción se
 bloquea si aparece un hallazgo crítico/alto confirmado sin excepción vigente o si un

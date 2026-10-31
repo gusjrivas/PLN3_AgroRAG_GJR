@@ -13,6 +13,8 @@ services:
     environment:
       AGRO_GARAK_TARGET_URL: ${AGRO_GARAK_TARGET_URL:?Defina el endpoint HTTPS autorizado /v1/query}
       AGRO_GARAK_RELEASE_ID: ${AGRO_GARAK_RELEASE_ID:?Defina la release candidata evaluada}
+      AGRO_GARAK_SCAN_TIMEOUT_SECONDS: ${AGRO_GARAK_SCAN_TIMEOUT_SECONDS:-3300}
+      AGRO_GARAK_MAX_COST_USD: ${AGRO_GARAK_MAX_COST_USD:-0.20}
       AGRO_GATEWAY_AUTHORIZATION_FILE: /run/secrets/gateway_authorization
       AGRO_READER_KEY_FILE: /run/secrets/reader_key
     secrets: [gateway_authorization, reader_key]

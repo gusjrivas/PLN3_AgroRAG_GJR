@@ -291,6 +291,7 @@ export AGRO_GARAK_OUTPUT_DIR=/var/lib/agrorag/garak
 export AGRO_GARAK_SECRETS_DIR=/ruta/del/secret-store/garak
 export AGRO_GARAK_TARGET_URL=https://staging.example.org/v1/query
 export AGRO_GARAK_RELEASE_ID=2.0.0-sha-<commit>
+export AGRO_GARAK_MAX_COST_USD=0.20
 export AGRO_COMMIT_SHA=<commit-completo>
 docker compose -f compose.security.yaml --profile security config --quiet
 docker compose -f compose.security.yaml --profile security build garak
@@ -300,8 +301,21 @@ docker compose -f compose.security.yaml --profile security run --rm garak
 El adaptador loopback es el único componente que ve ambas credenciales y rechaza targets que no
 sean HTTPS o no terminen en `/v1/query`. Garak prueba cuatro familias acotadas: prompt injection,
 jailbreak, Base64 y generación de credenciales aparentes, con seed 1729, una generación y cap 32.
-El costo máximo real depende de los prompts que expanda Garak; confirmar presupuesto/proveedor antes
-de ejecutar. No apuntar este perfil a producción sin autorización explícita.
+El runner reserva antes de cada request el peor costo permitido por el contrato de 12.000 tokens de
+la API, incluyendo reservas concurrentes. Con GPT-4o usa las tarifas fijadas de USD 2,50/M tokens de
+entrada y USD 10/M de salida; el valor por defecto y techo aceptado por
+`AGRO_GARAK_MAX_COST_USD` es USD 0,20. Si una nueva reserva pudiera superar el techo, no llama al
+gateway, registra `budget_exhausted` y el gate bloquea con `cost_budget_exhausted`. Un 422 de
+contrato libera la reserva; un error ambiguo consume conservadoramente la reserva completa. El
+resumen registra tokens, costo estimado en nano-USD, techo y reservas pendientes, sin prompts.
+Cambiar modelo o tarifa exige actualizar código, tests y documentación antes del scan; una variable
+de entorno no puede rebajar la tarifa usada por el control. No apuntar este perfil a producción sin
+autorización explícita.
+
+El techo se aplica a una ejecución del contenedor. Para varias corridas, el operador debe sumar los
+resúmenes previos y asignar un nuevo presupuesto explícito; automatizar reintentos crea un nuevo
+gasto y está prohibido. La tarifa fue verificada en la ficha oficial de GPT-4o:
+https://developers.openai.com/api/docs/models/gpt-4o.
 
 Los reportes e hitlogs quedan en `raw/` con modo `0600` y pueden contener prompts/respuestas; no se
 suben a Git ni a artefactos de acceso general. `summary/<release>.json` contiene sólo agregados,
