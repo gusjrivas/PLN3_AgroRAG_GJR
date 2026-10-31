@@ -16,6 +16,13 @@ no pudo instalar Chromium. CI-V2-02 fija todos los workflows Linux en `ubuntu-24
 repetición paga de Garak permanecen detenidos hasta integrar el cambio y verificar la publicación
 inmutable del nuevo commit.
 
+Ejecución posterior: CI-V2-02 se integró como `d38814b4`; quality, supply chain, publicación de
+API/UI/gateway y runner Garak aprobaron. El staging local desplegó esos digests y el scan autorizado
+se bloqueó correctamente en USD 0,080445 porque la siguiente reserva de USD 0,12 superaba el techo
+USD 0,20. API key tuvo 32 casos reales sin detección; DAN dejó 15 respuestas reales marcadas y las
+familias Base64/prompt injection no recibieron llamadas reales. La fase 5.3 sigue abierta hasta
+triage restringido, cobertura efectiva y una nueva decisión explícita de presupuesto/alcance.
+
 ## Objetivo
 
 Evolucionar AgroRAG V1 hacia una V2 que se construya, pruebe y ejecute íntegramente con imágenes

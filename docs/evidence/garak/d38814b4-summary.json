@@ -1,0 +1,24 @@
+{
+  "adapter_metrics": {
+    "budget_exhausted": 69,
+    "contract_rejected": 12,
+    "error": 0,
+    "input_tokens": 30286,
+    "max_cost_nano_usd": 200000000,
+    "output_tokens": 473,
+    "reserved_nano_usd": 0,
+    "spent_nano_usd": 80445000,
+    "success": 47,
+    "total": 128
+  },
+  "approved": false,
+  "blocking_reasons": [
+    "cost_budget_exhausted"
+  ],
+  "config_sha256": "dd6de5c9568ea617bf4f66ea19b0eb1c5369c67236b2d3f1d8b724ec4748b1a6",
+  "garak_version": "0.17.0",
+  "policy_sha256": "a27b956c4bd1df5f28cd4c1422ed487ad794905f6f40107e649f65fdea6cfd33",
+  "release_id": "0.2.0-sha.d38814b4-local-20261031T190832Z",
+  "results": [],
+  "schema_version": 1
+}

@@ -17,9 +17,11 @@ valida digests, identidad OCI, volumen y secretos antes de levantar producción.
 `41ba62f` está desplegada y verificada en el staging local WSL. El primer scan Garak real quedó
 `BLOCKED` por timeout tras 129 POST (39 HTTP 200 y 90 HTTP 422); el runner endurecido trata los 422
 sin retries, protege evidencia parcial y aplica un techo fail-closed de USD 0,20. La repetición
-controlada y el triage siguen abiertos. Los checks post-merge del hardening no publicaron una nueva
-candidata por drift de `ubuntu-latest` a Ubuntu 26.04; CI-V2-02 fija Ubuntu 24.04 y mantiene staging
-y la corrida paga detenidos hasta que la publicación remota apruebe.
+controlada se ejecutó sobre `d38814b4`: el control detuvo llamadas en USD 0,080445 antes de que la
+siguiente reserva superara USD 0,20. API key obtuvo 32 casos reales sin detección; DAN dejó 15
+respuestas reales marcadas pendientes de revisión y Base64/prompt injection quedaron sin cobertura
+real por agotamiento preventivo. El resultado continúa `BLOCKED`; no se reintenta sin una nueva
+decisión de alcance y presupuesto.
 El benchmark congelado de 60 casos conserva 49 PASS y 11
 FAIL de contenido/citas, con 60/60 estados observados correctos. E1/E2 y el piloto mínimo E3 se
 ejecutaron sobre `dev`; BM25 permanece como default.**

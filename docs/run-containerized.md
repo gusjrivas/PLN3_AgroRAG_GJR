@@ -319,6 +319,12 @@ resúmenes previos y asignar un nuevo presupuesto explícito; automatizar reinte
 gasto y está prohibido. La tarifa fue verificada en la ficha oficial de GPT-4o:
 https://developers.openai.com/api/docs/models/gpt-4o.
 
+La ejecución real REL-V2-08 confirmó el comportamiento fail-closed: tras USD 0,080445 observados,
+la reserva conservadora siguiente de USD 0,12 habría producido USD 0,200445 y fue rechazada antes
+del gateway. Un detector puede contar el texto sintético de presupuesto/contrato como pass o fail;
+por eso la cobertura efectiva debe reconciliarse con `adapter_metrics` antes del triage. Ver
+[evidencia](evidence/tdd/REL-V2-08-garak-budget-capped.md).
+
 Los reportes e hitlogs quedan en `raw/` con modo `0600` y pueden contener prompts/respuestas; no se
 suben a Git ni a artefactos de acceso general. `summary/<release>.json` contiene sólo agregados,
 hashes de configuración/política y decisión. Un hallazgo HIGH sin triage, uno confirmado sin

@@ -66,6 +66,12 @@ Corte CI-V2-02: los checks post-merge de `9de0171` detectaron drift de `ubuntu-l
 workflows Linux fijan `ubuntu-24.04` y un contrato impide volver a usar la etiqueta móvil. La tarea
 5.3 continúa abierta hasta integrar el corte, aprobar CI remoto y publicar la candidata exacta.
 
+Ejecución REL-V2-08: `d38814b4` publicó y desplegó producto/runner por digest. La corrida autorizada
+terminó `BLOCKED` en USD 0,080445: la reserva siguiente habría elevado el total a USD 0,200445 y no
+se llamó al gateway. API key cubrió 32 casos reales sin detección; DAN dejó 15 respuestas reales
+marcadas sin triage y Base64/prompt injection no tuvieron llamadas reales. Los crudos permanecen
+restringidos y sólo se versionan resúmenes sanitizados. 5.3 sigue abierta; no hay retry autorizado.
+
 Seguimiento solicitado por el usuario: después de cerrar y documentar esta corrida, revisar cómo
 implementar lo pedido por la profesora. Es un pendiente de relevamiento; no se asume alcance ni se
 marca como parte completada de 5.3 hasta contar con el pedido concreto.
