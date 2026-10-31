@@ -84,6 +84,20 @@ Por lo tanto, ni los 32 fails agregados de DAN ni los passes de Base64/prompt in
 aceptarse sin distinguir resultados reales de respuestas del harness. No se modificaron
 `triage.json`, `baseline.json` ni `exceptions.json`; no hay evidencia para aprobar o exceptuar.
 
+La revisión humana se preparó sin nuevas llamadas al proveedor. El libro
+[garak-d38814b4-revision-humana-dan.xlsx](../workbooks/garak-d38814b4-revision-humana-dan.xlsx)
+contiene 15 filas `DAN-01` a `DAN-15`, validación de veredictos, campos para revisor/fecha/evidencia
+y una pestaña de trazabilidad con UUID y hashes, pero sin prompts ni respuestas. El resumen se
+recalculó correctamente en una prueba desechable al cambiar un caso de `Pendiente` a
+`Falso positivo`: revisados 1, falsos positivos 1 y pendientes 14.
+
+Para permitir la inspección exacta se creó un visor local, restringido y no versionado en
+`/home/gus/.local/share/agrorag/review/d38814b4-dan/index.html`. El visor contiene únicamente las
+15 respuestas reales DAN, correlacionadas con el Excel. Sus archivos y las credenciales locales
+quedaron con propietario `gus:gus` y modo `0600`; el directorio quedó `0700`. La aplicación fue
+verificada en `https://localhost` con HTTP 200 autenticado y los tres contenedores healthy. No se
+debe enviar una consulta nueva durante este triage.
+
 ## Artefactos restringidos
 
 Los crudos permanecen fuera de Git bajo
@@ -98,6 +112,10 @@ console         5.477 bytes   mode 0600
 
 No se copiaron prompts ni respuestas a esta evidencia. Sólo se procesaron offline tipos, conteos,
 sentinelas exactos del adaptador y resultados agregados de detectores.
+
+Informe legible versionado: [Markdown](../garak/garak-d38814b4-human-report.md) y
+[PDF](../../../output/pdf/garak-d38814b4-human-report.pdf). El informe resume alcance, costo,
+cobertura efectiva, criterios de decisión y ubicaciones sin incluir material crudo ni secretos.
 
 ## Decisión y próximo paso
 
@@ -129,5 +147,23 @@ python -m json.tool docs/evidence/garak/d38814b4-summary.json
 python -m json.tool docs/evidence/garak/d38814b4-partial-policy.json
 git diff --check
 # exit 0 en los tres comandos
+```
+
+Preparación y verificación de la revisión humana, también offline:
+
+```text
+node tmp/garak-review/verify_workbook.mjs
+# exit 0: recalculation=ok; resumen 15,1,1,0,0,14; formulaErrors=0
+
+pdfinfo output/pdf/garak-d38814b4-human-report.pdf
+# exit 0: 3 páginas A4, sin JavaScript ni cifrado
+
+pdftoppm -png -r 130 output/pdf/garak-d38814b4-human-report.pdf \
+  tmp/pdfs/rendered-garak-v5/page
+# exit 0; las tres páginas fueron inspeccionadas visualmente sin recortes ni superposiciones
+
+curl -sk -u "<credencial local leída desde archivo 0600>" -o /dev/null \
+  -w '%{http_code}' https://localhost/
+# exit 0: HTTP 200; no se imprimió la credencial
 ```
 

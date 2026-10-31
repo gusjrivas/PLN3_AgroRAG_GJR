@@ -77,6 +77,9 @@ TDD obligatorio; ningún test no ejecutado se informa como aprobado. Las evaluac
 Ver [fuentes](docs/sources.md), [protocolo de evaluación](docs/evaluation.md) y [estado de validación](docs/validation.md).
 
 Informe técnico: [PDF](output/pdf/agro-rag-report.pdf) y [fuente versionada](docs/report.md).
+Seguridad Garak: [informe legible](docs/evidence/garak/garak-d38814b4-human-report.md),
+[PDF](output/pdf/garak-d38814b4-human-report.pdf) y
+[libro de revisión DAN](docs/evidence/workbooks/garak-d38814b4-revision-humana-dan.xlsx).
 Exposición: [guion reproducible de 15 minutos](docs/demo.md). Verificación offline:
 `uv run agro-rag verify-delivery --root .`.
 Libros Excel originales de pruebas y revisión: [docs/evidence/workbooks](docs/evidence/workbooks/README.md).
