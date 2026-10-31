@@ -6,6 +6,8 @@ técnica: misma sesión coordinadora; revisión humana completada por Gus Rivas 
 de la corrida. Registro inicial: `8e7b89f` (`docs: record budget-capped Garak scan`). Esta es
 evidencia operacional real, no una fase TDD ni una certificación.
 
+Commit de cierre del triage: `d0477a3` (`docs: close Garak DAN human triage`). MR: #38.
+
 ## Autorización y candidata exacta
 
 El usuario autorizó una única corrida contra OpenAI con un máximo total de USD 0,20. No se hizo
