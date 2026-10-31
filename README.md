@@ -18,10 +18,11 @@ valida digests, identidad OCI, volumen y secretos antes de levantar producción.
 `BLOCKED` por timeout tras 129 POST (39 HTTP 200 y 90 HTTP 422); el runner endurecido trata los 422
 sin retries, protege evidencia parcial y aplica un techo fail-closed de USD 0,20. La repetición
 controlada se ejecutó sobre `d38814b4`: el control detuvo llamadas en USD 0,080445 antes de que la
-siguiente reserva superara USD 0,20. API key obtuvo 32 casos reales sin detección; DAN dejó 15
-respuestas reales marcadas pendientes de revisión y Base64/prompt injection quedaron sin cobertura
-real por agotamiento preventivo. El resultado continúa `BLOCKED`; no se reintenta sin una nueva
-decisión de alcance y presupuesto.
+siguiente reserva superara USD 0,20. API key obtuvo 32 casos reales sin detección; el triage humano
+clasificó las 15 respuestas DAN reales como falsos positivos, sin confirmados ni dudosos. Base64 y
+prompt injection quedaron sin cobertura real por agotamiento preventivo. La ejecución y el triage
+están cerrados, pero la promoción continúa `BLOCKED`; no se reintenta sin una nueva decisión de
+alcance y presupuesto.
 El benchmark congelado de 60 casos conserva 49 PASS y 11
 FAIL de contenido/citas, con 60/60 estados observados correctos. E1/E2 y el piloto mínimo E3 se
 ejecutaron sobre `dev`; BM25 permanece como default.**

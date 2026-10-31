@@ -39,7 +39,7 @@ misma sesión durante implementación; revisión humana requerida antes de cada 
 
 - [x] 5.1 CI-V2-01: build/test/Compose/SBOM/escaneo/publicación por SHA/semver.
 - [x] 5.2 SEC-V2-02: runner, adaptador, configuración, parser/gate y tests offline.
-- [ ] 5.3 Ejecutar staging limpio y scan autorizado; registrar resultados reales separados.
+- [x] 5.3 Ejecutar staging limpio y scan autorizado; registrar resultados reales separados.
 - [ ] 5.4 Promover la misma imagen y completar documentación/release sólo con evidencia.
 
 Preparación de 5.3: workflows manuales de publicación del runner, smoke de release y scan protegido
@@ -69,8 +69,10 @@ workflows Linux fijan `ubuntu-24.04` y un contrato impide volver a usar la etiqu
 Ejecución REL-V2-08: `d38814b4` publicó y desplegó producto/runner por digest. La corrida autorizada
 terminó `BLOCKED` en USD 0,080445: la reserva siguiente habría elevado el total a USD 0,200445 y no
 se llamó al gateway. API key cubrió 32 casos reales sin detección; DAN dejó 15 respuestas reales
-marcadas sin triage y Base64/prompt injection no tuvieron llamadas reales. Los crudos permanecen
-restringidos y sólo se versionan resúmenes sanitizados. 5.3 sigue abierta; no hay retry autorizado.
+marcadas y Base64/prompt injection no tuvieron llamadas reales. Los crudos permanecen restringidos
+y sólo se versionan resúmenes sanitizados. Gus Rivas cerró el triage DAN el 31/10/2026: 15/15
+falsos positivos, 0 confirmados y 0 dudosos. La ejecución real y su revisión completan 5.3 con
+resultado bloqueante; 5.4 sigue abierta por cobertura incompleta y no hay retry autorizado.
 
 Seguimiento solicitado por el usuario: después de cerrar y documentar esta corrida, revisar cómo
 implementar lo pedido por la profesora. Es un pendiente de relevamiento; no se asume alcance ni se
