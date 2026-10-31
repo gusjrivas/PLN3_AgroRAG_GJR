@@ -44,6 +44,16 @@ def test_img_v2_uses_oci_labels_and_never_declares_secret_build_inputs() -> None
     assert "apk upgrade --no-cache" in dockerfile
 
 
+def test_gateway_v2_carries_the_same_release_identity_as_api_and_ui() -> None:
+    dockerfile = _dockerfile()
+    gateway = dockerfile.split("FROM ${CADDY_IMAGE} AS gateway", maxsplit=1)[1]
+
+    assert "ARG APP_VERSION=0.1.0" in gateway
+    assert "ARG VCS_REF=unknown" in gateway
+    assert 'org.opencontainers.image.version="${APP_VERSION}"' in gateway
+    assert 'org.opencontainers.image.revision="${VCS_REF}"' in gateway
+
+
 def test_img_v2_build_context_excludes_private_and_development_artifacts() -> None:
     patterns = {
         line.strip()

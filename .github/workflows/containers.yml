@@ -46,9 +46,13 @@ jobs:
 
       - name: Inspect runtime identities
         run: |
+          set -euo pipefail
           test "$(docker run --rm --entrypoint id agrorag-api:ci -u)" = "10001"
           test "$(docker run --rm --entrypoint id agrorag-ui:ci -u)" = "10001"
           test "$(docker run --rm --entrypoint id agrorag-gateway:ci -u)" = "10002"
+          for image in agrorag-api:ci agrorag-ui:ci agrorag-gateway:ci; do
+            test "$(docker image inspect "$image" --format '{{index .Config.Labels "org.opencontainers.image.revision"}}')" = "$GITHUB_SHA"
+          done
 
       - name: Validate single-host preflight syntax
         run: >-
