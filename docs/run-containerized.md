@@ -124,6 +124,19 @@ limpia sus recursos. No usa el catálogo ni volumen local del usuario.
 digest, un volumen de catálogo prepublicado, dominio, modelo OpenAI y tres secretos externos. Sólo
 gateway publica 80/443; API y UI permanecen en la red Compose.
 
+Para un staging local WSL no se deben ocupar los puertos habituales de otras aplicaciones. Definir
+explícitamente puertos alternativos antes de recrear el gateway:
+
+```sh
+export AGRO_HTTP_PORT=18080
+export AGRO_HTTPS_PORT=18443
+docker compose -f compose.yaml -f compose.production.yaml up -d --no-deps --force-recreate gateway
+```
+
+Abrir directamente `https://localhost:18443`. No usar `http://localhost:18080` como enlace de
+entrada: la redirección TLS interna de Caddy no conoce el puerto publicado por el host y apunta al
+443. Los puertos internos del contenedor siguen siendo 80/443 y la API/UI continúan sin publicarse.
+
 Construir/publicar el gateway versionado antes de desplegar:
 
 ```powershell
@@ -318,6 +331,12 @@ El techo se aplica a una ejecución del contenedor. Para varias corridas, el ope
 resúmenes previos y asignar un nuevo presupuesto explícito; automatizar reintentos crea un nuevo
 gasto y está prohibido. La tarifa fue verificada en la ficha oficial de GPT-4o:
 https://developers.openai.com/api/docs/models/gpt-4o.
+
+La ejecución real REL-V2-08 confirmó el comportamiento fail-closed: tras USD 0,080445 observados,
+la reserva conservadora siguiente de USD 0,12 habría producido USD 0,200445 y fue rechazada antes
+del gateway. Un detector puede contar el texto sintético de presupuesto/contrato como pass o fail;
+por eso la cobertura efectiva debe reconciliarse con `adapter_metrics` antes del triage. Ver
+[evidencia](evidence/tdd/REL-V2-08-garak-budget-capped.md).
 
 Los reportes e hitlogs quedan en `raw/` con modo `0600` y pueden contener prompts/respuestas; no se
 suben a Git ni a artefactos de acceso general. `summary/<release>.json` contiene sólo agregados,

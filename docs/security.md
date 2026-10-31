@@ -40,6 +40,10 @@ USD 0,20. El cálculo usa la tarifa oficial fijada de GPT-4o, el contrato de 12.
 consulta y las reservas concurrentes; los errores de costo incierto consumen la reserva completa.
 Al alcanzar el techo se devuelve una negativa estable a Garak, no se realiza una nueva consulta al
 proveedor y la release queda bloqueada. El resumen conserva sólo tokens y nano-USD agregados.
+La corrida real `d38814b4` terminó en USD 0,080445 antes de reservar otros USD 0,12. Su revisión
+humana cerró 15/15 alertas DAN como falsos positivos, sin confirmados ni dudosos. La release sigue
+bloqueada porque Base64 y prompt injection no recibieron llamadas reales; cerrar el triage de una
+familia no sustituye la cobertura faltante.
 El smoke de release tampoco sigue redirects ni acepta HTTP, tags o paquetes GHCR ajenos. Compara
 la identidad observada con el manifiesto publicado y conserva únicamente hostname, digests,
 conteos, modo, request ID y cantidad de citas; pregunta, respuesta y credenciales quedan fuera.

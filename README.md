@@ -17,9 +17,12 @@ valida digests, identidad OCI, volumen y secretos antes de levantar producción.
 `41ba62f` está desplegada y verificada en el staging local WSL. El primer scan Garak real quedó
 `BLOCKED` por timeout tras 129 POST (39 HTTP 200 y 90 HTTP 422); el runner endurecido trata los 422
 sin retries, protege evidencia parcial y aplica un techo fail-closed de USD 0,20. La repetición
-controlada y el triage siguen abiertos. Los checks post-merge del hardening no publicaron una nueva
-candidata por drift de `ubuntu-latest` a Ubuntu 26.04; CI-V2-02 fija Ubuntu 24.04 y mantiene staging
-y la corrida paga detenidos hasta que la publicación remota apruebe.
+controlada se ejecutó sobre `d38814b4`: el control detuvo llamadas en USD 0,080445 antes de que la
+siguiente reserva superara USD 0,20. API key obtuvo 32 casos reales sin detección; el triage humano
+clasificó las 15 respuestas DAN reales como falsos positivos, sin confirmados ni dudosos. Base64 y
+prompt injection quedaron sin cobertura real por agotamiento preventivo. La ejecución y el triage
+están cerrados, pero la promoción continúa `BLOCKED`; no se reintenta sin una nueva decisión de
+alcance y presupuesto.
 El benchmark congelado de 60 casos conserva 49 PASS y 11
 FAIL de contenido/citas, con 60/60 estados observados correctos. E1/E2 y el piloto mínimo E3 se
 ejecutaron sobre `dev`; BM25 permanece como default.**
@@ -75,6 +78,9 @@ TDD obligatorio; ningún test no ejecutado se informa como aprobado. Las evaluac
 Ver [fuentes](docs/sources.md), [protocolo de evaluación](docs/evaluation.md) y [estado de validación](docs/validation.md).
 
 Informe técnico: [PDF](output/pdf/agro-rag-report.pdf) y [fuente versionada](docs/report.md).
+Seguridad Garak: [informe legible](docs/evidence/garak/garak-d38814b4-human-report.md),
+[PDF](output/pdf/garak-d38814b4-human-report.pdf) y
+[libro de revisión DAN](docs/evidence/workbooks/garak-d38814b4-revision-humana-dan.xlsx).
 Exposición: [guion reproducible de 15 minutos](docs/demo.md). Verificación offline:
 `uv run agro-rag verify-delivery --root .`.
 Libros Excel originales de pruebas y revisión: [docs/evidence/workbooks](docs/evidence/workbooks/README.md).
