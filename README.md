@@ -15,8 +15,9 @@ El scan manual autorizado tiene un workflow fail-closed. El smoke de staging tam
 manifiesto, identidad, catálogo y una consulta citada en evidencia sanitizada. El preflight de host
 valida digests, identidad OCI, volumen y secretos antes de levantar producción. La candidata
 `41ba62f` está desplegada y verificada en el staging local WSL. El primer scan Garak real quedó
-bloqueado por timeout; el runner endurecido trata los 422 sin retries, protege evidencia parcial y
-aplica un techo fail-closed de USD 0,20. La repetición controlada y el triage siguen abiertos.
+`BLOCKED` por timeout tras 129 POST (39 HTTP 200 y 90 HTTP 422); el runner endurecido trata los 422
+sin retries, protege evidencia parcial y aplica un techo fail-closed de USD 0,20. La repetición
+controlada y el triage siguen abiertos.
 El benchmark congelado de 60 casos conserva 49 PASS y 11
 FAIL de contenido/citas, con 60/60 estados observados correctos. E1/E2 y el piloto mínimo E3 se
 ejecutaron sobre `dev`; BM25 permanece como default.**
