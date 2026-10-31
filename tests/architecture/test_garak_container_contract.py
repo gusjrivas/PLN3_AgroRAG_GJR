@@ -20,6 +20,10 @@ def test_garak_is_a_pinned_separate_one_shot_profile() -> None:
     assert "reader_key" in compose
     assert "cap_drop: [ALL]" in compose
     assert "no-new-privileges:true" in compose
+    assert "AGRO_GARAK_SCAN_TIMEOUT_SECONDS" in compose
+    assert "3300" in compose
+    assert "AGRO_GARAK_MAX_COST_USD" in compose
+    assert "0.20" in compose
 
 
 def test_garak_configuration_is_bounded_reproducible_and_black_box() -> None:

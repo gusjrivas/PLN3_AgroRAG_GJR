@@ -112,3 +112,10 @@ presentar el resultado como garantía o certificación.
 - **GIVEN** scan con identidad/datos sintéticos.
 - **WHEN** CI conserva evidencia.
 - **THEN** el JSONL crudo queda restringido, el resumen es sanitizado y ninguna credencial aparece.
+
+#### Scenario: GARAK-V2-cost-cap
+- **GIVEN** un scan autorizado contra GPT-4o con techo máximo de USD 0,20.
+- **WHEN** una nueva consulta, sumada al costo observado y a las reservas concurrentes, pudiera
+  superar el techo.
+- **THEN** el adaptador no llama al gateway, registra el agotamiento, conserva métricas agregadas y
+  el gate bloquea la release; errores ambiguos consumen su reserva completa.

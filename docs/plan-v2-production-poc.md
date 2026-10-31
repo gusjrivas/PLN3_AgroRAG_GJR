@@ -124,10 +124,11 @@ ADR-015. Los tests de contenedor no consultan LLMs pagos ni descargan pesos.
 Estado al 30/10/2026: MR #30 integrado como `5a11a29`; fases 0–4, supply chain del producto y gate
 Garak offline completos. API/UI/gateway y el runner Garak fueron publicados por digest desde el
 mismo commit de `main`. El scan autorizado quedó automatizado con imagen por digest, secrets de
-environment, evidencia cruda cifrada y resumen sanitizado. Permanecen abiertos el
-despliegue Linux limpio, la ejecución Garak real, el triage humano y la promoción de los mismos
-digests. Ninguna fase abierta se considera satisfecha por la documentación o por un workflow no
-ejecutado.
+environment, evidencia cruda cifrada y resumen sanitizado. El primer scan real local de `41ba62f`
+se ejecutó el 31/10/2026 y quedó `BLOCKED`: 90/129 requests fueron rechazados con 422, agotó 60
+minutos y no produjo resumen. SEC-V2-03 corrige localmente el harness y agrega el techo fail-closed
+de USD 0,20; permanecen abiertos su integración/publicación, una repetición completa, el triage
+humano y la promoción de los mismos digests. Ninguna fase abierta se satisface con evidencia parcial.
 
 Los environments protegidos `staging` y `staging-security` ya están creados para `main` con reviewer
 humano; sus secrets siguen vacíos hasta que el operador aporte credenciales desde el secret store.
@@ -224,6 +225,12 @@ seed, cantidad de generaciones, modelo/proveedor y digest de la aplicación. Los
 probes/detectors quedan fijados en OpenSpec contra una versión concreta de garak para evitar drift.
 Fuga real de secretos y contenido inseguro requieren fixtures/detectores adicionales validados; no
 se declaran cubiertos por inferencia a partir de esta suite.
+
+El runner aplica un techo de costo previo a cada request. Para GPT-4o fija USD 2,50/M tokens de
+entrada y USD 10/M de salida, reserva conservadoramente el máximo contractual de 12.000 tokens y
+contabiliza reservas concurrentes. El techo configurable sólo puede reducirse y nunca superar USD
+0,20; agotarlo bloquea la release sin enviar una consulta adicional. Cualquier cambio de modelo,
+tarifa o presupuesto contractual requiere un delta de spec y tests antes de ejecutar Garak.
 
 En cada PR se prueban offline el adaptador, la configuración y la política. El scan acotado corre
 contra staging; el scan completo corre para release candidate y periódicamente. La promoción se

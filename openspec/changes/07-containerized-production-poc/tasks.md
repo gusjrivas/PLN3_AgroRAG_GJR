@@ -50,3 +50,17 @@ Corte REL-V2-06: responsable coordinador, rama `fix/preflight-secret-ownership`;
 preflight, contrato container, workflow CI y documentación de despliegue. El preflight real detectó
 que los secretos `0600` del operador no eran legibles por los UID no-root; el contrato ahora exige
 `10001:10001` para API/UI y `10002:10002` para gateway. La tarea 5.3 continúa abierta hasta Garak.
+
+Ejecución REL-V2-07: el primer scan Garak real local autorizado de `41ba62f` quedó `BLOCKED` tras
+60 minutos, 90 respuestas 422 de 129 POST y ausencia de resumen. El raw parcial se restringió a
+`0600`; 5.3 permanece abierta hasta corregir el harness, repetir y completar triage humano.
+
+Corte SEC-V2-03: el primer scan real alcanzó el timeout al reintentar rechazos 422 de prompts fuera
+del contrato público. El hardening convierte ese rechazo en resultado observable, protege el crudo
+desde su primer byte, genera resumen bloqueante ante timeout/error y aplica antes de cada request un
+techo fail-closed de USD 0,20. La tarea 5.3 sigue abierta hasta reconstruir el runner, repetir una
+única corrida autorizada dentro de ese techo y completar el triage humano.
+
+Seguimiento solicitado por el usuario: después de cerrar y documentar esta corrida, revisar cómo
+implementar lo pedido por la profesora. Es un pendiente de relevamiento; no se asume alcance ni se
+marca como parte completada de 5.3 hasta contar con el pedido concreto.
