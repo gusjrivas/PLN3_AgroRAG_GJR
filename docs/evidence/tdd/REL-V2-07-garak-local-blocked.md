@@ -2,7 +2,8 @@
 
 Fecha: 2026-10-31. Responsable y operador autorizado: Gustavo Julián Rivas. Rama documental:
 `docs/garak-local-blocked-41ba62f`. Revisión técnica: misma sesión; revisión humana requerida antes
-de integrar. Este registro es evidencia operacional real, no una fase TDD ni una certificación.
+de integrar. Registro inicial: `f68e29f2e0129fc0209f9adce03963b0de4bcabe`. Este documento es
+evidencia operacional real, no una fase TDD ni una certificación.
 
 ## Alcance autorizado
 
@@ -72,4 +73,19 @@ de llamadas ni permiten informar un costo inventado.
 2. Hacer que el raw nazca `0600`, incluso ante señal, timeout o terminación abrupta.
 3. Definir timeout por request y cierre global reproducible que produzca resumen bloqueante.
 4. Repetir el baseline con presupuesto explícito; sólo un reporte completo admite triage humano.
+
+## Validación del registro
+
+```text
+uv run pytest tests/unit/test_garak_policy.py tests/unit/test_garak_adapter.py \
+  tests/architecture/test_garak_release_workflows.py \
+  tests/architecture/test_garak_container_contract.py -q
+exit 0; 14 passed
+
+npx --yes @fission-ai/openspec@1.14.3 validate --all --strict
+exit 0; 8 passed, 0 failed
+
+git diff --check
+exit 0
+```
 
