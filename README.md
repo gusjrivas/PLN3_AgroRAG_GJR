@@ -14,7 +14,8 @@ El runner Garak 0.17.0 aprobó sus contratos offline y fue publicado por digest 
 El scan manual autorizado tiene un workflow fail-closed. El smoke de staging también ata
 manifiesto, identidad, catálogo y una consulta citada en evidencia sanitizada. El preflight de host
 valida digests, identidad OCI, volumen y secretos antes de levantar producción. La candidata
-`41ba62f` está desplegada y verificada en el staging local WSL; el scan Garak real sigue abierto.
+`41ba62f` está desplegada y verificada en el staging local WSL. El primer scan Garak real local se
+ejecutó y quedó `BLOCKED` por timeout y 90 rechazos HTTP 422; falta corregir el harness y repetirlo.
 El benchmark congelado de 60 casos conserva 49 PASS y 11
 FAIL de contenido/citas, con 60/60 estados observados correctos. E1/E2 y el piloto mínimo E3 se
 ejecutaron sobre `dev`; BM25 permanece como default.**

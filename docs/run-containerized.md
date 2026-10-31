@@ -2,7 +2,8 @@
 
 Estado: implementación incremental. Imágenes, Compose local, gateway productivo, identidad/logs de
 release, rollback, supply chain y preflight de host están verificados. El runner Garak aprobó
-build/smoke y contratos offline; staging y el primer scan autorizado continúan pendientes.
+build/smoke y contratos offline. El primer scan real local fue ejecutado pero quedó bloqueado por
+timeout y cobertura inválida; staging y una repetición completa continúan pendientes.
 
 ## Requisitos
 
@@ -365,6 +366,18 @@ confidencialidad operacional.
 La existencia de ambos workflows no completa 5.3: registrar por separado URL/host autorizado,
 digests de API/UI/gateway/runner, run de Actions, costo, resumen, triage y dictamen humano. No
 descargar ni compartir el crudo salvo necesidad de triage y acceso aprobado.
+
+### Primer scan real local bloqueado
+
+El 31/10/2026 se ejecutó el runner publicado contra el gateway HTTPS local de `41ba62f`, después de
+validar TLS, credenciales, commit y catálogo desde el propio contenedor. El job alcanzó el límite de
+60 minutos con 129 POST: 39 respondieron 200 y 90 fueron rechazados con 422. No produjo resumen y
+se clasificó `BLOCKED`; no demuestra que la candidata sea segura. La evidencia sanitizada está en
+`docs/evidence/tdd/REL-V2-07-garak-local-blocked.md`.
+
+No repetir sin corregir dos condiciones: compatibilidad controlada entre prompts Garak y el límite
+de entrada de `/v1/query`, y creación del JSONL crudo con `0600` desde el primer byte incluso si el
+runner es interrumpido. El raw parcial permanece fuera del repositorio y no debe compartirse.
 
 ## Backup y rollback
 

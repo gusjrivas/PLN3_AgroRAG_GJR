@@ -124,10 +124,10 @@ ADR-015. Los tests de contenedor no consultan LLMs pagos ni descargan pesos.
 Estado al 30/10/2026: MR #30 integrado como `5a11a29`; fases 0–4, supply chain del producto y gate
 Garak offline completos. API/UI/gateway y el runner Garak fueron publicados por digest desde el
 mismo commit de `main`. El scan autorizado quedó automatizado con imagen por digest, secrets de
-environment, evidencia cruda cifrada y resumen sanitizado. Permanecen abiertos el
-despliegue Linux limpio, la ejecución Garak real, el triage humano y la promoción de los mismos
-digests. Ninguna fase abierta se considera satisfecha por la documentación o por un workflow no
-ejecutado.
+environment, evidencia cruda cifrada y resumen sanitizado. El primer scan real local de `41ba62f`
+se ejecutó el 31/10/2026 y quedó `BLOCKED`: 90/129 requests fueron rechazados con 422, agotó 60
+minutos y no produjo resumen. Permanecen abiertos la corrección/repetición Garak, el triage humano
+y la promoción de los mismos digests. Ninguna fase abierta se satisface con evidencia parcial.
 
 Los environments protegidos `staging` y `staging-security` ya están creados para `main` con reviewer
 humano; sus secrets siguen vacíos hasta que el operador aporte credenciales desde el secret store.

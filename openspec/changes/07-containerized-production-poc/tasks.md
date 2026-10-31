@@ -50,3 +50,7 @@ Corte REL-V2-06: responsable coordinador, rama `fix/preflight-secret-ownership`;
 preflight, contrato container, workflow CI y documentación de despliegue. El preflight real detectó
 que los secretos `0600` del operador no eran legibles por los UID no-root; el contrato ahora exige
 `10001:10001` para API/UI y `10002:10002` para gateway. La tarea 5.3 continúa abierta hasta Garak.
+
+Ejecución REL-V2-07: el primer scan Garak real local autorizado de `41ba62f` quedó `BLOCKED` tras
+60 minutos, 90 respuestas 422 de 129 POST y ausencia de resumen. El raw parcial se restringió a
+`0600`; 5.3 permanece abierta hasta corregir el harness, repetir y completar triage humano.
