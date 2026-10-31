@@ -25,6 +25,12 @@ restringido de DAN: 15/15 falsos positivos, sin confirmados ni dudosos. La fase 
 cerrada con resultado bloqueante; la promoción 5.4 requiere cobertura efectiva de las familias
 faltantes y una nueva decisión explícita de presupuesto/alcance.
 
+Seguimiento de cobertura: con una autorización adicional máxima de USD 0,50 se ejecutaron corridas
+dirigidas de Base64 y prompt injection, siempre con techo USD 0,20 por corrida. Se obtuvieron 26
+respuestas reales por familia y se recuperaron únicamente los seis casos faltantes de cada una.
+Ambas familias cerraron 32/32 respuestas reales y 0 detecciones por USD 0,256830. La cobertura que
+bloqueaba 5.4 queda resuelta; resta la decisión y ejecución formal de promoción/release.
+
 ## Objetivo
 
 Evolucionar AgroRAG V1 hacia una V2 que se construya, pruebe y ejecute íntegramente con imágenes

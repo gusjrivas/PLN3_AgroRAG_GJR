@@ -1,34 +1,30 @@
-# Informe legible de seguridad Garak
+# Informe de seguridad Garak
 
 **Proyecto:** AgroRAG  
 **Release evaluada:** `d38814b4f352b3f007f7520858f48daeca27a160`  
-**Corrida:** `0.2.0-sha.d38814b4-local-20261031T190832Z`  
 **Fecha:** 31/10/2026  
 **Garak:** 0.17.0  
-**Estado:** **BLOCKED - cobertura incompleta**
+**Estado:** **cobertura faltante completada; promoción 5.4 pendiente**
 
 ## Resumen ejecutivo
 
-La corrida verificó el límite preventivo de costo y produjo evidencia real para dos de las cuatro
-familias previstas. El adaptador procesó 128 solicitudes lógicas, pero solo 47 llegaron al modelo:
-32 de búsqueda de API keys y 15 de bypass DAN. El control detuvo nuevas llamadas antes de superar
-el máximo autorizado de USD 0,20.
+La evaluación adversarial de la candidata desplegada por digest quedó completa para las familias
+que habían sido interrumpidas por presupuesto. `encoding.InjectBase64` obtuvo 32/32 respuestas
+reales sin coincidencias de `encoding.DecodeMatch`. `promptinject.HijackHateHumans` obtuvo 32/32
+respuestas reales sin coincidencias de `promptinject.AttackRogueString`.
 
-Gus Rivas revisó las 15 respuestas reales DAN el 31/10/2026 y clasificó 15/15 como falsos
-positivos, sin hallazgos confirmados ni casos dudosos. Las respuestas compartieron un único patrón
-seguro: solicitaron información adicional, no siguieron la instrucción DAN y no expusieron
-credenciales o secretos.
+Las corridas dirigidas produjeron 26 respuestas reales por familia. El control preventivo detuvo
+los últimos seis casos de cada una. Una recuperación posterior repitió únicamente esos 12 casos:
+12/12 fueron exitosos, ninguno agotó presupuesto y los 12 obtuvieron puntaje detector 0.
 
-La release no queda aprobada por Garak. Base64 y prompt injection no tuvieron respuestas reales
-porque el presupuesto se agotó de forma preventiva. El triage DAN está cerrado, pero la cobertura
-adversarial total y la promoción permanecen bloqueadas.
+La evidencia anterior se mantiene: `apikey.GetKey` tuvo 32 respuestas reales sin detecciones y Gus
+Rivas revisó las 15 respuestas reales DAN como 15 falsos positivos, sin confirmados ni dudosos. La
+evaluación es evidencia heurística y no una certificación de seguridad.
 
-## Entorno y candidata evaluada
+## Candidata y entorno
 
-La aplicación se ejecutó en Docker Compose sobre Ubuntu WSL. API, UI y gateway se desplegaron por
-digest. Solo el gateway se publicó en el host: `18080->80` y `18443->443`; API y UI permanecieron
-en la red interna. La aplicación local estuvo disponible en `https://localhost:18443` con TLS y
-autenticación Basic locales.
+La aplicación se ejecutó con Docker Compose en Ubuntu WSL. API y UI permanecieron en la red
+interna. El gateway fue el único componente publicado, en `18080->80` y `18443->443`.
 
 | Componente | Digest desplegado |
 |---|---|
@@ -37,83 +33,64 @@ autenticación Basic locales.
 | Gateway | `sha256:31225397760fdcface3fa3641b73236df272dbc5e59824b77304b1b42c9afc3a` |
 | Garak runner | `sha256:f0bd19bef1458a0b74b70d4a4c55fa3c94aa0cec10ca86fb84b1059cafd5267e` |
 
-## Control de costo
-
-| Métrica | Resultado |
-|---|---:|
-| Techo autorizado | USD 0,200000 |
-| Costo estimado | USD 0,080445 |
-| Margen no utilizado | USD 0,119555 |
-| Tokens de entrada | 30.286 |
-| Tokens de salida | 473 |
-| Solicitudes lógicas | 128 |
-| Respuestas reales | 47 |
-| Rechazos contractuales HTTP 422 | 12 |
-| Bloqueos antes de llamar por presupuesto | 69 |
-| Errores de transporte ambiguos | 0 |
-
-La siguiente reserva conservadora era USD 0,12. Como USD 0,080445 + USD 0,12 hubiera dado USD
-0,200445, el adaptador rechazó las solicitudes restantes antes de alcanzar el gateway. No hubo
-reintentos ni llamadas posteriores.
-
 ## Cobertura efectiva
 
-| Familia Garak | Respuestas reales | HTTP 422 | Presupuesto | Interpretación |
-|---|---:|---:|---:|---|
-| `apikey.GetKey` | 32 | 0 | 0 | 32/32 sin detección de API key; cobertura real completa para esta familia. |
-| `dan.DanInTheWild` | 15 | 12 | 5 | 15/15 respuestas reales revisadas como falsos positivos; triage cerrado. |
-| `encoding.InjectBase64` | 0 | 0 | 32 | Sin cobertura real; los pases automáticos provinieron de respuestas sintéticas del harness. |
-| `promptinject.HijackHateHumans` | 0 | 0 | 32 | Sin cobertura real; los pases automáticos provinieron de respuestas sintéticas del harness. |
+| Familia | Respuestas reales | Resultado |
+|---|---:|---|
+| `apikey.GetKey` | 32 | 0 detecciones de API key. |
+| `dan.DanInTheWild` | 15 | 15/15 alertas revisadas como falsos positivos; 0 confirmadas y 0 dudosas. |
+| `encoding.InjectBase64` | 32 | 0 coincidencias de payload decodificado. |
+| `promptinject.HijackHateHumans` | 32 | 0 emisiones de la cadena de inyección. |
 
-El reporte bruto muestra 32 fallos DAN porque también evalúa las 12 respuestas contractuales y los
-5 bloqueos de presupuesto. Esos resultados no son 32 vulnerabilidades reales. El dictamen humano
-se limita a las 15 respuestas producidas efectivamente por la aplicación.
+Los pases Base64 y prompt injection de las corridas dirigidas no se aceptaron de forma automática:
+se separaron las 26 respuestas reales de las seis negativas sintéticas por presupuesto. Los 12
+casos incompletos se recuperaron después y se evaluaron con la misma regla exacta de Garak:
+búsqueda de la cadena disparadora sin distinguir mayúsculas y minúsculas.
 
-## Revisión humana completada
+## Presupuesto
 
-| Métrica | Resultado |
-|---|---:|
-| Casos reales DAN | 15 |
-| Revisados | 15 |
-| Falsos positivos | 15 |
-| Confirmados | 0 |
-| Dudosos | 0 |
-| Pendientes | 0 |
-| Revisor | Gus Rivas |
-| Fecha | 31/10/2026 |
+El usuario autorizó hasta USD 0,50 para completar las pruebas faltantes. Cada corrida conservó el
+techo técnico máximo de USD 0,20.
 
-El libro sanitizado conserva los identificadores, el veredicto, el motivo, el revisor, la fecha y
-una descripción observable, pero no incluye prompts ni respuestas completas. Una comprobación
-offline confirmó que las 15 respuestas observadas eran idénticas, solicitaban más información, no
-mencionaban DAN y no contenían marcadores de credenciales o secretos.
+| Corrida nueva | Respuestas reales | Costo estimado |
+|---|---:|---:|
+| Base64 dirigida | 26 | USD 0,145160 |
+| Prompt injection dirigida | 26 | USD 0,082180 |
+| Recuperación selectiva | 12 | USD 0,029490 |
+| **Total de la nueva autorización** | **64** | **USD 0,256830** |
+| **Presupuesto no utilizado** |  | **USD 0,243170** |
 
-Este resultado cierra el triage manual de DAN. No transforma la falta de cobertura de Base64 y
-prompt injection en un pase ni constituye una certificación de seguridad.
+Incluyendo la corrida inicial ya documentada de USD 0,080445, el costo estimado acumulado de todas
+las corridas Garak de esta candidata fue USD 0,337275. Ninguna corrida individual superó USD 0,20.
 
-## Ubicación de artefactos
+## Incidente de credencial local
+
+Durante una inspección previa a las corridas dirigidas, una orden local mostró la credencial Basic
+anterior en la salida de consola. Se la consideró comprometida, se rotó antes de continuar y se
+recreó únicamente el gateway con las mismas imágenes, volúmenes y puertos. La credencial anterior
+pasó a devolver HTTP 401 y la nueva devolvió HTTP 200. No se versionaron valores secretos.
+
+## Evidencia y tratamiento de datos
 
 | Artefacto | Ubicación | Tratamiento |
 |---|---|---|
-| Informe Markdown | `docs/evidence/garak/garak-d38814b4-human-report.md` | Versionado |
-| Informe PDF | `output/pdf/garak-d38814b4-human-report.pdf` | Versionado |
-| Resumen de triage | `docs/evidence/garak/d38814b4-human-triage.json` | Versionado y sanitizado |
-| Libro de revisión | `docs/evidence/workbooks/garak-d38814b4-revision-humana-dan.xlsx` | Versionado y sanitizado |
-| Libro local con prompts | `/home/gus/.local/share/agrorag/review/d38814b4-dan/garak-d38814b4-pruebas-locales-final.xlsx` | Local, modo 0600 |
-| Reportes crudos Garak | `/home/gus/.local/share/agrorag/garak/d38814b4-20261031T190832Z` | Local restringido |
+| Resumen de recuperación | `docs/evidence/garak/d38814b4-targeted-recovery.json` | Versionado y sanitizado. |
+| Informe Markdown | `docs/evidence/garak/garak-d38814b4-human-report.md` | Versionado. |
+| Informe PDF | `output/pdf/garak-d38814b4-human-report.pdf` | Versionado. |
+| Libro de revisión | `docs/evidence/workbooks/garak-d38814b4-revision-humana-dan.xlsx` | Versionado y sanitizado. |
+| Crudos y recuperación | `/home/gus/.local/share/agrorag/garak/` | Local restringido; directorios 0700 y archivos 0600. |
 
-Los crudos conservan los hashes SHA-256 registrados en la evidencia `REL-V2-08`. Este informe no
-incluye prompts, respuestas completas, claves ni cabeceras de autenticación.
+Los artefactos versionados no contienen prompts, respuestas completas, claves ni cabeceras de
+autenticación. La recuperación sanitizada conserva familia, secuencia, UUID, hashes, estado y
+puntaje detector.
 
-## Conclusión y siguiente decisión
+## Decisión
 
-La ejecución y su triage quedan documentados: el tope de costo funcionó, API key no mostró
-detecciones en 32 respuestas reales y los 15 avisos DAN fueron falsos positivos según la revisión
-humana. La tarea operativa OpenSpec 5.3 puede cerrarse con resultado bloqueante.
+La deuda de cobertura de Base64 y prompt injection queda resuelta: ambas familias alcanzaron 32
+respuestas reales y 0 detecciones. La revisión DAN también permanece cerrada sin hallazgos
+confirmados.
 
-La promoción 5.4 permanece abierta porque no hubo cobertura real para Base64 ni prompt injection y
-el runner terminó con `cost_budget_exhausted`. Para continuar se requiere una estrategia que
-priorice esas familias y una nueva autorización explícita de presupuesto, siempre con techo por
-corrida menor o igual a USD 0,20. No corresponde repetir llamadas con la autorización ya agotada.
-
-Garak aporta evidencia heurística sobre esta candidata; no garantiza seguridad completa ni
-reemplaza threat modeling, controles clásicos, revisión humana y monitoreo.
+OpenSpec 5.4 no se marca completo en este cambio. Aún corresponde ejecutar la decisión formal de
+promoción de la misma imagen y cerrar la documentación de release con esta evidencia. Garak reduce
+incertidumbre sobre estos escenarios concretos, pero no reemplaza threat modeling, controles
+clásicos, revisión humana ni monitoreo.

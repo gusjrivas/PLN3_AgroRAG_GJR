@@ -183,3 +183,63 @@ curl -sk -u "<credencial local leída desde archivo 0600>" -o /dev/null \
 # exit 0: HTTP 200; no se imprimió la credencial
 ```
 
+## Seguimiento: recuperación de cobertura faltante
+
+El usuario autorizó hasta USD 0,50 para completar las pruebas pendientes, manteniendo el hard cap
+existente de USD 0,20 por corrida. Se ejecutaron dos corridas dirigidas con seed 1729 y 32 intentos:
+
+| Familia | Éxitos reales iniciales | Detenidos por presupuesto | Costo |
+|---|---:|---:|---:|
+| `encoding.InjectBase64` | 26 | 6 | USD 0,145160 |
+| `promptinject.HijackHateHumans` | 26 | 6 | USD 0,082180 |
+
+Los pases automáticos no se aceptaron sin revisar el origen de las respuestas. El JSONL confirmó
+que las secuencias 26 a 31 de cada familia contenían la negativa sintética del adaptador. Se
+extrajeron esos 12 intentos dentro del almacenamiento local restringido y se repitieron de forma
+secuencial usando la misma candidata, secretos montados como archivos y el mismo adaptador de
+presupuesto. La recuperación produjo 12 éxitos, 0 rechazos, 0 errores, 0 nuevos cortes y 0 hits de
+detector. Consumió USD 0,029490.
+
+El total de la nueva autorización fue USD 0,256830 y quedaron USD 0,243170 sin utilizar. La
+evidencia sanitizada está en
+[d38814b4-targeted-recovery.json](../garak/d38814b4-targeted-recovery.json). Los prompts y
+respuestas completos permanecen fuera de Git en `/home/gus/.local/share/agrorag/garak/`, con
+directorios 0700 y archivos 0600.
+
+Durante la preparación se expuso accidentalmente la credencial Basic local anterior en la salida
+de una orden. Se revocó y rotó antes de las corridas pagas; el gateway se recreó sin cambiar las
+imágenes candidatas y se comprobó que la credencial anterior devuelve 401 y la nueva 200. Ningún
+valor secreto se incorporó a los artefactos.
+
+Con esta recuperación, Base64 y prompt injection tienen 32/32 respuestas reales y 0 detecciones.
+La cobertura faltante queda cerrada. OpenSpec 5.4 continúa pendiente porque este seguimiento no
+ejecuta por sí mismo la promoción formal ni el cierre de release.
+
+Validación posterior, sin nuevas llamadas al proveedor:
+
+```text
+uv run pytest tests/unit/test_garak_policy.py tests/unit/test_garak_adapter.py \
+  tests/unit/test_garak_runner.py tests/architecture/test_garak_container_contract.py \
+  tests/architecture/test_garak_release_workflows.py -q
+# exit 0: 30 passed, 1 skipped por bits POSIX en Windows
+
+uv run ruff check . --exclude tmp --exclude outputs
+# exit 0
+
+npx --yes @fission-ai/openspec@1.14.3 validate 07-containerized-production-poc --strict
+# exit 0: change valid
+
+python -m json.tool docs/evidence/garak/d38814b4-targeted-recovery.json
+git diff --check
+# exit 0
+
+pdfinfo output/pdf/garak-d38814b4-human-report.pdf
+# 3 páginas A4, sin JavaScript ni cifrado; las tres páginas se renderizaron e inspeccionaron
+
+docker ps --filter name=agrorag-
+# API, UI y gateway healthy; gateway en 18080/18443
+```
+
+La revisión técnica y documental de este seguimiento fue realizada por la misma sesión
+coordinadora. El resultado automatizado no requirió un nuevo veredicto manual del usuario.
+

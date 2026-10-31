@@ -74,6 +74,12 @@ y sólo se versionan resúmenes sanitizados. Gus Rivas cerró el triage DAN el 3
 falsos positivos, 0 confirmados y 0 dudosos. La ejecución real y su revisión completan 5.3 con
 resultado bloqueante; 5.4 sigue abierta por cobertura incompleta y no hay retry autorizado.
 
+Seguimiento REL-V2-08: el usuario autorizó hasta USD 0,50 adicionales y se mantuvo el techo técnico
+de USD 0,20 por corrida. Las ejecuciones dirigidas y una recuperación limitada a los 12 intentos
+interrumpidos completaron Base64 32/32 y prompt injection 32/32 con respuestas reales y 0
+detecciones. El gasto nuevo fue USD 0,256830. La deuda de cobertura queda resuelta; 5.4 permanece
+abierta hasta realizar la promoción formal de la misma imagen y cerrar la release con evidencia.
+
 Seguimiento solicitado por el usuario: después de cerrar y documentar esta corrida, revisar cómo
 implementar lo pedido por la profesora. Es un pendiente de relevamiento; no se asume alcance ni se
 marca como parte completada de 5.3 hasta contar con el pedido concreto.
