@@ -155,7 +155,20 @@ Copiar `infra/deploy/production.env.example` fuera del checkout, reemplazar todo
 cargarlo desde el secret store o con `set -a; . /ruta/segura/production.env; set +a`. El archivo
 sólo contiene referencias y configuración no secreta: las credenciales permanecen en
 `AGRO_SECRETS_DIR`. En Linux, el directorio debe ser absoluto, no symlink y modo `0700`; los tres
-archivos deben ser regulares, no vacíos, no symlinks y modo `0400` o `0600`.
+archivos deben ser regulares, no vacíos, no symlinks y modo `0400` o `0600`. Como Compose monta
+archivos del host y los procesos no son root, `reader_key` y `openai_api_key` deben pertenecer a
+`10001:10001`, mientras que `gateway_auth` debe pertenecer a `10002:10002`:
+
+```sh
+sudo chown 10001:10001 "$AGRO_SECRETS_DIR/reader_key" "$AGRO_SECRETS_DIR/openai_api_key"
+sudo chown 10002:10002 "$AGRO_SECRETS_DIR/gateway_auth"
+chmod 0600 "$AGRO_SECRETS_DIR/reader_key" \
+  "$AGRO_SECRETS_DIR/openai_api_key" "$AGRO_SECRETS_DIR/gateway_auth"
+```
+
+Usar IDs numéricos: los nombres de usuario del host no forman parte del contrato de las imágenes.
+El operador que ejecuta el preflight debe poder atravesar el directorio, pero el script no lee ni
+imprime el contenido de los secretos.
 
 Crear el volumen externo y poblarlo desde un backup previamente aprobado. El restore valida hashes
 y trabaja sin red; no usar `catalogue-admin` ni reconstruir el corpus durante el deploy:
@@ -172,8 +185,8 @@ docker pull "$AGRO_GATEWAY_IMAGE"
 
 `scripts/preflight_single_host.sh` es read-only: no crea recursos, no descarga imágenes y no
 restaura datos. Antes de `up`, verifica Engine/Compose, referencias por digest, labels de commit,
-usuarios no root, volumen externo, permisos de secretos y renderizado Compose sin imprimir valores
-sensibles:
+usuarios no root, volumen externo, modos y propietarios runtime de secretos y renderizado Compose
+sin imprimir valores sensibles:
 
 ```sh
 umask 077

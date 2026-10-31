@@ -136,8 +136,9 @@ La puerta previa de staging también está automatizada: descarga el `release-ma
 que publicó las imágenes, exige coincidencia de commit/digests, consulta identidad y catálogo por el
 gateway y ejecuta una pregunta sintética citada. Su existencia no sustituye una ejecución real.
 El host limpio cuenta además con un preflight read-only que falla antes de `up` si faltan digests,
-labels de commit, identidades no root, volumen externo, secretos con permisos restrictivos o un
-Compose productivo válido. El bootstrap/restauración sigue siendo una operación explícita.
+labels de commit, identidades no root, volumen externo, secretos con modos restrictivos y
+propietarios UID:GID compatibles o un Compose productivo válido. El bootstrap/restauración sigue
+siendo una operación explícita.
 
 ### Fase 0 — contrato de V2
 

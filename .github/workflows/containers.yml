@@ -63,6 +63,7 @@ jobs:
       - name: Exercise single-host preflight contract
         run: >-
           docker run --rm --entrypoint sh
+          --user 0:0
           -v "$PWD:/workspace:ro"
           agrorag-gateway:ci
           /workspace/tests/container/run_preflight_contract.sh
