@@ -124,6 +124,19 @@ limpia sus recursos. No usa el catálogo ni volumen local del usuario.
 digest, un volumen de catálogo prepublicado, dominio, modelo OpenAI y tres secretos externos. Sólo
 gateway publica 80/443; API y UI permanecen en la red Compose.
 
+Para un staging local WSL no se deben ocupar los puertos habituales de otras aplicaciones. Definir
+explícitamente puertos alternativos antes de recrear el gateway:
+
+```sh
+export AGRO_HTTP_PORT=18080
+export AGRO_HTTPS_PORT=18443
+docker compose -f compose.yaml -f compose.production.yaml up -d --no-deps --force-recreate gateway
+```
+
+Abrir directamente `https://localhost:18443`. No usar `http://localhost:18080` como enlace de
+entrada: la redirección TLS interna de Caddy no conoce el puerto publicado por el host y apunta al
+443. Los puertos internos del contenedor siguen siendo 80/443 y la API/UI continúan sin publicarse.
+
 Construir/publicar el gateway versionado antes de desplegar:
 
 ```powershell

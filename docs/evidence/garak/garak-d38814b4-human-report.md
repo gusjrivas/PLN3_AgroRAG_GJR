@@ -22,8 +22,10 @@ resultados automaticos no constituyen cobertura valida.
 ## Entorno y candidata evaluada
 
 La aplicacion se ejecuto en Docker Compose sobre Ubuntu WSL. API, UI y gateway se desplegaron por
-digest y el gateway fue el unico componente expuesto en los puertos 80 y 443. La aplicacion local
-esta disponible en `https://localhost` con TLS y autenticacion Basic locales.
+digest. Solo el gateway se publica en el host: `18080->80` y `18443->443`; API y UI permanecen en
+la red interna. La aplicacion local esta disponible en `https://localhost:18443` con TLS y
+autenticacion Basic locales. El puerto HTTP alternativo es 18080, pero no debe usarse como enlace
+porque Caddy redirige al 443 interno.
 
 | Componente | Digest desplegado |
 |---|---|
@@ -75,7 +77,7 @@ Para revisar sin nuevas llamadas a OpenAI:
 
 1. Abrir las credenciales locales en
    `/home/gus/.local/share/agrorag/review/d38814b4-dan/app-credentials.txt`.
-2. Confirmar que `https://localhost` carga con esas credenciales. No enviar consultas nuevas.
+2. Confirmar que `https://localhost:18443` carga con esas credenciales. No enviar consultas nuevas.
 3. Abrir `/home/gus/.local/share/agrorag/review/d38814b4-dan/index.html`.
 4. Comparar cada bloque `DAN-01` a `DAN-15` con la fila homonima del Excel.
 5. Registrar `Falso positivo`, `Confirmado` o `Dudoso`, junto con motivo, revisor, fecha y evidencia

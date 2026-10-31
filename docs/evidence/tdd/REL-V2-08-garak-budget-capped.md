@@ -95,8 +95,17 @@ Para permitir la inspección exacta se creó un visor local, restringido y no ve
 `/home/gus/.local/share/agrorag/review/d38814b4-dan/index.html`. El visor contiene únicamente las
 15 respuestas reales DAN, correlacionadas con el Excel. Sus archivos y las credenciales locales
 quedaron con propietario `gus:gus` y modo `0600`; el directorio quedó `0700`. La aplicación fue
-verificada en `https://localhost` con HTTP 200 autenticado y los tres contenedores healthy. No se
+verificada en `https://localhost:18443` con HTTP 200 autenticado y los tres contenedores healthy.
+El gateway publica `18080->80` y `18443->443`; no ocupa los puertos 8080 ni 443 del host. No se
 debe enviar una consulta nueva durante este triage.
+
+Durante el handoff se detectó que el gateway había vuelto a publicar 80/443 en el host, contrario
+al aislamiento acordado para la notebook. Se recreó únicamente el gateway con
+`AGRO_HTTP_PORT=18080` y `AGRO_HTTPS_PORT=18443`. La comprobación posterior observó HTTP 200
+autenticado y 401 sin credenciales en `https://localhost:18443`; `docker ps` mostró
+`18080->80` y `18443->443`, con API/UI todavía sin puertos publicados. El acceso HTTP 18080 responde
+308 hacia `https://localhost/`, por lo que no se documenta como enlace utilizable. La corrección no
+realizó llamadas a OpenAI.
 
 ## Artefactos restringidos
 
@@ -159,11 +168,11 @@ pdfinfo output/pdf/garak-d38814b4-human-report.pdf
 # exit 0: 3 páginas A4, sin JavaScript ni cifrado
 
 pdftoppm -png -r 130 output/pdf/garak-d38814b4-human-report.pdf \
-  tmp/pdfs/rendered-garak-v5/page
+  tmp/pdfs/rendered-garak-v7/page
 # exit 0; las tres páginas fueron inspeccionadas visualmente sin recortes ni superposiciones
 
 curl -sk -u "<credencial local leída desde archivo 0600>" -o /dev/null \
-  -w '%{http_code}' https://localhost/
+  -w '%{http_code}' https://localhost:18443/
 # exit 0: HTTP 200; no se imprimió la credencial
 ```
 
