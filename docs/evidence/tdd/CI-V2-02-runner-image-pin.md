@@ -71,7 +71,18 @@ git diff --check
 El único `skip` es el control de bits POSIX del runner Garak que no aplica en Windows. Los tres
 casos deseleccionados son pruebas marcadas fuera de la suite offline; no se ejecutaron scans reales.
 
-La verificación local sólo demuestra el contrato versionado. El cierre remoto exige que los checks
-del MR aprueben sobre Ubuntu 24.04 y, después del merge, que `container-supply-chain` publique el
-manifiesto inmutable del nuevo commit. Hasta entonces no se reconstruye ni ejecuta Garak.
+## GREEN remoto del MR
+
+El primer HEAD documentado del MR #37 aprobó sobre la plataforma fijada:
+
+- `quality`, run
+  [`41226199536`](https://github.com/gusjrivas/PLN3_AgroRAG_GJR/actions/runs/41226199536): `specs`
+  8 s, `browser` 33 s y `offline` 51 s, todos `success`;
+- `container-supply-chain`, run
+  [`41226199572`](https://github.com/gusjrivas/PLN3_AgroRAG_GJR/actions/runs/41226199572): build, E2E,
+  SBOM, scans y política aprobaron en 2m41s.
+
+En un evento `pull_request` la publicación es correctamente omitida. Después del merge todavía se
+debe comprobar que el run de `main` publique el manifiesto inmutable del nuevo commit; hasta
+entonces no se reconstruye ni ejecuta Garak.
 
