@@ -2,7 +2,8 @@
 
 Fecha: 2026-10-30/31. Responsable: coordinador. Rama:
 `fix/preflight-secret-ownership`. Propiedad: `scripts/preflight_single_host.sh`, su contrato
-container/CI, documentación de arquitectura, OpenSpec y runbook. Commit: pendiente de integración.
+container/CI, documentación de arquitectura, OpenSpec y runbook. Implementación:
+`bfdf33f4a3e6d750cc64f46af5481180348e2483`.
 Revisión: misma sesión; revisión humana requerida antes de integrar.
 
 ## Hallazgo real previo al cambio
