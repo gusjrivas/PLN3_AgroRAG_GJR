@@ -243,3 +243,39 @@ def test_verified_answer_is_prominent_and_identifies_openai(monkeypatch):
 
     assert any("OpenAI" in message.value for message in app.success)
     assert any("cuajado de frutos" in text.value for text in app.text)
+
+
+def test_answer_shows_researcher_verifier_decision_without_claiming_model_vote(monkeypatch):
+    from agro_rag_ui.client import ApiClient
+
+    monkeypatch.setenv("AGRO_READER_KEY", "test-reader-token-123456")
+
+    def query(self, question, crop, context, clarification=None):
+        return {
+            "status": "answered",
+            "answer": "Respuesta respaldada por evidencia.",
+            "citations": [],
+            "limitations": [],
+            "verification": {
+                "decision": "approve",
+                "revision_count": 1,
+                "issue_codes": [],
+            },
+        }
+
+    monkeypatch.setattr(ApiClient, "query", query)
+    app = AppTest.from_file(str(Path("src/agro_rag_ui/app.py").resolve())).run()
+    app.sidebar.radio[0].set_value("Respuesta verificada").run()
+    app.text_area[0].set_value("¿Cómo se obtuvo la respuesta?")
+    app.button[0].click().run()
+
+    visible = " ".join(
+        element.value
+        for collection in (app.caption, app.info, app.success)
+        for element in collection
+    ).lower()
+    assert "investigador" in visible
+    assert "verificador" in visible
+    assert "aprobada" in visible
+    assert "1 revisión" in visible
+    assert "votación de modelos" not in visible

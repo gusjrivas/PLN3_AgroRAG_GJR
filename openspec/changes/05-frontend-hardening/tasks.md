@@ -47,6 +47,18 @@ operativa y evidencia `docs/evidence/tdd/UI-02-repeat-guidance.md`.
 Este corte amplía `UI-01-respuesta` y `UI-02-rerun`; no cierra por sí solo los demás escenarios
 generales del cambio.
 
+## Corte independiente: visibilidad del flujo de verificación
+
+Responsable y revisor: coordinador/frontend, misma sesión. Rama:
+`fix/ui-show-verification-flow`. Propiedad: `src/agro_rag_ui/app.py`,
+`tests/ui/test_ui.py`, `docs/frontend.md`, OpenSpec y evidencia
+`docs/evidence/tdd/UI-06-verification-flow.md`.
+
+- [x] VF.1 RED: una respuesta con metadata de verificación no muestra investigador, verificador,
+  decisión ni cantidad de revisiones.
+- [x] VF.2 GREEN: presentar esos datos sin afirmar una votación multi-modelo inexistente.
+- [x] VF.3 REFACTOR: AppTest, typing, lint, arquitectura, OpenSpec, documentación y evidencia.
+
 ## Corte independiente: resultado primero
 
 Responsable: coordinador/frontend, misma sesión. Rama: `fix/result-first-ui`. Propiedad:

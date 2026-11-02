@@ -59,6 +59,29 @@ def show_evidence(items: list[dict[str, Any]]) -> None:
             st.link_button("Abrir documento fuente", item["source_url"])
 
 
+def show_verification(result: dict[str, Any]) -> None:
+    verification = result.get("verification")
+    if not isinstance(verification, dict):
+        return
+    decision = str(verification.get("decision", ""))
+    labels = {
+        "approve": "aprobada",
+        "revise": "revisión solicitada",
+        "clarify": "aclaración solicitada",
+        "abstain": "abstención",
+        "not_run": "verificación no ejecutada",
+    }
+    label = labels.get(decision)
+    revision_count = verification.get("revision_count")
+    if label is None or not isinstance(revision_count, int):
+        return
+    revision_label = "revisión" if revision_count == 1 else "revisiones"
+    st.caption(
+        "Flujo de agentes: investigador → verificador · "
+        f"Decisión: {label} · {revision_count} {revision_label}."
+    )
+
+
 def main() -> None:
     st.set_page_config(page_title="AgroRAG", page_icon="🌱", layout="centered")
     st.title("AgroRAG")
@@ -181,6 +204,7 @@ def main() -> None:
                     st.info("Reformulá la consulta incluyendo el contexto reunido.")
             else:
                 st.warning("No hay evidencia suficiente para una respuesta verificada.")
+            show_verification(result)
             show_evidence(result.get("citations", []))
             for limit in result.get("limitations", []):
                 st.caption(limit)

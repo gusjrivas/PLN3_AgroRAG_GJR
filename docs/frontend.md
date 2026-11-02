@@ -8,7 +8,7 @@ Consulta en español, selector opcional tomate/lechuga, contexto opcional. La pa
 
 Estados: bienvenida, validación, procesando, answered, needs_clarification, insufficient_evidence y error operativo. Aclaraciones conservan pregunta/contexto y piden sólo lo faltante; la nueva llamada usa clarification_context explícito. No inventar estado backend ni usar una conversación global.
 
-Respuesta muestra texto, limitaciones y citas expandibles con pasaje exacto, título, edición, página física y página impresa cuando exista. Enlace externo sólo al origen autorizado del catálogo. Panel técnico plegable para latencia/tokens/versión; detalles de implementación no ocupan el flujo principal. UI no confunde sin evidencia con API caída.
+Respuesta muestra texto, limitaciones y citas expandibles con pasaje exacto, título, edición, página física y página impresa cuando exista. También muestra el flujo observable `investigador → verificador`, la decisión del verificador y la cantidad de revisiones informadas por la API. No se describe como votación entre modelos: ADR-007 usa dos roles con el mismo proveedor LLM inicial y una revisión secuencial acotada. Enlace externo sólo al origen autorizado del catálogo. Panel técnico plegable para latencia/tokens/versión; detalles de implementación no ocupan el flujo principal. UI no confunde sin evidencia con API caída.
 
 ## Calidad de frontend
 

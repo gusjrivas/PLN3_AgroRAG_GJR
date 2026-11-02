@@ -6,6 +6,7 @@ humana documentados en `docs/evidence/workbooks/`.
 | Escenario | Test previsto | Nivel / evidencia |
 |---|---|---|
 | UI-01-respuesta | `test_ui_01_respuesta` | AppTest; E2E Python para recorrido completo |
+| UI-01-flujo-verificacion | `test_answer_shows_researcher_verifier_decision_without_claiming_model_vote` | AppTest; metadata estructurada de API simulada |
 | UI-01-aclaracion | `test_ui_01_aclaracion` | AppTest; E2E Python para recorrido completo |
 | UI-01-error | `test_ui_01_error` | AppTest; E2E Python para recorrido completo |
 | UI-02-rerun | `test_ui_02_rerun` | AppTest; E2E Python para recorrido completo |

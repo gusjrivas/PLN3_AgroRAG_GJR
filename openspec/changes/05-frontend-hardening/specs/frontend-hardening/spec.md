@@ -10,6 +10,12 @@ La UI Streamlit MUST consumir sólo HTTP y mostrar estados de negocio, errores y
 - **WHEN** usuario consulta.
 - **THEN** ve texto, limitaciones y fuentes expandibles con página/edición.
 
+#### Scenario: UI-01-flujo-verificacion
+- **GIVEN** API devuelve una respuesta y el resultado estructurado del verificador.
+- **WHEN** la UI presenta la respuesta.
+- **THEN** muestra que el flujo usa agente investigador y agente verificador, junto con la decisión
+  y cantidad de revisiones, sin describirlo como votación entre modelos.
+
 #### Scenario: UI-01-aclaracion
 - **GIVEN** API solicita contexto.
 - **WHEN** usuario completa lo faltante.
