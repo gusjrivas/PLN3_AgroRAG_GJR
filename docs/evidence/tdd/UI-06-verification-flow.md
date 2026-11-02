@@ -69,4 +69,4 @@ git diff --check
 ```
 
 El test usa un cliente API simulado y no es evidencia de calidad de un proveedor real. Commit de
-implementación: pendiente de registrar tras crear el commit.
+implementación: `442e2e1` (`fix: show agent verification flow in UI`).
