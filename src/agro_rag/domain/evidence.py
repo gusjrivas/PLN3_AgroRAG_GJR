@@ -76,9 +76,7 @@ class Evidence:
             "applicable_regions", self.applicable_regions, APPLICABLE_REGIONS
         )
         # JSON persists tuples as arrays; restore the immutable domain representation.
-        object.__setattr__(
-            self, "growth_stages", cast(tuple[GrowthStage, ...], growth_stages)
-        )
+        object.__setattr__(self, "growth_stages", cast(tuple[GrowthStage, ...], growth_stages))
         object.__setattr__(
             self,
             "applicable_regions",
