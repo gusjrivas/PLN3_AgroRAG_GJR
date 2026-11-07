@@ -1,6 +1,7 @@
 # Tasks: Recuperación sensible a metadatos curados
 
-Estado: plan registrado; ninguna tarea funcional iniciada. Coordinador: Gustavo Julián Rivas.
+Estado: META-01 implementada y verificada; META-02 es la próxima tarea sin dependencias abiertas.
+Coordinador: Gustavo Julián Rivas.
 Rama de planificación: `docs/professor-rag-feedback-draft`. Rama de integración propuesta después
 de integrar este plan: `feat/metadata-aware-retrieval`. Base y commit se registran al asignar cada
 tarea; no inventarlos por anticipado.
@@ -48,11 +49,11 @@ Issue: #40. Dependencias: PLAN-08 integrado mediante PR #36. Propiedad exclusiva
 `tests/integration/test_corpus.py` y `docs/evidence/tdd/META-01-metadata-contract.md`. El manifiesto
 real no se cura todavía; usar fixtures mínimos. No editar retrieval, API o Pinecone.
 
-- [ ] META-01.1 Leer ADR-006/016 y registrar handoff; base, rama y propiedad ya fijadas.
-- [ ] META-01.2 RED: propagación, vocabularios inválidos, ausencia no inferida y cambio de versión.
-- [ ] META-01.3 GREEN: ampliar modelos y propagar metadata con serialización determinista.
-- [ ] META-01.4 REFACTOR: idempotencia, snapshot anterior, typing, Ruff y suite de corpus.
-- [ ] META-01.5 Registrar comandos/códigos/commit y obtener revisión antes de integrar.
+- [x] META-01.1 Leer ADR-006/016 y registrar handoff; base, rama y propiedad ya fijadas.
+- [x] META-01.2 RED: propagación, vocabularios inválidos, ausencia no inferida y cambio de versión.
+- [x] META-01.3 GREEN: ampliar modelos y propagar metadata con serialización determinista.
+- [x] META-01.4 REFACTOR: idempotencia, snapshot anterior, typing, Ruff y suite de corpus.
+- [x] META-01.5 Registrar comandos/códigos/commit y obtener revisión antes de integrar.
 
 ## META-02 — Política común y contrato de retrieval
 

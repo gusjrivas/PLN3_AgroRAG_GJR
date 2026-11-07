@@ -157,7 +157,7 @@ import-linter, OpenSpec estricto y `git diff --check`; todos terminaron con exit
 
 ## Estado de entrega y revisión
 
-- Commit: pendiente; el implementador no realiza commit ni push por instrucción del coordinador.
+- Commit funcional: `2ec2dbc` (`feat: add curated corpus metadata contract`).
 - Revisión del diff: auto-revisión completada; una revisión independiente encontró los dos
   bloqueantes anteriores y fueron corregidos. El mismo revisor independiente confirmó después que
   no quedan bloqueantes y repitió corpus, suites afectadas, Ruff, mypy, import-linter, OpenSpec y
