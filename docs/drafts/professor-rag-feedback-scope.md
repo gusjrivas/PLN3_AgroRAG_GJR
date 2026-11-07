@@ -1,14 +1,14 @@
 # Borrador de alcance: metadatos y suficiencia de contexto en el RAG
 
-Estado: **borrador no normativo; pendiente de recomendación docente**.  
-Fecha de registro: 31/10/2026.  
-Responsable: Gustavo Julián Rivas, con asistencia de Codex.  
+Estado: **alcance aceptado por el usuario y promovido a planificación OpenSpec**.
+Fecha de registro: 31/10/2026.
+Responsable: Gustavo Julián Rivas, con asistencia de Codex.
 Rama documental: `docs/professor-rag-feedback-draft`.
 
-Este documento conserva el alcance posible derivado del comentario de la profesora. No aprueba una
-arquitectura, no modifica requisitos y no autoriza cambios de código, corpus, índice, API, UI ni
-evaluación. Cuando llegue la explicación de cómo integrar los metadatos dentro del flujo, se revisará
-este borrador y recién entonces se propondrá un delta de ADR/OpenSpec.
+Este documento conserva el origen y análisis de la devolución. La profesora no especificó el diseño
+final ni llegó una explicación posterior. El usuario autorizó el 07/11/2026 avanzar con una solución
+acotada, reversible y evaluable, registrada en `08-metadata-aware-retrieval` y ADR-016. Esos archivos
+son desde ahora el contrato normativo; este borrador queda como antecedente y no prueba implementación.
 
 ## Comentario recibido
 
@@ -117,7 +117,10 @@ Si el alcance es aceptado más adelante, el cambio debería comenzar con pruebas
 Las pruebas de contrato y recuperación pueden ser offline. No se autoriza una evaluación paga por
 este borrador.
 
-## Decisiones pendientes de la explicación docente
+## Preguntas que una explicación docente futura podría revisar
+
+Estas preguntas ya no bloquean el plan autorizado. Si llega una recomendación posterior, se compara
+con ADR-016 y cualquier cambio de contrato se registra antes de modificar la implementación.
 
 1. En qué nivel se espera declarar cada metadato: fuente, página, chunk o varios niveles.
 2. Si el uso esperado es filtrado previo, búsqueda con filtros, reordenamiento posterior o una
@@ -127,15 +130,10 @@ este borrador.
 5. Qué condiciones mínimas espera para considerar suficiente una recomendación de riego.
 6. Qué evidencia o métrica espera ver en la entrega académica.
 
-## Condición de activación
+## Activación registrada
 
-Este borrador podrá convertirse en trabajo activo sólo después de:
-
-1. recibir la explicación pendiente de la profesora;
-2. reconciliarla con el corpus y los contratos existentes;
-3. acordar el alcance con el usuario;
-4. registrar un ADR o delta de ADR si cambia la arquitectura;
-5. crear proposal/design/spec/tasks OpenSpec y evidencia TDD propia.
-
-Hasta entonces, el comentario docente queda registrado como oportunidad de mejora y no como una
-tarea implementada, un requisito aprobado ni un bloqueo de la PoC V2 single-host.
+El usuario acordó el alcance técnico sin atribuírselo a la profesora. La implementación queda
+dividida en PLAN-08 y META-01..07 en
+`openspec/changes/08-metadata-aware-retrieval/tasks.md`. Cada capacidad sigue pendiente hasta su
+RED/GREEN/REFACTOR y evidencia real. La planificación no bloquea la PoC V2 single-host ni autoriza
+servicios pagos, publicación o modificación del repositorio docente.

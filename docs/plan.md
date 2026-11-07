@@ -25,6 +25,12 @@ enviar a ambos docentes sólo con autorización del usuario. `test` permanece ce
 demuestra el comportamiento de caché para una consulta. La secuencia original de abajo queda como
 mapa de dependencias, no como estado de implementación.
 
+El 07/11/2026 el usuario autorizó planificar la recomendación docente de usar metadata de cultivo,
+etapa, región y fuente. El cambio activo [08-metadata-aware-retrieval](../openspec/changes/08-metadata-aware-retrieval/proposal.md)
+es posterior a la V1 e independiente del cierre Garak de 07. Primero estabiliza corpus y política de
+retrieval; luego permite dos cortes paralelos disjuntos de API y Pinecone; finalmente cura, reindexa
+y compara sin cambiar BM25 por defecto antes de medir.
+
 ## Decisión de organización
 
 Usar el repositorio independiente creado por el usuario: https://github.com/gusjrivas/PLN3_AgroRAG_GJR. `src`, `tests`, `docs` y `openspec` pertenecen a su raíz; las carpetas runtime se crean durante 00-foundation. `gusjrivas/PLN3_GJR` se conserva exclusivamente como referencia docente de lectura, sin copiar su historial ni modificarlo. La primera carga contiene planificación. Las ramas funcionales parten del commit documental de main.
@@ -40,6 +46,7 @@ Usar el repositorio independiente creado por el usuario: https://github.com/gusj
 | 04-agents-backend | Backend/agentes | 03 | Dos agentes, ciclo acotado, API y citas verificables, tests de fallos | 14-20 h |
 | 05-frontend-hardening | Frontend + revisor | 04 | UI Python, auth, pruebas AppTest/E2E, caché, logs y límites | 12-18 h |
 | 06-evaluation-delivery | Evaluación + coordinador | 05 | Benchmark congelado, resultados reales, informe PDF y demo reproducible | 14-20 h |
+| 08-metadata-aware-retrieval | Coordinador + RAG/backend/evaluación | 02, 03, 04, 06 implementados | Metadata curada, política común, contexto propagado, reindexado reversible y comparación reportada | estimar por tareas tras PLAN-08 |
 
 Total orientativo: 72-106 horas de trabajo efectivo, no calendario comprometido. Añadir margen si la extracción de tablas o la inferencia en CPU no alcanza el objetivo. Confirmar fecha de Teoría 7 al iniciar. Ajustar alcance antes de omitir TDD o evaluación.
 
