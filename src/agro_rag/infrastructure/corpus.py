@@ -12,9 +12,16 @@ from pathlib import Path
 from typing import Literal
 
 import pdfplumber
-from pydantic import BaseModel, ConfigDict, Field
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
-from agro_rag.domain.evidence import Catalogue, Evidence
+from agro_rag.domain.evidence import (
+    Applicability,
+    ApplicableRegion,
+    Catalogue,
+    Evidence,
+    GrowthStage,
+    SourceType,
+)
 
 
 class StrictModel(BaseModel):
@@ -32,9 +39,19 @@ class Page(StrictModel):
     printed_page: str = Field(min_length=1)
     section: str = Field(min_length=1)
     crop: Literal["tomato", "lettuce"] | None = None
+    growth_stages: tuple[GrowthStage, ...] = ()
+    applicable_regions: tuple[ApplicableRegion, ...] = ()
+    applicability: Applicability = "unknown"
     start_marker: str | None = None
     end_marker: str | None = None
     table: Table | None = None
+
+    @field_validator("growth_stages", "applicable_regions")
+    @classmethod
+    def reject_duplicate_metadata(cls, values: tuple[str, ...]) -> tuple[str, ...]:
+        if len(values) != len(set(values)):
+            raise ValueError("metadata duplicada")
+        return values
 
 
 class Source(StrictModel):
@@ -43,6 +60,7 @@ class Source(StrictModel):
     authors: list[str] = Field(min_length=1)
     institution: str = Field(min_length=1)
     edition: str = Field(min_length=1)
+    source_type: SourceType | None = None
     language: Literal["es", "en"]
     source_url: str = Field(pattern=r"^https://")
     access_date: str = Field(pattern=r"^\d{4}-\d{2}-\d{2}$")
@@ -142,6 +160,10 @@ def build_catalogue(manifest_path: Path, output: Path) -> Catalogue:
                                 start=start,
                                 end=end,
                                 transformation=transform,
+                                source_type=source.source_type,
+                                growth_stages=page.growth_stages,
+                                applicable_regions=page.applicable_regions,
+                                applicability=page.applicability,
                             )
                         )
         except (ValueError, IndexError) as exc:
@@ -164,11 +186,10 @@ def build_catalogue(manifest_path: Path, output: Path) -> Catalogue:
                 if count != len(evidence):
                     raise ValueError("Catálogo incompleto")
         target = output / f"{version}.sqlite"
-        if target.exists():
-            if read_snapshot(target, version) != catalogue:
-                raise ValueError("Catálogo existente distinto del esperado")
-        else:
+        if not target.exists():
             os.replace(db_path, target)
+        if read_snapshot(target, version) != catalogue:
+            raise ValueError("Catálogo persistido distinto del esperado")
         pointer = Path(temp) / "active.json"
         pointer.write_text(
             json.dumps({"version": version, "count": count, "mode": "catalogue_preview"})

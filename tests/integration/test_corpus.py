@@ -87,14 +87,152 @@ def test_blank_pdf_is_rejected(tmp_path):
     assert not (tmp_path / "catalogues" / "active.json").exists()
 
 
-def test_metadata_changes_create_new_version(tmp_path):
+def test_metadata_is_propagated_to_evidence(tmp_path):
+    from agro_rag.infrastructure.corpus import load_catalogue
+
     manifest, source = fixture_source(tmp_path)
-    first = build(manifest, tmp_path / "catalogues")
-    source["edition"] = "2026 corrected"
+    source["source_type"] = "technical_guide"
+    source["pages"][0].update(
+        {
+            "growth_stages": ["vegetative_growth", "pre_harvest"],
+            "applicable_regions": ["ar-mendoza-oasis-norte"],
+            "applicability": "specific",
+        }
+    )
     manifest.write_text(json.dumps({"sources": [source]}))
-    second = build(manifest, tmp_path / "catalogues")
+
+    output = tmp_path / "catalogues"
+    evidence = build(manifest, output).evidence[0]
+
+    assert evidence.source_type == "technical_guide"
+    assert evidence.growth_stages == ("vegetative_growth", "pre_harvest")
+    assert evidence.applicable_regions == ("ar-mendoza-oasis-norte",)
+    assert evidence.applicability == "specific"
+    assert load_catalogue(output).evidence[0] == evidence
+
+
+@pytest.mark.parametrize(
+    ("target", "invalid_value"),
+    [
+        ("source_type", "blog_post"),
+        ("growth_stages", ["germination"]),
+        ("growth_stages", ["flowering", "flowering"]),
+        ("applicable_regions", ["ar-mendoza-inferred"]),
+        ("applicability", "regional"),
+    ],
+)
+def test_uncontrolled_or_unsupported_metadata_is_rejected(tmp_path, target, invalid_value):
+    manifest, source = fixture_source(tmp_path)
+    output = tmp_path / "catalogues"
+    first = build(manifest, output)
+    previous = (output / "active.json").read_bytes()
+    if target == "source_type":
+        source[target] = invalid_value
+    else:
+        source["pages"][0][target] = invalid_value
+    manifest.write_text(json.dumps({"sources": [source]}))
+
+    with pytest.raises(ValueError) as exc_info:
+        build(manifest, output)
+
+    assert target in str(exc_info.value)
+    assert (output / "active.json").read_bytes() == previous
+    assert (output / f"{first.version}.sqlite").is_file()
+
+
+def test_metadata_change_creates_new_version_without_activation_on_failure(tmp_path):
+    manifest, source = fixture_source(tmp_path)
+    output = tmp_path / "catalogues"
+    first = build(manifest, output)
+    previous = (output / "active.json").read_bytes()
+    assert first.evidence[0].source_type is None
+    assert first.evidence[0].growth_stages == ()
+    assert first.evidence[0].applicable_regions == ()
+    assert first.evidence[0].applicability == "unknown"
+
+    source["pages"][0]["growth_stages"] = ["unsupported_stage"]
+    manifest.write_text(json.dumps({"sources": [source]}))
+    with pytest.raises(ValueError):
+        build(manifest, output)
+    assert (output / "active.json").read_bytes() == previous
+
+    source["source_type"] = "institutional_fact_sheet"
+    source["pages"][0].update(
+        {
+            "growth_stages": ["flowering"],
+            "applicable_regions": ["ar-mendoza-oasis-norte"],
+            "applicability": "specific",
+        }
+    )
+    manifest.write_text(json.dumps({"sources": [source]}))
+    second = build(manifest, output)
+    repeated = build(manifest, output)
+
     assert second.version != first.version
     assert second.evidence[0].evidence_id != first.evidence[0].evidence_id
+    assert repeated == second
+    assert (output / f"{first.version}.sqlite").is_file()
+    assert json.loads((output / "active.json").read_text())["version"] == second.version
+
+
+@pytest.mark.parametrize(
+    ("target", "invalid_value"),
+    [
+        ("source_type", "blog_post"),
+        ("applicability", "regional"),
+        ("growth_stages", ["germination"]),
+        ("applicable_regions", ["ar-mendoza-inferred"]),
+        ("growth_stages", ["flowering", "flowering"]),
+        (
+            "applicable_regions",
+            ["ar-mendoza-oasis-norte", "ar-mendoza-oasis-norte"],
+        ),
+        ("growth_stages", "flowering"),
+        ("applicable_regions", "ar-mendoza-oasis-norte"),
+    ],
+)
+def test_snapshot_metadata_is_validated_on_deserialization(tmp_path, target, invalid_value):
+    import sqlite3
+
+    from agro_rag.infrastructure.corpus import load_catalogue
+
+    manifest, _ = fixture_source(tmp_path)
+    output = tmp_path / "catalogues"
+    catalogue = build(manifest, output)
+    snapshot = output / f"{catalogue.version}.sqlite"
+    with sqlite3.connect(snapshot) as db:
+        row = db.execute("SELECT payload FROM evidence").fetchone()
+        payload = json.loads(row[0])
+        payload[target] = invalid_value
+        db.execute("UPDATE evidence SET payload = ?", (json.dumps(payload),))
+
+    with pytest.raises(ValueError, match=target):
+        load_catalogue(output)
+
+
+def test_new_snapshot_is_verified_before_activation(tmp_path, monkeypatch):
+    from agro_rag.infrastructure import corpus
+
+    manifest, source = fixture_source(tmp_path)
+    output = tmp_path / "catalogues"
+    first = build(manifest, output)
+    previous = (output / "active.json").read_bytes()
+    source["source_type"] = "technical_manual"
+    manifest.write_text(json.dumps({"sources": [source]}))
+    read_snapshot = corpus.read_snapshot
+
+    def reject_new_snapshot(path, version):
+        if version != first.version:
+            raise ValueError("verificacion posterior controlada")
+        return read_snapshot(path, version)
+
+    monkeypatch.setattr(corpus, "read_snapshot", reject_new_snapshot)
+
+    with pytest.raises(ValueError, match="verificacion posterior controlada"):
+        corpus.build_catalogue(manifest, output)
+
+    assert (output / "active.json").read_bytes() == previous
+    assert (output / f"{first.version}.sqlite").is_file()
 
 
 def test_utf8_manifest_markers_are_preserved_on_windows(tmp_path):
