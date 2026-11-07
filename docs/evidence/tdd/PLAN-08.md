@@ -29,5 +29,8 @@ resultado: Change '08-metadata-aware-retrieval' is valid
 
 ## Estado
 
-PLAN-08.1..08.4 completos. PLAN-08.5 permanece pendiente hasta integrar esta planificación y
-registrar el commit base real de META-01. Ningún agente implementador fue iniciado en este corte.
+PLAN-08.1..08.5 completos. El PR #36 fue integrado en `main` con commit
+`eb9122dc2c61fe0035bf09659662ca4fd6d2cc8c`. La rama `feat/meta-01-corpus-contract` parte de ese
+commit y queda asignada al agente implementador RAG/datos A. La implementación funcional aún no se
+inició; el Issue #40 registra propiedad y handoff esperado. META-01 debe comenzar con su handoff y
+prueba RED observable.

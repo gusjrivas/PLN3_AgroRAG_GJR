@@ -36,17 +36,19 @@ declara ciclo RED de producto para prosa de planificación.
 - [x] PLAN-08.2 Crear requisitos, escenarios, test-plan y grafo de dependencias.
 - [x] PLAN-08.3 Registrar responsables, ramas propuestas y archivos de propiedad.
 - [x] PLAN-08.4 Validar OpenSpec estricto y revisar consistencia documental.
-- [ ] PLAN-08.5 Integrar la planificación y registrar commit base para META-01.
+- [x] PLAN-08.5 Integrar la planificación en PR #36 y registrar `eb9122d` como commit base de META-01.
 
 ## META-01 — Contrato de corpus y evidencia
 
-Responsable propuesto: agente RAG/datos A. Rama: `feat/meta-01-corpus-contract`. Dependencias:
-PLAN-08 integrado. Propiedad exclusiva: `src/agro_rag/domain/evidence.py`,
+Responsable asignado: agente implementador RAG/datos A, coordinado por Gustavo Julián Rivas. Rama:
+`feat/meta-01-corpus-contract`. Commit base: `eb9122dc2c61fe0035bf09659662ca4fd6d2cc8c`.
+Issue: #40. Dependencias: PLAN-08 integrado mediante PR #36. Propiedad exclusiva:
+`src/agro_rag/domain/evidence.py`,
 `src/agro_rag/infrastructure/corpus.py`, fixtures propios de corpus,
 `tests/integration/test_corpus.py` y `docs/evidence/tdd/META-01-metadata-contract.md`. El manifiesto
 real no se cura todavía; usar fixtures mínimos. No editar retrieval, API o Pinecone.
 
-- [ ] META-01.1 Leer ADR-006/016, confirmar base y registrar handoff/propiedad.
+- [ ] META-01.1 Leer ADR-006/016 y registrar handoff; base, rama y propiedad ya fijadas.
 - [ ] META-01.2 RED: propagación, vocabularios inválidos, ausencia no inferida y cambio de versión.
 - [ ] META-01.3 GREEN: ampliar modelos y propagar metadata con serialización determinista.
 - [ ] META-01.4 REFACTOR: idempotencia, snapshot anterior, typing, Ruff y suite de corpus.
