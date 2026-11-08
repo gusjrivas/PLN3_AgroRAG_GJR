@@ -20,8 +20,8 @@ class Ranking:
         self.failure = failure
         self.calls = []
 
-    def rank(self, question, crop):
-        self.calls.append((question, crop))
+    def rank(self, question, filters):
+        self.calls.append((question, filters))
         if self.failure:
             raise OSError("provider credentials must not leak")
         return tuple(api().ScoredId(id, float(len(self.ids) - i)) for i, id in enumerate(self.ids))
@@ -97,6 +97,59 @@ def test_candidate_ranking_can_be_benchmarked_without_tokenizer_or_context_selec
 
     assert pipeline.corpus_version == "v1"
     assert [row.evidence_id for row in pipeline.rank("riego", None)] == ["a", "b"]
+
+
+@pytest.mark.parametrize("mode", ["bm25", "vector", "hybrid", "hybrid_rerank"])
+def test_meta_02_pipeline_applies_shared_policy_in_every_mode(mode):
+    m = api()
+    items = [
+        evidence("unknown", "riego", source="U", crop=None),
+        evidence("general", "riego", source="G", crop=None, applicability="general"),
+        evidence(
+            "incompatible",
+            "riego",
+            source="I",
+            growth_stages=("pre_harvest",),
+            applicability="specific",
+        ),
+        evidence(
+            "exact",
+            "riego",
+            source="E",
+            growth_stages=("flowering",),
+            applicable_regions=("ar-mendoza-oasis-norte",),
+            applicability="specific",
+        ),
+    ]
+    provider_ids = ["unknown", "general", "incompatible", "exact"]
+    lexical = Ranking(provider_ids)
+    vector = Ranking(provider_ids)
+    filters = m.RetrievalFilters(
+        crop="tomato", growth_stage="flowering", region="ar-mendoza-oasis-norte"
+    )
+
+    result = build(
+        mode,
+        items,
+        lexical=lexical,
+        vector=vector,
+        reranker=Reranker(["unknown", "general", "exact"]),
+    ).retrieve("riego", filters)
+
+    assert [item.evidence_id for item in result.evidence] == ["exact", "general", "unknown"]
+    assert result.excluded_ids == ("incompatible",)
+    if mode != "vector":
+        assert lexical.calls == [("riego", filters)]
+    if mode != "bm25":
+        assert vector.calls == [("riego", filters)]
+
+
+def test_meta_02_crop_argument_remains_transitionally_compatible() -> None:
+    structured = build("bm25").retrieve("riego", api().RetrievalFilters(crop="tomato"))
+    legacy = build("bm25").retrieve("riego", "tomato")
+
+    assert structured.evidence == legacy.evidence
+    assert structured.excluded_ids == legacy.excluded_ids
 
 
 @pytest.mark.parametrize(

@@ -5,7 +5,7 @@ import pytest
 from agro_rag.domain.evidence import Catalogue, Evidence
 
 
-def evidence(id, text, source="A", crop="tomato"):
+def evidence(id, text, source="A", crop="tomato", **metadata):
     return Evidence(
         id,
         "v1",
@@ -21,6 +21,7 @@ def evidence(id, text, source="A", crop="tomato"):
         text,
         0,
         len(text),
+        **metadata,
     )
 
 
@@ -28,6 +29,136 @@ def retriever(items):
     from agro_rag.infrastructure.retrieval import LexicalRetriever
 
     return LexicalRetriever(Catalogue("v1", tuple(items)))
+
+
+def test_exact_metadata_precedes_general_and_unknown() -> None:
+    from agro_rag.application.retrieval import RetrievalFilters, prioritize_evidence
+
+    items = (
+        evidence("unknown-a", "riego", crop=None),
+        evidence(
+            "exact-a",
+            "riego",
+            growth_stages=("flowering",),
+            applicable_regions=("ar-mendoza-oasis-norte",),
+            applicability="specific",
+        ),
+        evidence("general-a", "riego", crop=None, applicability="general"),
+        evidence("unknown-b", "riego", crop=None),
+        evidence(
+            "exact-b",
+            "riego",
+            growth_stages=("flowering",),
+            applicable_regions=("ar-mendoza-oasis-norte",),
+            applicability="specific",
+        ),
+        evidence(
+            "other-stage",
+            "riego",
+            growth_stages=("pre_harvest",),
+            applicability="specific",
+        ),
+        evidence("wrong-crop", "riego", crop="lettuce", applicability="general"),
+    )
+    filters = RetrievalFilters(
+        crop="tomato", growth_stage="flowering", region="ar-mendoza-oasis-norte"
+    )
+
+    prioritized, excluded = prioritize_evidence(items, filters)
+
+    assert [item.evidence_id for item in prioritized] == [
+        "exact-a",
+        "exact-b",
+        "general-a",
+        "unknown-a",
+        "unknown-b",
+    ]
+    assert excluded == ("other-stage", "wrong-crop")
+
+
+def test_incompatible_crop_is_excluded_and_general_evidence_survives() -> None:
+    from agro_rag.application.retrieval import RetrievalFilters, prioritize_evidence
+
+    lettuce = evidence("lettuce", "riego", crop="lettuce", applicability="specific")
+    general = evidence("general", "riego", crop=None, applicability="general")
+
+    prioritized, excluded = prioritize_evidence((lettuce, general), RetrievalFilters(crop="tomato"))
+
+    assert prioritized == (general,)
+    assert excluded == ("lettuce",)
+
+
+def test_crop_only_excludes_contradictions_without_reordering_compatible_items() -> None:
+    from agro_rag.application.retrieval import RetrievalFilters, prioritize_evidence
+
+    untagged = evidence("untagged", "riego", crop=None)
+    tomato = evidence("tomato", "riego", crop="tomato")
+
+    prioritized, excluded = prioritize_evidence((untagged, tomato), RetrievalFilters(crop="tomato"))
+
+    assert prioritized == (untagged, tomato)
+    assert excluded == ()
+
+
+@pytest.mark.parametrize(
+    ("field", "value"),
+    [
+        ("crop", []),
+        ("growth_stage", []),
+        ("region", []),
+        ("growth_stage", 1),
+        ("region", object()),
+    ],
+)
+def test_retrieval_filters_reject_non_string_values_with_value_error(field, value) -> None:
+    from agro_rag.application.retrieval import RetrievalFilters
+
+    with pytest.raises(ValueError, match=field):
+        RetrievalFilters(**{field: value})
+
+
+def test_absent_stage_and_region_preserve_baseline_order() -> None:
+    from agro_rag.application.retrieval import RetrievalFilters, prioritize_evidence
+
+    items = (
+        evidence("specific", "riego", growth_stages=("flowering",)),
+        evidence("general", "riego", applicability="general"),
+        evidence("unknown", "riego", crop=None),
+    )
+
+    prioritized, excluded = prioritize_evidence(items, RetrievalFilters())
+
+    assert prioritized == items
+    assert excluded == ()
+
+
+def test_meta_02_bm25_uses_shared_structured_policy() -> None:
+    from agro_rag.application.retrieval import RetrievalFilters
+
+    exact = evidence(
+        "exact",
+        "humedad cultivo",
+        source="E",
+        growth_stages=("flowering",),
+        applicable_regions=("ar-mendoza-oasis-norte",),
+        applicability="specific",
+    )
+    general = evidence("general", "humedad cultivo", source="G", crop=None, applicability="general")
+    unknown = evidence("unknown", "humedad cultivo", source="U", crop=None)
+    incompatible = evidence(
+        "incompatible",
+        "humedad cultivo",
+        source="I",
+        growth_stages=("pre_harvest",),
+        applicability="specific",
+    )
+
+    result = retriever([unknown, general, incompatible, exact]).search(
+        "humedad cultivo",
+        RetrievalFilters(crop="tomato", growth_stage="flowering", region="ar-mendoza-oasis-norte"),
+    )
+
+    assert [item.evidence_id for item in result] == ["exact", "general", "unknown"]
 
 
 def test_search_crop_filter_empty_and_accent_normalization():

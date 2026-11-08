@@ -6,6 +6,12 @@ from collections import Counter
 from dataclasses import dataclass
 from typing import Literal, Protocol
 
+from agro_rag.application.retrieval import (
+    FilterInput,
+    RetrievalFilters,
+    normalize_filters,
+    prioritize_evidence,
+)
 from agro_rag.domain.evidence import Catalogue, Evidence
 
 Mode = Literal["bm25", "vector", "hybrid", "hybrid_rerank"]
@@ -29,7 +35,7 @@ class CandidateRanker(Protocol):
     @property
     def corpus_version(self) -> str: ...
 
-    def rank(self, question: str, crop: str | None) -> tuple[ScoredId, ...]: ...
+    def rank(self, question: str, filters: FilterInput) -> tuple[ScoredId, ...]: ...
 
 
 class Reranker(Protocol):
@@ -136,8 +142,8 @@ class RetrievalPipeline:
         self.token_budget, self.source_cap = token_budget, source_cap
         self.max_items, self.candidate_limit = max_items, candidate_limit
 
-    def search(self, question: str, crop: str | None) -> tuple[Evidence, ...]:
-        return self.retrieve(question, crop).evidence
+    def search(self, question: str, filters: FilterInput) -> tuple[Evidence, ...]:
+        return self.retrieve(question, filters).evidence
 
     @property
     def corpus_version(self) -> str:
@@ -155,9 +161,29 @@ class RetrievalPipeline:
             for id, score in sorted(best.items(), key=lambda item: (-item[1], item[0]))
         )
 
+    def _apply_policy(
+        self,
+        rows: tuple[ScoredId, ...],
+        filters: RetrievalFilters,
+        excluded: set[str],
+    ) -> tuple[ScoredId, ...]:
+        scores: dict[str, ScoredId] = {}
+        candidates = []
+        for row in rows:
+            item = self.items.get(row.evidence_id)
+            if item is None:
+                excluded.add(row.evidence_id)
+                continue
+            scores[row.evidence_id] = row
+            candidates.append(item)
+        prioritized, incompatible = prioritize_evidence(tuple(candidates), filters)
+        excluded.update(incompatible)
+        return tuple(scores[item.evidence_id] for item in prioritized)
+
     def _rank_candidates(
-        self, question: str, crop: str | None
+        self, question: str, filter_input: FilterInput
     ) -> tuple[tuple[ScoredId, ...], tuple[StageRanking, ...], tuple[str, ...]]:
+        filters = normalize_filters(filter_input)
         stages: list[StageRanking] = []
         excluded: set[str] = set()
         rankings: list[tuple[ScoredId, ...]] = []
@@ -169,17 +195,11 @@ class RetrievalPipeline:
         for name, provider in providers if question.strip() else []:
             assert provider is not None  # validated at construction
             try:
-                rows = provider.rank(question, crop)
+                rows = provider.rank(question, filters)
             except Exception as exc:
                 raise RetrievalUnavailable(f"Proveedor {name} no disponible") from exc
-            valid = []
-            for row in self._normalize(rows):
-                item = self.items.get(row.evidence_id)
-                if item is None or (crop and item.crop not in (None, crop)):
-                    excluded.add(row.evidence_id)
-                else:
-                    valid.append(row)
-            ranking = tuple(valid[: self.candidate_limit])
+            valid = self._apply_policy(self._normalize(rows), filters, excluded)
+            ranking = valid[: self.candidate_limit]
             rankings.append(ranking)
             stages.append(StageRanking(name, ranking))
         ordered = rankings[0] if rankings else ()
@@ -189,6 +209,7 @@ class RetrievalPipeline:
                 for rank, row in enumerate(ranking, 1):
                     scores[row.evidence_id] = scores.get(row.evidence_id, 0.0) + 1 / (60 + rank)
             ordered = self._normalize(tuple(ScoredId(id, score) for id, score in scores.items()))
+            ordered = self._apply_policy(ordered, filters, excluded)
             ordered = ordered[: self.candidate_limit]
             stages.append(StageRanking("rrf", ordered))
         if self.mode == "hybrid_rerank" and ordered:
@@ -201,15 +222,16 @@ class RetrievalPipeline:
             ordered = self._normalize(reranked)
             if {r.evidence_id for r in ordered} != {e.evidence_id for e in candidates}:
                 raise RetrievalContractError("El reranker debe puntuar exactamente los candidatos")
+            ordered = self._apply_policy(ordered, filters, excluded)
             stages.append(StageRanking("reranker", ordered))
         return ordered, tuple(stages), tuple(sorted(excluded))
 
-    def rank(self, question: str, crop: str | None) -> tuple[ScoredId, ...]:
+    def rank(self, question: str, filters: FilterInput) -> tuple[ScoredId, ...]:
         """Return final candidates for evaluation without invoking context tokenization."""
-        return self._rank_candidates(question, crop)[0]
+        return self._rank_candidates(question, filters)[0]
 
-    def retrieve(self, question: str, crop: str | None) -> RetrievalResult:
-        ordered, stages, excluded = self._rank_candidates(question, crop)
+    def retrieve(self, question: str, filters: FilterInput) -> RetrievalResult:
+        ordered, stages, excluded = self._rank_candidates(question, filters)
         selected: list[Evidence] = []
         count = 0
         counts: Counter[str] = Counter()

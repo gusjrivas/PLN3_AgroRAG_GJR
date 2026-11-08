@@ -1,3 +1,4 @@
+from dataclasses import replace
 from typing import Any, cast
 
 import pytest
@@ -32,6 +33,7 @@ class ForbiddenFactory:
 
 
 def test_bm25_runtime_does_not_initialize_semantic_providers() -> None:
+    from agro_rag.application.retrieval import RetrievalFilters
     from agro_rag.bootstrap.retrieval import RetrievalFactories, build_retrieval_runtime
 
     forbidden = ForbiddenFactory()
@@ -47,13 +49,12 @@ def test_bm25_runtime_does_not_initialize_semantic_providers() -> None:
     )
 
     assert runtime.mode == "bm25"
-    assert runtime.retriever.search("humedad", "tomato")[0].evidence_id == "abc"
+    result = runtime.retriever.search("humedad", RetrievalFilters(crop="tomato"))
+    assert result[0].evidence_id == "abc"
     runtime.close()
 
 
 def test_bm25_runtime_applies_configured_context_breadth() -> None:
-    from dataclasses import replace
-
     from agro_rag.bootstrap.retrieval import build_retrieval_runtime
 
     items = tuple(
@@ -85,6 +86,7 @@ def test_semantic_runtime_requires_explicit_secret_and_tokenizer(mode: str) -> N
 
 
 def test_hybrid_runtime_composes_verified_providers_and_closes_resources() -> None:
+    from agro_rag.application.retrieval import RetrievalFilters
     from agro_rag.bootstrap.retrieval import RetrievalFactories, build_retrieval_runtime
 
     calls: dict[str, Any] = {}
@@ -118,7 +120,12 @@ def test_hybrid_runtime_composes_verified_providers_and_closes_resources() -> No
 
         def query(self, **kwargs: Any) -> dict[str, Any]:
             calls["query"] = kwargs
-            return {"matches": [{"id": "abc", "score": 0.9}]}
+            return {
+                "matches": [
+                    {"id": "unknown", "score": 0.9},
+                    {"id": "exact", "score": 0.8},
+                ]
+            }
 
     class Handle:
         index = Index()
@@ -137,7 +144,7 @@ def test_hybrid_runtime_composes_verified_providers_and_closes_resources() -> No
     class Reranker:
         def rank(self, question: str, candidates: tuple[Evidence, ...]) -> tuple[ScoredId, ...]:
             calls["reranked"] = (question, candidates)
-            return (ScoredId("abc", 1.0),)
+            return (ScoredId("unknown", 1.0), ScoredId("exact", 0.5))
 
     def connect(**kwargs: Any) -> Any:
         calls["connect"] = kwargs
@@ -168,9 +175,19 @@ def test_hybrid_runtime_composes_verified_providers_and_closes_resources() -> No
         retrieval_tokenizer_revision="revision-t",
         semantic_local_files_only=True,
     )
+    base = evidence()
+    exact = replace(
+        base,
+        evidence_id="exact",
+        source_id="E",
+        growth_stages=("flowering",),
+        applicable_regions=("ar-mendoza-oasis-norte",),
+        applicability="specific",
+    )
+    unknown = replace(base, evidence_id="unknown", source_id="U", crop=None)
     runtime = build_retrieval_runtime(
         config,
-        Catalogue("v1", (evidence(),)),
+        Catalogue("v1", (unknown, exact)),
         factories=RetrievalFactories(
             connect_pinecone=connect,
             load_embedder=load_embedder,
@@ -180,9 +197,22 @@ def test_hybrid_runtime_composes_verified_providers_and_closes_resources() -> No
     )
 
     assert runtime.mode == "hybrid_rerank"
-    assert runtime.retriever.search("humedad", "tomato")[0].evidence_id == "abc"
+    filters = RetrievalFilters(
+        crop="tomato", growth_stage="flowering", region="ar-mendoza-oasis-norte"
+    )
+    result = runtime.retriever.search("humedad", filters)
+    assert [item.evidence_id for item in result] == ["exact", "unknown"]
     assert calls["identity_namespace"] == "corpus-v1"
     assert calls["query"]["namespace"] == "corpus-v1"
+    assert calls["query"]["filter"] == {
+        "$and": [
+            {"kind": {"$eq": "chunk"}},
+            {"corpus_version": {"$eq": "v1"}},
+            {"$or": [{"crop": {"$eq": "tomato"}}, {"crop": {"$exists": False}}]},
+        ]
+    }
+    assert "growth_stage" not in str(calls["query"]["filter"])
+    assert "region" not in str(calls["query"]["filter"])
     assert calls["connect"]["api_key"] == "test-secret"
     assert calls["tokenizer"]["local_files_only"] is True
     assert calls["reranked"][0] == "humedad"
