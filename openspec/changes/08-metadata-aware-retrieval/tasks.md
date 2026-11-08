@@ -1,6 +1,6 @@
 # Tasks: Recuperación sensible a metadatos curados
 
-Estado: META-01 implementada y verificada; META-02 es la próxima tarea sin dependencias abiertas.
+Estado: META-01 integrada; META-02 implementada y verificada, pendiente de integración remota.
 Coordinador: Gustavo Julián Rivas.
 Rama de planificación: `docs/professor-rag-feedback-draft`. Rama de integración propuesta después
 de integrar este plan: `feat/metadata-aware-retrieval`. Base y commit se registran al asignar cada
@@ -48,6 +48,7 @@ Issue: #40. Dependencias: PLAN-08 integrado mediante PR #36. Propiedad exclusiva
 `src/agro_rag/infrastructure/corpus.py`, fixtures propios de corpus,
 `tests/integration/test_corpus.py` y `docs/evidence/tdd/META-01-metadata-contract.md`. El manifiesto
 real no se cura todavía; usar fixtures mínimos. No editar retrieval, API o Pinecone.
+Integración: PR #41, merge `ab032e4f334c42ee875743a83c3ad1fa115d5bd5`.
 
 - [x] META-01.1 Leer ADR-006/016 y registrar handoff; base, rama y propiedad ya fijadas.
 - [x] META-01.2 RED: propagación, vocabularios inválidos, ausencia no inferida y cambio de versión.
@@ -57,18 +58,20 @@ real no se cura todavía; usar fixtures mínimos. No editar retrieval, API o Pin
 
 ## META-02 — Política común y contrato de retrieval
 
-Responsable propuesto: agente RAG/datos A. Rama: `feat/meta-02-retrieval-policy`. Dependencias:
-META-01 integrado. Propiedad exclusiva: `src/agro_rag/application/retrieval.py`,
+Responsable asignado: agente RAG/datos A, coordinado por Gustavo Julián Rivas. Rama:
+`feat/meta-02-retrieval-policy`. Base: `ab032e4f334c42ee875743a83c3ad1fa115d5bd5`. Issue: #44.
+Dependencias: META-01 integrado mediante PR #41. Propiedad exclusiva:
+`src/agro_rag/application/retrieval.py`,
 `src/agro_rag/application/retrieval_pipeline.py`, `src/agro_rag/infrastructure/retrieval.py`,
 `src/agro_rag/bootstrap/retrieval.py`, `tests/unit/test_retrieval.py`,
 `tests/unit/test_retrieval_pipeline.py`, pruebas runtime focalizadas y
 `docs/evidence/tdd/META-02-retrieval-policy.md`. No editar API, caso de uso ni Pinecone.
 
-- [ ] META-02.1 RED: exact/general/unknown/incompatible, cultivo estricto y ausencia de filtros.
-- [ ] META-02.2 RED: demostrar paridad de política entre runtime BM25 y pipeline sin cargar semántica.
-- [ ] META-02.3 GREEN: introducir `RetrievalFilters` y política pura compartida.
-- [ ] META-02.4 GREEN: adaptar puertos/runtimes conservando orden, diversidad y presupuesto.
-- [ ] META-02.5 REFACTOR: suite retrieval, typing, arquitectura y evidencia; revisión e integración.
+- [x] META-02.1 RED: exact/general/unknown/incompatible, cultivo estricto y ausencia de filtros.
+- [x] META-02.2 RED: demostrar paridad de política entre runtime BM25 y pipeline sin cargar semántica.
+- [x] META-02.3 GREEN: introducir `RetrievalFilters` y política pura compartida.
+- [x] META-02.4 GREEN: adaptar puertos/runtimes conservando orden, diversidad y presupuesto.
+- [x] META-02.5 REFACTOR: suite retrieval, typing, arquitectura y evidencia; revisión e integración.
 
 ## META-03 — API, contexto, caché y suficiencia
 

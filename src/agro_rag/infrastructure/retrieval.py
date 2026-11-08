@@ -5,6 +5,7 @@ from functools import lru_cache
 
 from rank_bm25 import BM25Plus
 
+from agro_rag.application.retrieval import FilterInput, normalize_filters, prioritize_evidence
 from agro_rag.application.retrieval_pipeline import ScoredId
 from agro_rag.domain.evidence import Catalogue, Evidence
 
@@ -66,10 +67,11 @@ class LexicalRetriever:
         self.index = BM25Plus(self.terms) if self.items else None
         self._cached = lru_cache(maxsize=128)(self._search)
 
-    def search(self, question: str, crop: str | None) -> tuple[Evidence, ...]:
-        return self._cached(question, crop)
+    def search(self, question: str, filters: FilterInput) -> tuple[Evidence, ...]:
+        return self._cached(question, filters)
 
-    def rank(self, question: str, crop: str | None) -> tuple[ScoredId, ...]:
+    def rank(self, question: str, filter_input: FilterInput) -> tuple[ScoredId, ...]:
+        filters = normalize_filters(filter_input)
         query = tokens(question)
         if not query or self.index is None:
             return ()
@@ -77,21 +79,22 @@ class LexicalRetriever:
         indices = sorted(
             range(len(self.items)), key=lambda i: (-scores[i], self.items[i].evidence_id)
         )
-        ranked = []
+        ranked: list[ScoredId] = []
         for i in indices:
             item = self.items[i]
-            if crop and item.crop not in (None, crop):
-                continue
             if not set(query).intersection(self.terms[i]):
                 continue
             ranked.append(ScoredId(item.evidence_id, float(scores[i])))
-        return tuple(ranked)
+        by_id = {row.evidence_id: row for row in ranked}
+        candidates = tuple(self.items[i] for i in indices if self.items[i].evidence_id in by_id)
+        prioritized, _ = prioritize_evidence(candidates, filters)
+        return tuple(by_id[item.evidence_id] for item in prioritized)
 
-    def _search(self, question: str, crop: str | None) -> tuple[Evidence, ...]:
+    def _search(self, question: str, filters: FilterInput) -> tuple[Evidence, ...]:
         items = {item.evidence_id: item for item in self.items}
         selected = []
         counts: Counter[str] = Counter()
-        for row in self.rank(question, crop):
+        for row in self.rank(question, filters):
             item = items[row.evidence_id]
             if counts[item.source_id] >= self.source_cap:
                 continue
