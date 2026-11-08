@@ -108,7 +108,8 @@ Controles finales:
 
 ## Estado de entrega
 
-- Commit/push: pendientes del coordinador.
+- Commit funcional: `ecff9f1` (`feat: add metadata-aware retrieval policy`); push pendiente del
+  coordinador al registrar esta evidencia.
 - Revisión independiente: completada por un agente distinto. El revisor detectó las tres brechas
   registradas arriba y, después de las correcciones, confirmó que no quedan bloqueantes; repitió
   retrieval+métricas (`78 passed`), Ruff, formato, mypy y `git diff --check`.

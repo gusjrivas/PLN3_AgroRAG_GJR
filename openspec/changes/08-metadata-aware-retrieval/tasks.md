@@ -1,6 +1,6 @@
 # Tasks: Recuperación sensible a metadatos curados
 
-Estado: META-01 integrada; META-02 asignada y en ejecución.
+Estado: META-01 integrada; META-02 implementada y verificada, pendiente de integración remota.
 Coordinador: Gustavo Julián Rivas.
 Rama de planificación: `docs/professor-rag-feedback-draft`. Rama de integración propuesta después
 de integrar este plan: `feat/metadata-aware-retrieval`. Base y commit se registran al asignar cada
@@ -67,11 +67,11 @@ Dependencias: META-01 integrado mediante PR #41. Propiedad exclusiva:
 `tests/unit/test_retrieval_pipeline.py`, pruebas runtime focalizadas y
 `docs/evidence/tdd/META-02-retrieval-policy.md`. No editar API, caso de uso ni Pinecone.
 
-- [ ] META-02.1 RED: exact/general/unknown/incompatible, cultivo estricto y ausencia de filtros.
-- [ ] META-02.2 RED: demostrar paridad de política entre runtime BM25 y pipeline sin cargar semántica.
-- [ ] META-02.3 GREEN: introducir `RetrievalFilters` y política pura compartida.
-- [ ] META-02.4 GREEN: adaptar puertos/runtimes conservando orden, diversidad y presupuesto.
-- [ ] META-02.5 REFACTOR: suite retrieval, typing, arquitectura y evidencia; revisión e integración.
+- [x] META-02.1 RED: exact/general/unknown/incompatible, cultivo estricto y ausencia de filtros.
+- [x] META-02.2 RED: demostrar paridad de política entre runtime BM25 y pipeline sin cargar semántica.
+- [x] META-02.3 GREEN: introducir `RetrievalFilters` y política pura compartida.
+- [x] META-02.4 GREEN: adaptar puertos/runtimes conservando orden, diversidad y presupuesto.
+- [x] META-02.5 REFACTOR: suite retrieval, typing, arquitectura y evidencia; revisión e integración.
 
 ## META-03 — API, contexto, caché y suficiencia
 
