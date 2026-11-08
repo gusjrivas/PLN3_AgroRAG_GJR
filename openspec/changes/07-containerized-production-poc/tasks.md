@@ -66,6 +66,13 @@ Corte CI-V2-02: los checks post-merge de `9de0171` detectaron drift de `ubuntu-l
 workflows Linux fijan `ubuntu-24.04` y un contrato impide volver a usar la etiqueta móvil. La tarea
 5.3 continúa abierta hasta integrar el corte, aprobar CI remoto y publicar la candidata exacta.
 
+Corte CI-V2-03: el gate `container-supply-chain` del PR #41 detectó tres HIGH nuevos en las
+imágenes fijadas (`CVE-2026-109518` en API/UI y `CVE-2026-78661` en gateway). Issue #42, rama
+`fix/ci-v2-03-image-cves`, base `eb9122d`. Propiedad: `Dockerfile`, contratos de imágenes/supply
+chain estrictamente necesarios, excepciones sólo con justificación completa y evidencia
+`docs/evidence/tdd/CI-V2-03-image-cves.md`. No se relaja Trivy ni se mezcla la remediación con
+META-01. La integración exige `quality` y `container-supply-chain` aprobados.
+
 Ejecución REL-V2-08: `d38814b4` publicó y desplegó producto/runner por digest. La corrida autorizada
 terminó `BLOCKED` en USD 0,080445: la reserva siguiente habría elevado el total a USD 0,200445 y no
 se llamó al gateway. API key cubrió 32 casos reales sin detección; DAN dejó 15 respuestas reales
