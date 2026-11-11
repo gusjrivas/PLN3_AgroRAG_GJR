@@ -159,11 +159,13 @@ git diff --check
 ## Estado de entrega
 
 - Commit de implementación y evidencia: `b1d51f0` (`feat: propagate query metadata context`).
-- Sin push ni PR desde esta sesión: `gh` devolvió HTTP 401; la integración remota corresponde al
-  coordinador cuando se restaure la autenticación.
+- PR #48 integrado en `main` mediante merge `75ff7cd44b58c4a127743189a4d9cfdeb4017533`.
 - El schema público de respuesta, citas, errores HTTP tipados y auditoría redactada permanecen
   intactos; los nuevos cierres deterministas conservan `usage`, `cache_hit` y evento de auditoría.
 - Verificación independiente de tests completada por el coordinador; revisión semántica final del
   diff permanece a cargo de integración.
 - Validación exclusivamente offline con dobles; no demuestra calidad agronómica ni comportamiento
   de un modelo o índice remoto real.
+- Regresión conjunta posterior a integrar META-03 y META-04: `338 passed, 1 skipped, 3 deselected`,
+  Ruff, mypy e import-linter verdes. La primera corrida local tuvo 14 `PermissionError` de sandbox
+  al leer el catálogo; la repetición autorizada sobre el mismo `main` terminó con exit 0.
