@@ -125,9 +125,12 @@ Controles finales:
 ## Estado de entrega
 
 - Commit de implementación y evidencia: `990890e` (`feat: preserve metadata filters in Pinecone`).
-- Sin push ni PR al registrar este hash; la publicación se realiza después del cierre documental.
+- PR #49 integrado en `main` mediante merge `46e89750073face7470c351fdae20601cefbe432`.
 - La revisión independiente detectó el bloqueo de integración runtime; quedó corregido con RED y
   GREEN reales y la re-revisión independiente aprobó el corte sin hallazgos funcionales.
 - El puente temporal de cultivo fue eliminado: el runtime entrega el objeto estructurado completo
   al adaptador compatible.
 - No se ejecutó el escenario LIVE opcional ni se creó, modificó o consultó ningún índice real.
+- Regresión conjunta posterior a integrar META-03 y META-04: `338 passed, 1 skipped, 3 deselected`,
+  Ruff, mypy e import-linter verdes. La primera corrida local tuvo 14 `PermissionError` de sandbox
+  al leer el catálogo; la repetición autorizada sobre el mismo `main` terminó con exit 0.

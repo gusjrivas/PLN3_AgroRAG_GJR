@@ -1,6 +1,7 @@
 # Tasks: Recuperación sensible a metadatos curados
 
-Estado: META-01 integrada; META-02 implementada y verificada, pendiente de integración remota.
+Estado: META-01..04 integradas; META-05 es la siguiente tarea habilitada y requiere curación
+humana trazable del corpus real.
 Coordinador: Gustavo Julián Rivas.
 Rama de planificación: `docs/professor-rag-feedback-draft`. Rama de integración propuesta después
 de integrar este plan: `feat/metadata-aware-retrieval`. Base y commit se registran al asignar cada
@@ -80,12 +81,13 @@ META-02 integrado. Propiedad exclusiva: `src/agro_rag/api/schemas.py`,
 `src/agro_rag/api/query.py`, `src/agro_rag/application/query.py`, `tests/unit/test_query.py`,
 `tests/contract/test_query_api.py`, fixtures de contrato y
 `docs/evidence/tdd/META-03-query-context.md`. No editar adaptadores de retrieval o Pinecone.
+Integración: PR #48, merge `75ff7cd44b58c4a127743189a4d9cfdeb4017533`.
 
-- [ ] META-03.1 RED: región/etapa llegan a retrieval y forman parte de la clave de caché.
-- [ ] META-03.2 RED: aclaración sin LLM, insuficiencia con contexto completo y pregunta general.
-- [ ] META-03.3 GREEN: agregar `region`, construir filtros y enriquecer contexto de agentes.
-- [ ] META-03.4 GREEN: preservar schemas públicos, citas, errores tipados y auditoría redactada.
-- [ ] META-03.5 REFACTOR: unit/contract, typing, arquitectura, evidencia y revisión.
+- [x] META-03.1 RED: región/etapa llegan a retrieval y forman parte de la clave de caché.
+- [x] META-03.2 RED: aclaración sin LLM, insuficiencia con contexto completo y pregunta general.
+- [x] META-03.3 GREEN: agregar `region`, construir filtros y enriquecer contexto de agentes.
+- [x] META-03.4 GREEN: preservar schemas públicos, citas, errores tipados y auditoría redactada.
+- [x] META-03.5 REFACTOR: unit/contract, typing, arquitectura, evidencia y revisión.
 
 ## META-04 — Metadata Pinecone e identidad remota
 
@@ -94,11 +96,12 @@ META-02 integrado. Puede correr en paralelo con META-03. Propiedad exclusiva:
 `src/agro_rag/infrastructure/pinecone.py`, `tests/unit/test_pinecone.py`, integración live específica
 si se autoriza y `docs/evidence/tdd/META-04-pinecone-metadata.md`. No editar API, caso de uso ni
 política común.
+Integración: PR #49, merge `46e89750073face7470c351fdae20601cefbe432`.
 
-- [ ] META-04.1 RED: payload seguro, filtros de identidad/cultivo y ausencia de texto/rutas.
-- [ ] META-04.2 RED: falla parcial o incompatibilidad no publica manifiesto.
-- [ ] META-04.3 GREEN: ampliar metadata remota y consumir filtros compatibles.
-- [ ] META-04.4 REFACTOR: verificar batch/namespace/identidad, suite offline y evidencia.
+- [x] META-04.1 RED: payload seguro, filtros de identidad/cultivo y ausencia de texto/rutas.
+- [x] META-04.2 RED: falla parcial o incompatibilidad no publica manifiesto.
+- [x] META-04.3 GREEN: ampliar metadata remota y consumir filtros compatibles.
+- [x] META-04.4 REFACTOR: verificar batch/namespace/identidad, suite offline y evidencia.
 - [ ] META-04.5 LIVE opcional: integración aislada sólo con autorización, namespace fresco y presupuesto.
 
 ## META-05 — Curación del corpus real
