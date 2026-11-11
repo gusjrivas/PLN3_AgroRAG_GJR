@@ -158,7 +158,9 @@ git diff --check
 
 ## Estado de entrega
 
-- Sin commit ni push: la integración corresponde al coordinador.
+- Commit de implementación y evidencia: `b1d51f0` (`feat: propagate query metadata context`).
+- Sin push ni PR desde esta sesión: `gh` devolvió HTTP 401; la integración remota corresponde al
+  coordinador cuando se restaure la autenticación.
 - El schema público de respuesta, citas, errores HTTP tipados y auditoría redactada permanecen
   intactos; los nuevos cierres deterministas conservan `usage`, `cache_hit` y evento de auditoría.
 - Verificación independiente de tests completada por el coordinador; revisión semántica final del
