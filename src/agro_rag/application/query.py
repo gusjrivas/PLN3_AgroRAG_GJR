@@ -103,6 +103,7 @@ def preflight_decision(
     asks_current_decision = (
         "cambio" in normalized
         or "demasiado" in normalized
+        or ("deberia" in normalized and "cambiar" in normalized)
         or ("ya" in normalized and any(term in normalized for term in ("deberia", "aumentar")))
     )
     situational_action = asks_current_decision and any(

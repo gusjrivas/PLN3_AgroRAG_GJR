@@ -409,6 +409,7 @@ def test_out_of_scope_or_live_market_questions_abstain_without_model(question, c
     [
         ("¿Cuál es el momento crítico?", None),
         ("Hace mucho calor, ¿cambio el riego?", None),
+        ("Hace mucho calor, ¿debería cambiar el riego?", None),
         ("¿Ya debería aumentar la frecuencia?", "tomato"),
         ("¿El suelo está demasiado húmedo?", None),
         ("El sensor marca 20, ¿riego ahora?", None),

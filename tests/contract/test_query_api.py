@@ -273,6 +273,51 @@ def test_general_documentary_question_does_not_require_region():
     assert model.calls == 2
 
 
+def test_situational_irrigation_infinitive_clarifies_without_model_call():
+    from agro_rag.application.query import QueryService
+    from agro_rag.bootstrap.app import create_app
+    from agro_rag.bootstrap.settings import Settings
+    from agro_rag.domain.evidence import Catalogue, Evidence
+    from agro_rag.infrastructure.retrieval import LexicalRetriever
+
+    item = Evidence(
+        "general",
+        "v1",
+        "S",
+        "Manual",
+        "2008",
+        "https://example.org/doc.pdf",
+        3,
+        "1",
+        "Riego",
+        None,
+        "La programación del riego considera las condiciones meteorológicas.",
+        "La programación del riego considera las condiciones meteorológicas.",
+        0,
+        66,
+        applicability="general",
+    )
+    catalogue = Catalogue("v1", (item,))
+
+    class ModelMustNotRun:
+        async def generate(self, *args):
+            raise AssertionError("La aclaración situacional no debe llamar al modelo")
+
+    service = QueryService(LexicalRetriever(catalogue), ModelMustNotRun(), "v1")
+    app = create_app(Settings(reader_key=KEY), catalogue=catalogue, service=service)
+
+    with TestClient(app) as c:
+        response = c.post(
+            "/v1/query",
+            headers={"X-API-Key": KEY},
+            json={"question": "Hace mucho calor, ¿debería cambiar el riego?"},
+        )
+
+    assert response.status_code == 200
+    assert response.json()["status"] == "needs_clarification"
+    assert response.json()["usage"]["llm_calls"] == 0
+
+
 def test_complete_context_without_evidence_is_insufficient_at_api_boundary():
     from agro_rag.application.query import QueryService
     from agro_rag.bootstrap.app import create_app
