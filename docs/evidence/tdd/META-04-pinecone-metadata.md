@@ -124,7 +124,8 @@ Controles finales:
 
 ## Estado de entrega
 
-- Sin commit ni push, por instrucción del coordinador.
+- Commit de implementación y evidencia: `990890e` (`feat: preserve metadata filters in Pinecone`).
+- Sin push ni PR al registrar este hash; la publicación se realiza después del cierre documental.
 - La revisión independiente detectó el bloqueo de integración runtime; quedó corregido con RED y
   GREEN reales y la re-revisión independiente aprobó el corte sin hallazgos funcionales.
 - El puente temporal de cultivo fue eliminado: el runtime entrega el objeto estructurado completo
