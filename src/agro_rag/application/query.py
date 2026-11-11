@@ -6,12 +6,12 @@ import time
 import unicodedata
 from collections import OrderedDict
 from dataclasses import dataclass
-from typing import Any, Protocol
+from typing import Any, Protocol, cast
 from uuid import uuid4
 
 from agro_rag.application.audit import AuditOutcome, AuditSink, QueryAuditEvent
-from agro_rag.application.retrieval import Retriever
-from agro_rag.domain.evidence import Evidence
+from agro_rag.application.retrieval import Crop, RetrievalFilters, Retriever
+from agro_rag.domain.evidence import ApplicableRegion, Evidence, GrowthStage
 
 
 class UpstreamError(Exception):
@@ -90,7 +90,9 @@ def preflight_decision(
             ],
         )
 
-    context_complete = all(context.get(key) for key in ("growth_stage", "soil_description"))
+    context_complete = all(
+        context.get(key) for key in ("growth_stage", "region", "soil_description")
+    )
     if context_complete:
         return None
 
@@ -110,8 +112,9 @@ def preflight_decision(
         return (
             "needs_clarification",
             [
+                "Indicar la región aplicable.",
                 "Indicar cultivo, etapa, frecuencia de riego y condiciones actuales del suelo "
-                "y del ambiente."
+                "y del ambiente.",
             ],
         )
     return None
@@ -139,9 +142,10 @@ class QueryService:
         self.audit_sink = audit_sink
         self.retrieval_mode = retrieval_mode
         self.verifier_enabled = verifier_enabled
-        self._retrieval_cache: OrderedDict[tuple[str, str, str | None], tuple[Evidence, ...]] = (
-            OrderedDict()
-        )
+        self._retrieval_cache: OrderedDict[
+            tuple[str, str, Crop | None, GrowthStage | None, ApplicableRegion | None],
+            tuple[Evidence, ...],
+        ] = OrderedDict()
 
     async def run(self, question: str, crop: str | None, context: dict[str, Any]) -> dict[str, Any]:
         request_id = str(uuid4())
@@ -195,13 +199,24 @@ class QueryService:
         started: float,
     ) -> dict[str, Any]:
         normalized = normalize_question(question)
-        cache_key = (self.version, normalized, crop)
+        filters = RetrievalFilters(
+            crop=cast(Crop | None, crop),
+            growth_stage=cast(GrowthStage | None, context.get("growth_stage")),
+            region=cast(ApplicableRegion | None, context.get("region")),
+        )
+        cache_key = (
+            self.version,
+            normalized,
+            filters.crop,
+            filters.growth_stage,
+            filters.region,
+        )
         try:
             hits = self._retrieval_cache.pop(cache_key)
             self._retrieval_cache[cache_key] = hits
             cache_hit = True
         except KeyError:
-            hits = await asyncio.to_thread(self.retriever.search, question, crop)
+            hits = await asyncio.to_thread(self.retriever.search, question, filters)
             self._retrieval_cache[cache_key] = hits
             if len(self._retrieval_cache) > self.retrieval_cache_size:
                 self._retrieval_cache.popitem(last=False)
@@ -317,20 +332,31 @@ class QueryService:
         if (
             ("litro" in normalized or "cuanto" in normalized)
             and ("riego" in normalized or "regar" in normalized)
-            and not all(context.get(key) for key in ("growth_stage", "soil_description"))
+            and not all(context.get(key) for key in ("growth_stage", "region", "soil_description"))
         ):
             decision = "clarify"
             return finish(
                 "needs_clarification",
                 missing=[
+                    "Indicar la región aplicable.",
                     "Indicar etapa del cultivo, tipo de suelo, superficie y condiciones de riego. "
-                    "Un porcentaje de humedad no permite calcular litros por sí solo."
+                    "Un porcentaje de humedad no permite calcular litros por sí solo.",
                 ],
             )
         if not hits:
             return finish("insufficient_evidence")
         evidence = [
-            {"evidence_id": e.evidence_id, "text": e.text, "source_id": e.source_id} for e in hits
+            {
+                "evidence_id": e.evidence_id,
+                "text": e.text,
+                "source_id": e.source_id,
+                "crop": e.crop,
+                "source_type": e.source_type,
+                "growth_stages": list(e.growth_stages),
+                "applicable_regions": list(e.applicable_regions),
+                "applicability": e.applicability,
+            }
+            for e in hits
         ]
         feedback = ""
         for pass_number in range(2):

@@ -16,7 +16,22 @@ Ingesta mediante CLI local administrativa, fuera de la API pública del MVP. No 
 
 ## QueryRequest
 
-`question`: string no vacío tras strip, 1..2000 caracteres; `crop`: tomato|lettuce|null; `context`: objeto opcional con growth_stage, soil_description, measurement (value, unit, measurement_type), cada texto ≤500 caracteres. Rechazar NaN/Infinity, valores sin unidad o mediciones incoherentes mediante 422. `measurement_type` distingue volumetric_water_content, matric_potential y unknown: no convertir automáticamente porcentaje en potencial hídrico. `clarification_context`: pregunta original y hasta tres respuestas previas limitadas; se validan como datos del usuario. Sin memoria global de conversación.
+`question`: string no vacío tras strip, 1..2000 caracteres; `crop`: tomato|lettuce|null;
+`context`: objeto opcional con `growth_stage`, `region`, `soil_description` y `measurement`
+(`value`, `unit`, `measurement_type`). `growth_stage` admite `establishment`,
+`vegetative_growth`, `flowering`, `fruit_set`, `fruit_development` o `pre_harvest`; `region`
+admite inicialmente `ar-mendoza-oasis-norte`. Ambos son filtros explícitos del usuario: no se
+infieren desde texto libre. Cada texto libre admite hasta 500 caracteres. Rechazar NaN/Infinity,
+valores fuera de vocabulario, valores sin unidad o mediciones incoherentes mediante 422.
+`measurement_type` distingue `volumetric_water_content`, `matric_potential` y `unknown`: no
+convertir automáticamente porcentaje en potencial hídrico. `clarification_context`: pregunta
+original y hasta tres respuestas previas limitadas; se validan como datos del usuario. Sin memoria
+global de conversación.
+
+La UI presenta etiquetas legibles para los vocabularios de etapa y región, pero envía los valores
+controlados anteriores exclusivamente por `ApiClient` sobre HTTP. Si la API solicita aclaración,
+reutiliza sin alteraciones la pregunta, cultivo, etapa, región y demás contexto de la consulta
+original, y agrega sólo `clarification_context`.
 
 ## QueryResponse
 
@@ -25,7 +40,7 @@ Campos: request_id (UUID), status (answered|needs_clarification|insufficient_evi
 Invariantes: answered exige claims no vacíos y evidencia por cada claim; IDs se resuelven en catálogo de la misma corpus_version. needs_clarification exige missing_information. insufficient_evidence explica el límite y no añade recomendaciones inventadas. No se expone chain-of-thought. Metadata administrativa como claves, rutas absolutas y stacktraces nunca forma parte de la respuesta.
 
 Antes de invocar modelos, el caso de uso aplica decisiones de alcance observables. Una recomendación
-situacional para cambiar riego, frecuencia o interpretar humedad actual sin etapa, unidad y
+situacional para cambiar riego, frecuencia o interpretar humedad actual sin etapa, región y
 condiciones del suelo produce `needs_clarification`. Temas fuera del corpus piloto - herbicidas,
 costos, precios y recomendaciones comerciales por marca/modelo - producen
 `insufficient_evidence`; aportar más contexto no convierte al corpus en una

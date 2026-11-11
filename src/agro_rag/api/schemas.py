@@ -2,6 +2,8 @@ from typing import Literal, Self
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
 
+from agro_rag.domain.evidence import ApplicableRegion, GrowthStage
+
 
 class Input(BaseModel):
     model_config = ConfigDict(extra="forbid", str_strip_whitespace=True, allow_inf_nan=False)
@@ -25,7 +27,8 @@ class Measurement(Input):
 
 
 class Context(Input):
-    growth_stage: str | None = Field(default=None, max_length=500)
+    growth_stage: GrowthStage | None = None
+    region: ApplicableRegion | None = None
     soil_description: str | None = Field(default=None, max_length=500)
     measurement: Measurement | None = None
 
