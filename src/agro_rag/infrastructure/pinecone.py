@@ -14,6 +14,7 @@ from dataclasses import dataclass
 from importlib import import_module
 from typing import Any, Protocol
 
+from agro_rag.application.retrieval import FilterInput, normalize_filters
 from agro_rag.application.retrieval_pipeline import IndexIdentity, ScoredId
 from agro_rag.domain.evidence import Catalogue
 
@@ -192,17 +193,38 @@ class PineconeVectorRanker:
     def corpus_version(self) -> str:
         return self.identity.corpus_version
 
-    def rank(self, question: str, crop: str | None) -> tuple[ScoredId, ...]:
+    def rank(self, question: str, filters: FilterInput) -> tuple[ScoredId, ...]:
+        normalized = normalize_filters(filters)
         clauses: list[dict[str, object]] = [
             {"kind": {"$eq": "chunk"}},
             {"corpus_version": {"$eq": self.corpus_version}},
         ]
-        if crop:
+        if normalized.crop:
             clauses.append(
                 {
                     "$or": [
-                        {"crop": {"$eq": crop}},
+                        {"crop": {"$eq": normalized.crop}},
                         {"crop": {"$exists": False}},
+                    ]
+                }
+            )
+        if normalized.growth_stage:
+            clauses.append(
+                {
+                    "$or": [
+                        {"growth_stages": {"$in": [normalized.growth_stage]}},
+                        {"applicability": {"$eq": "general"}},
+                        {"growth_stages": {"$exists": False}},
+                    ]
+                }
+            )
+        if normalized.region:
+            clauses.append(
+                {
+                    "$or": [
+                        {"applicable_regions": {"$in": [normalized.region]}},
+                        {"applicability": {"$eq": "general"}},
+                        {"applicable_regions": {"$exists": False}},
                     ]
                 }
             )
@@ -307,13 +329,20 @@ def index_catalogue(
         vectors = embedder.embed_passages(tuple(item.text for item in batch))
         payload = []
         for item, vector in zip(batch, vectors, strict=True):
-            metadata: dict[str, str] = {
+            metadata: dict[str, str | list[str]] = {
                 "kind": "chunk",
                 "evidence_id": item.evidence_id,
                 "corpus_version": catalogue.version,
+                "applicability": item.applicability,
             }
             if item.crop:
                 metadata["crop"] = item.crop
+            if item.source_type:
+                metadata["source_type"] = item.source_type
+            if item.growth_stages:
+                metadata["growth_stages"] = list(item.growth_stages)
+            if item.applicable_regions:
+                metadata["applicable_regions"] = list(item.applicable_regions)
             payload.append({"id": item.evidence_id, "values": list(vector), "metadata": metadata})
         index.upsert(vectors=payload, namespace=namespace)
 

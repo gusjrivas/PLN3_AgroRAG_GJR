@@ -85,7 +85,7 @@ def test_semantic_runtime_requires_explicit_secret_and_tokenizer(mode: str) -> N
         build_retrieval_runtime(config, Catalogue("v1", (evidence(),)))
 
 
-def test_hybrid_runtime_composes_verified_providers_and_closes_resources() -> None:
+def test_hybrid_runtime_delivers_complete_filters_to_pinecone_and_closes_resources() -> None:
     from agro_rag.application.retrieval import RetrievalFilters
     from agro_rag.bootstrap.retrieval import RetrievalFactories, build_retrieval_runtime
 
@@ -209,10 +209,22 @@ def test_hybrid_runtime_composes_verified_providers_and_closes_resources() -> No
             {"kind": {"$eq": "chunk"}},
             {"corpus_version": {"$eq": "v1"}},
             {"$or": [{"crop": {"$eq": "tomato"}}, {"crop": {"$exists": False}}]},
+            {
+                "$or": [
+                    {"growth_stages": {"$in": ["flowering"]}},
+                    {"applicability": {"$eq": "general"}},
+                    {"growth_stages": {"$exists": False}},
+                ]
+            },
+            {
+                "$or": [
+                    {"applicable_regions": {"$in": ["ar-mendoza-oasis-norte"]}},
+                    {"applicability": {"$eq": "general"}},
+                    {"applicable_regions": {"$exists": False}},
+                ]
+            },
         ]
     }
-    assert "growth_stage" not in str(calls["query"]["filter"])
-    assert "region" not in str(calls["query"]["filter"])
     assert calls["connect"]["api_key"] == "test-secret"
     assert calls["tokenizer"]["local_files_only"] is True
     assert calls["reranked"][0] == "humedad"

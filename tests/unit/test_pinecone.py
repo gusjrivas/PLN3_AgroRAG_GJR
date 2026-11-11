@@ -158,6 +158,56 @@ def test_vector_ranker_reads_manifest_and_queries_only_compatible_namespace() ->
     }
 
 
+def test_vector_ranker_uses_safe_structured_context_filters() -> None:
+    from agro_rag.application.retrieval import RetrievalFilters
+    from agro_rag.infrastructure.pinecone import PineconeVectorRanker
+
+    index = FakeIndex(identity())
+    ranker = PineconeVectorRanker.from_index(
+        index=index,
+        namespace="agro-v1",
+        embedder=build_embedder(),
+        expected_identity=identity(),
+    )
+
+    ranker.rank(
+        "agua",
+        RetrievalFilters(
+            crop="tomato",
+            growth_stage="flowering",
+            region="ar-mendoza-oasis-norte",
+        ),
+    )
+
+    assert index.query_kwargs is not None
+    assert index.query_kwargs["filter"] == {
+        "$and": [
+            {"kind": {"$eq": "chunk"}},
+            {"corpus_version": {"$eq": "v1"}},
+            {
+                "$or": [
+                    {"crop": {"$eq": "tomato"}},
+                    {"crop": {"$exists": False}},
+                ]
+            },
+            {
+                "$or": [
+                    {"growth_stages": {"$in": ["flowering"]}},
+                    {"applicability": {"$eq": "general"}},
+                    {"growth_stages": {"$exists": False}},
+                ]
+            },
+            {
+                "$or": [
+                    {"applicable_regions": {"$in": ["ar-mendoza-oasis-norte"]}},
+                    {"applicability": {"$eq": "general"}},
+                    {"applicable_regions": {"$exists": False}},
+                ]
+            },
+        ]
+    }
+
+
 @pytest.mark.parametrize(
     "actual",
     [None, replace(identity(), model="other"), replace(identity(), dimension=4)],
@@ -174,14 +224,22 @@ def test_vector_ranker_rejects_missing_or_incompatible_manifest(actual) -> None:
         )
 
 
-def test_catalogue_indexing_uses_evidence_ids_and_publishes_manifest_last() -> None:
+def test_index_payload_contains_safe_metadata_without_text() -> None:
     from agro_rag.infrastructure.pinecone import index_catalogue
 
     index = FakeIndex()
     catalogue = Catalogue(
         "v1",
         (
-            evidence("a", "riego", crop="tomato"),
+            evidence(
+                "a",
+                "riego",
+                crop="tomato",
+                source_type="technical_manual",
+                growth_stages=("flowering", "fruit_set"),
+                applicable_regions=("ar-mendoza-oasis-norte",),
+                applicability="specific",
+            ),
             evidence("b", "humedad", source="B", crop=None),
             evidence("c", "suelo", source="C", crop="lettuce"),
         ),
@@ -199,14 +257,32 @@ def test_catalogue_indexing_uses_evidence_ids_and_publishes_manifest_last() -> N
     assert [len(call["vectors"]) for call in index.upserts] == [2, 1, 1]
     rows = [row for call in index.upserts[:-1] for row in call["vectors"]]
     assert [row["id"] for row in rows] == ["a", "b", "c"]
-    assert all("text" not in row["metadata"] for row in rows)
+    forbidden = {
+        "text",
+        "original_text",
+        "source_url",
+        "title",
+        "pdf_page",
+        "printed_page",
+        "section",
+        "start",
+        "end",
+    }
+    assert all(forbidden.isdisjoint(row["metadata"]) for row in rows)
     assert rows[0]["metadata"] == {
         "kind": "chunk",
         "evidence_id": "a",
         "corpus_version": "v1",
         "crop": "tomato",
+        "source_type": "technical_manual",
+        "growth_stages": ["flowering", "fruit_set"],
+        "applicable_regions": ["ar-mendoza-oasis-norte"],
+        "applicability": "specific",
     }
     assert "crop" not in rows[1]["metadata"]
+    assert rows[1]["metadata"]["applicability"] == "unknown"
+    assert "growth_stages" not in rows[1]["metadata"]
+    assert "applicable_regions" not in rows[1]["metadata"]
     manifest = index.upserts[-1]["vectors"][0]
     assert manifest["id"] == "__agro_index_manifest__"
     assert manifest["values"] == [1.0, 0.0, 0.0]
@@ -227,7 +303,7 @@ def test_catalogue_indexing_refuses_to_overwrite_existing_namespace() -> None:
     assert index.upserts == []
 
 
-def test_catalogue_indexing_does_not_publish_manifest_until_all_ids_are_visible() -> None:
+def test_partial_metadata_index_does_not_publish_manifest() -> None:
     from agro_rag.infrastructure.pinecone import MANIFEST_ID, index_catalogue
 
     class EventuallyInvisibleIndex(FakeIndex):

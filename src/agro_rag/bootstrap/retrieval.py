@@ -6,12 +6,11 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from typing import Any
 
-from agro_rag.application.retrieval import FilterInput, Retriever, normalize_filters
+from agro_rag.application.retrieval import Retriever
 from agro_rag.application.retrieval_pipeline import (
     IndexIdentity,
     Mode,
     RetrievalPipeline,
-    ScoredId,
 )
 from agro_rag.bootstrap.settings import Settings
 from agro_rag.domain.evidence import Catalogue
@@ -43,20 +42,6 @@ class RetrievalRuntime:
         if self._close is not None:
             self._close()
             self._close = None
-
-
-@dataclass(frozen=True)
-class _CropOnlyVectorRanker:
-    """META-02 bridge; META-04 will give the Pinecone adapter structured filters."""
-
-    delegate: PineconeVectorRanker
-
-    @property
-    def corpus_version(self) -> str:
-        return self.delegate.corpus_version
-
-    def rank(self, question: str, filter_input: FilterInput) -> tuple[ScoredId, ...]:
-        return self.delegate.rank(question, normalize_filters(filter_input).crop)
 
 
 def _validate_semantic_config(config: Settings) -> None:
@@ -121,7 +106,6 @@ def build_retrieval_runtime(
             expected_identity=expected,
             top_k=config.retrieval_candidate_limit,
         )
-        vector = _CropOnlyVectorRanker(pinecone_vector)
         reranker = None
         if mode == "hybrid_rerank":
             reranker = providers.load_reranker(
@@ -132,7 +116,7 @@ def build_retrieval_runtime(
         pipeline = RetrievalPipeline(
             catalogue=catalogue,
             lexical=lexical,
-            vector=vector,
+            vector=pinecone_vector,
             expected_index=expected,
             actual_index=pinecone_vector.identity,
             reranker=reranker,
