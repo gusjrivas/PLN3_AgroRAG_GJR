@@ -1,14 +1,17 @@
 # TDD y calidad transversal
 
-Requisito del usuario aplicable a todo comportamiento nuevo o corregido: backend, frontend, agentes, RAG, scripts de ingesta/evaluación y contratos de arquitectura. No presentar porcentaje de cobertura como prueba de TDD.
+Requisito del usuario aplicable a todo comportamiento nuevo o corregido: backend, frontend, agentes, RAG, scripts de ingesta/evaluación y contratos de arquitectura. No presentar porcentaje de cobertura como prueba de TDD. ODD no elimina TDD: ajusta la cantidad de ceremonia y verificación al riesgo. La trazabilidad se adapta al camino elegido: ODD directo para cambios pequeños y SDD para cambios sustanciales o contractuales.
 
 ## Ciclo verificable
 
-1. Escenario identificado en OpenSpec y test de comportamiento que falla por la capacidad ausente.
+1. Resultado observable identificado en el PR ODD o escenario identificado en OpenSpec para SDD, y test de comportamiento que falla por la capacidad ausente.
 2. RED: ejecutar el test, registrar comando, exit code y fallo esperado. Un error de credenciales/entorno no sustituye un fallo funcional.
 3. GREEN: implementación mínima; ejecutar el mismo test y guardar resultado.
 4. REFACTOR: mejorar estructura sin cambiar contrato, volver a ejecutar suite afectada y controles estáticos.
-5. Registrar evidencia en docs/evidence/tdd/<task-id>.md con hashes/commits. No es obligatorio publicar commits rotos en main: puede preservarse un patch del test y log del rojo antes de un commit verde.
+5. En ODD, registrar comandos y resultados en el PR; un archivo separado es opcional. En SDD,
+   registrar evidencia en `docs/evidence/tdd/<task-id>.md` con hashes/commits. No es obligatorio
+   publicar commits rotos en main: puede preservarse un patch del test y log del rojo antes de un
+   commit verde.
 
 Para código heredado: primero tests de caracterización verdes sobre lo existente; para cada diferencia nueva, test rojo antes de adaptar. No fabricar historia roja retroactiva. Si ya se implementó algo fuera de TDD, explicitar deuda y cubrir el riesgo; no declarar que se cumplió el proceso.
 
@@ -30,11 +33,22 @@ Para código heredado: primero tests de caracterización verdes sobre lo existen
 
 pytest-cov con branch coverage global ≥85% y ≥90% en domain/application como puertas iniciales del proyecto, no exigencias numéricas de la cátedra. Todo flujo crítico descrito debe tener prueba aunque se alcance la cobertura. No excluir código para inflar métricas. Objetivos se modifican con justificación versionada, nunca para esconder fallos.
 
-Ruff lint/formato, mypy sobre src, contratos de importación, tests deterministas y validación OpenSpec son checks de PR. Dependencies con uv.lock y auditoría de vulnerabilidades con política de severidad documentada. Las versiones se resuelven en 00; este plan no asegura compatibilidad sin ejecutarlas.
+Ruff lint/formato, mypy sobre src, contratos de importación y tests deterministas son checks de PR
+según la superficie alcanzada. La validación OpenSpec es obligatoria sólo para SDD o cuando se
+modifica un cambio OpenSpec. Dependencies con uv.lock y auditoría de vulnerabilidades con política
+de severidad documentada. Las versiones se resuelven en 00; este plan no asegura compatibilidad sin
+ejecutarlas.
 
 CI rápida no llama a servicios pagos, no descarga modelos grandes y no exige secretos. Job integration_live manual usa namespace efímero y presupuesto; nunca usa producción. CI de frontend incluye AppTest; E2E smoke se ejecuta con stack local reproducible. Cambios en Docker/config se validan con pruebas de arranque o config, no se afirma TDD para prosa de ADR.
 
-## Definition of Done por tarea
+## Definition of Done ODD
+
+- Resultado observable satisfecho y alcance pequeño conservado.
+- RED/GREEN cuando cambió comportamiento; regresión afectada y controles proporcionales verdes.
+- PR con comandos reales, limitaciones y revisión del diff.
+- Sin cambio implícito de contrato, secretos ni modificaciones a `Teoria*`.
+
+## Definition of Done SDD
 
 - Escenario satisfecho, test rojo/verde/refactor trazable y review del diff.
 - Tests de regresión relevantes, lint, tipos y límites de arquitectura correctos.
