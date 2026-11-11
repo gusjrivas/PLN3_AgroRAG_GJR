@@ -222,6 +222,92 @@ def test_clarification_keeps_original_question(monkeypatch):
     assert calls[1][1]["answers"] == ["Cuajado de frutos"]
 
 
+def test_verified_query_sends_controlled_growth_stage_and_region(monkeypatch):
+    from agro_rag_ui.client import ApiClient
+
+    monkeypatch.setenv("AGRO_READER_KEY", "test-reader-token-123456")
+    calls = []
+
+    def query(self, question, crop, context, clarification=None):
+        calls.append((crop, context, clarification))
+        return {
+            "status": "answered",
+            "answer": "Respuesta respaldada.",
+            "citations": [],
+            "limitations": [],
+        }
+
+    monkeypatch.setattr(ApiClient, "query", query)
+    app = AppTest.from_file(str(Path("src/agro_rag_ui/app.py").resolve())).run()
+    app.sidebar.radio[0].set_value("Respuesta verificada").run()
+    app.text_area[0].set_value("¿Cómo ajustar el riego del tomate?")
+    next(box for box in app.selectbox if box.label == "Cultivo").set_value("Tomate")
+    next(box for box in app.selectbox if box.label == "Etapa del cultivo (opcional)").set_value(
+        "Floración"
+    )
+    next(box for box in app.selectbox if box.label == "Región (opcional)").set_value(
+        "Oasis Norte de Mendoza (Argentina)"
+    )
+    next(button for button in app.button if button.label == "Consultar").click().run()
+
+    assert calls == [
+        (
+            "tomato",
+            {
+                "growth_stage": "flowering",
+                "region": "ar-mendoza-oasis-norte",
+            },
+            None,
+        )
+    ]
+
+
+def test_clarification_preserves_controlled_growth_stage_and_region(monkeypatch):
+    from agro_rag_ui.client import ApiClient
+
+    monkeypatch.setenv("AGRO_READER_KEY", "test-reader-token-123456")
+    calls = []
+
+    def query(self, question, crop, context, clarification=None):
+        calls.append((context, clarification))
+        if clarification is None:
+            return {
+                "status": "needs_clarification",
+                "missing_information": ["Indicar condiciones actuales del suelo."],
+                "citations": [],
+                "limitations": [],
+            }
+        return {
+            "status": "insufficient_evidence",
+            "citations": [],
+            "limitations": [],
+        }
+
+    monkeypatch.setattr(ApiClient, "query", query)
+    app = AppTest.from_file(str(Path("src/agro_rag_ui/app.py").resolve())).run()
+    app.sidebar.radio[0].set_value("Respuesta verificada").run()
+    app.text_area[0].set_value("¿Cambio el riego?")
+    next(box for box in app.selectbox if box.label == "Etapa del cultivo (opcional)").set_value(
+        "Desarrollo de frutos"
+    )
+    next(box for box in app.selectbox if box.label == "Región (opcional)").set_value(
+        "Oasis Norte de Mendoza (Argentina)"
+    )
+    next(button for button in app.button if button.label == "Consultar").click().run()
+    next(
+        area for area in app.text_area if area.label == "Completá el contexto solicitado"
+    ).set_value("Suelo franco con humedad medida.")
+    next(button for button in app.button if button.label == "Enviar aclaración").click().run()
+
+    expected_context = {
+        "growth_stage": "fruit_development",
+        "region": "ar-mendoza-oasis-norte",
+    }
+    assert calls[0] == (expected_context, None)
+    assert calls[1][0] == expected_context
+    assert calls[1][1]["answers"] == ["Suelo franco con humedad medida."]
+
+
 def test_verified_answer_is_prominent_and_identifies_openai(monkeypatch):
     from agro_rag_ui.client import ApiClient
 

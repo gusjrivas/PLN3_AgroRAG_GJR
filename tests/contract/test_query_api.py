@@ -38,6 +38,18 @@ def test_input_validation():
             ).status_code
             == 422
         )
+        for invalid_context in (
+            {"growth_stage": "floración"},
+            {"region": "ar-cordoba"},
+        ):
+            assert (
+                c.post(
+                    "/v1/query",
+                    headers={"X-API-Key": KEY},
+                    json={"question": "riego", "context": invalid_context},
+                ).status_code
+                == 422
+            )
         assert (
             c.post(
                 "/v1/query",
@@ -199,6 +211,100 @@ def test_query_response_schema_and_end_to_end_fake_provider():
             "content"
         ]["application/json"]["schema"]
         assert schema["$ref"].endswith("/QueryResponse")
+
+
+def test_general_documentary_question_does_not_require_region():
+    from agro_rag.application.query import Generation, QueryService
+    from agro_rag.bootstrap.app import create_app
+    from agro_rag.bootstrap.settings import Settings
+    from agro_rag.domain.evidence import Catalogue, Evidence
+    from agro_rag.infrastructure.retrieval import LexicalRetriever
+
+    item = Evidence(
+        "general",
+        "v1",
+        "S",
+        "Manual",
+        "2008",
+        "https://example.org/doc.pdf",
+        3,
+        "1",
+        "Riego",
+        None,
+        "El riego mantiene la humedad del suelo.",
+        "El riego mantiene la humedad del suelo.",
+        0,
+        42,
+        applicability="general",
+    )
+    catalogue = Catalogue("v1", (item,))
+
+    class Model:
+        calls = 0
+
+        async def generate(self, role, payload, timeout):
+            self.calls += 1
+            if role == "researcher":
+                return Generation(
+                    {
+                        "status": "answered",
+                        "claims": [
+                            {"text": "El riego mantiene la humedad.", "evidence_ids": ["general"]}
+                        ],
+                    },
+                    10,
+                    5,
+                )
+            return Generation({"decision": "approve", "feedback": ""}, 10, 5)
+
+    model = Model()
+    service = QueryService(LexicalRetriever(catalogue), model, "v1")
+    app = create_app(Settings(reader_key=KEY), catalogue=catalogue, service=service)
+
+    with TestClient(app) as c:
+        response = c.post(
+            "/v1/query",
+            headers={"X-API-Key": KEY},
+            json={"question": "¿Qué función cumple el riego?", "crop": "tomato"},
+        )
+
+    assert response.status_code == 200
+    assert response.json()["status"] == "answered"
+    assert model.calls == 2
+
+
+def test_complete_context_without_evidence_is_insufficient_at_api_boundary():
+    from agro_rag.application.query import QueryService
+    from agro_rag.bootstrap.app import create_app
+    from agro_rag.bootstrap.settings import Settings
+
+    class EmptyRetriever:
+        def search(self, question, filters):
+            return ()
+
+    class ModelMustNotRun:
+        async def generate(self, *args):
+            raise AssertionError("El LLM no debe ejecutarse sin evidencia compatible")
+
+    service = QueryService(EmptyRetriever(), ModelMustNotRun(), "v1")
+    app = create_app(Settings(reader_key=KEY), service=service)
+    with TestClient(app) as c:
+        response = c.post(
+            "/v1/query",
+            headers={"X-API-Key": KEY},
+            json={
+                "question": "Hace mucho calor, ¿cambio el riego?",
+                "crop": "tomato",
+                "context": {
+                    "growth_stage": "flowering",
+                    "region": "ar-mendoza-oasis-norte",
+                    "soil_description": "franco, humedad medida 20 %",
+                },
+            },
+        )
+
+    assert response.status_code == 200
+    assert response.json()["status"] == "insufficient_evidence"
 
 
 @pytest.mark.parametrize(

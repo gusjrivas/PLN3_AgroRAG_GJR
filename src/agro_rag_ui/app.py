@@ -7,6 +7,21 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from agro_rag_ui.client import ApiClient, ApiError
 
+GROWTH_STAGE_OPTIONS: dict[str, str | None] = {
+    "Sin especificar": None,
+    "Implantación": "establishment",
+    "Crecimiento vegetativo": "vegetative_growth",
+    "Floración": "flowering",
+    "Cuajado de frutos": "fruit_set",
+    "Desarrollo de frutos": "fruit_development",
+    "Pre-cosecha": "pre_harvest",
+}
+
+REGION_OPTIONS: dict[str, str | None] = {
+    "Sin especificar": None,
+    "Oasis Norte de Mendoza (Argentina)": "ar-mendoza-oasis-norte",
+}
+
 
 class UISettings(BaseSettings):
     model_config = SettingsConfigDict(
@@ -102,8 +117,15 @@ def main() -> None:
                 ["Sin especificar", "Tomate", "Lechuga"],
                 key=f"crop-{form_version}",
             )
-            stage = st.text_input(
-                "Etapa del cultivo (opcional)", max_chars=500, key=f"stage-{form_version}"
+            stage_name = st.selectbox(
+                "Etapa del cultivo (opcional)",
+                list(GROWTH_STAGE_OPTIONS),
+                key=f"stage-{form_version}",
+            )
+            region_name = st.selectbox(
+                "Región (opcional)",
+                list(REGION_OPTIONS),
+                key=f"region-{form_version}",
             )
             soil = st.text_input(
                 "Descripción del suelo (opcional)", max_chars=500, key=f"soil-{form_version}"
@@ -115,8 +137,16 @@ def main() -> None:
                 st.session_state.api_error = "Escribí una pregunta antes de consultar."
             else:
                 crop = {"Tomate": "tomato", "Lechuga": "lettuce"}.get(crop_name)
+                stage = GROWTH_STAGE_OPTIONS[stage_name]
+                region = REGION_OPTIONS[region_name]
                 context = {
-                    k: v for k, v in {"growth_stage": stage, "soil_description": soil}.items() if v
+                    k: v
+                    for k, v in {
+                        "growth_stage": stage,
+                        "region": region,
+                        "soil_description": soil,
+                    }.items()
+                    if v
                 }
                 try:
                     with st.spinner("Consultando las fuentes…"):

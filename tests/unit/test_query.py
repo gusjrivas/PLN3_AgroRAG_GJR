@@ -273,6 +273,53 @@ def test_ops_01_retrieval_cache_invalidates_on_filter_and_version():
     asyncio.run(exercise())
 
 
+def test_retrieval_cache_key_includes_metadata_filters():
+    from agro_rag.application.query import QueryService
+    from agro_rag.application.retrieval import RetrievalFilters
+
+    class RecordingRetriever:
+        def __init__(self):
+            self.filters = []
+
+        def search(self, question, filters):
+            self.filters.append(filters)
+            return ()
+
+    async def exercise():
+        retriever = RecordingRetriever()
+        service = QueryService(retriever, FakeModel([]), "v1")
+        common = {
+            "region": "ar-mendoza-oasis-norte",
+            "soil_description": "franco, humedad medida 20 %",
+        }
+
+        first = await service.run("riego tomate", "tomato", {**common, "growth_stage": "flowering"})
+        changed_stage = await service.run(
+            "riego tomate", "tomato", {**common, "growth_stage": "pre_harvest"}
+        )
+        repeated = await service.run(
+            "riego tomate", "tomato", {**common, "growth_stage": "flowering"}
+        )
+
+        assert retriever.filters == [
+            RetrievalFilters(
+                crop="tomato",
+                growth_stage="flowering",
+                region="ar-mendoza-oasis-norte",
+            ),
+            RetrievalFilters(
+                crop="tomato",
+                growth_stage="pre_harvest",
+                region="ar-mendoza-oasis-norte",
+            ),
+        ]
+        assert first["usage"]["cache_hit"] is False
+        assert changed_stage["usage"]["cache_hit"] is False
+        assert repeated["usage"]["cache_hit"] is True
+
+    asyncio.run(exercise())
+
+
 def test_ops_01_retrieval_errors_are_never_cached():
     from agro_rag.application.query import QueryService
     from agro_rag.application.retrieval_pipeline import RetrievalUnavailable
@@ -378,6 +425,84 @@ def test_context_dependent_decisions_request_clarification_without_model(questio
     assert not model.roles
 
 
+def test_missing_situational_context_clarifies_without_model_call():
+    model = FakeModel([])
+
+    result = execute_with_context(
+        model,
+        "Hace mucho calor, ¿cambio el riego?",
+        "tomato",
+        {"growth_stage": "flowering", "soil_description": "franco, humedad medida 20 %"},
+    )
+
+    assert result["status"] == "needs_clarification"
+    assert any("región" in item for item in result["missing_information"])
+    assert not model.roles
+
+
+def test_complete_context_without_compatible_evidence_abstains():
+    from agro_rag.application.query import QueryService
+    from agro_rag.application.retrieval import RetrievalFilters
+
+    class EmptyRetriever:
+        received = None
+
+        def search(self, question, filters):
+            self.received = filters
+            return ()
+
+    retriever = EmptyRetriever()
+    model = FakeModel([])
+    result = asyncio.run(
+        QueryService(retriever, model, "v1").run(
+            "Hace mucho calor, ¿cambio el riego?",
+            "tomato",
+            {
+                "growth_stage": "flowering",
+                "region": "ar-mendoza-oasis-norte",
+                "soil_description": "franco, humedad medida 20 %",
+            },
+        )
+    )
+
+    assert retriever.received == RetrievalFilters(
+        crop="tomato", growth_stage="flowering", region="ar-mendoza-oasis-norte"
+    )
+    assert result["status"] == "insufficient_evidence"
+    assert not model.roles
+
+
+def test_researcher_and_verifier_receive_relevant_evidence_metadata():
+    from agro_rag.application.query import QueryService
+
+    item = evidence(
+        "a",
+        "Tomate: riego durante floración.",
+        source_type="technical_guide",
+        growth_stages=("flowering",),
+        applicable_regions=("ar-mendoza-oasis-norte",),
+        applicability="specific",
+    )
+    model = FakeModel([draft(), {"decision": "approve", "feedback": ""}])
+
+    result = asyncio.run(
+        QueryService(retriever([item]), model, "v1").run(
+            "¿Qué indica la guía sobre el riego del tomate?", "tomato", {}
+        )
+    )
+
+    assert result["status"] == "answered"
+    expected = {
+        "crop": "tomato",
+        "source_type": "technical_guide",
+        "growth_stages": ["flowering"],
+        "applicable_regions": ["ar-mendoza-oasis-norte"],
+        "applicability": "specific",
+    }
+    for payload in model.payloads:
+        assert payload["evidence"][0] | expected == payload["evidence"][0]
+
+
 def test_resolved_reference_can_continue_after_clarification():
     model = FakeModel([draft(("b",)), {"decision": "approve", "feedback": ""}])
 
@@ -404,7 +529,11 @@ def test_context_dependent_question_can_continue_when_context_is_complete():
         model,
         "Hace mucho calor, ¿cambio el riego?",
         "tomato",
-        {"growth_stage": "floración", "soil_description": "franco, humedad medida 20 %"},
+        {
+            "growth_stage": "flowering",
+            "region": "ar-mendoza-oasis-norte",
+            "soil_description": "franco, humedad medida 20 %",
+        },
     )
 
     assert result["status"] == "answered"
