@@ -18,6 +18,7 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+tracing = ["opentelemetry-sdk==1.45.1"]
 semantic = [
     "pinecone>=10,<11",
     "sentence-transformers>=5.1,<6",
@@ -87,4 +88,8 @@ forbidden_modules = ["agro_rag"]
 
 [[tool.mypy.overrides]]
 module = ["rank_bm25"]
+ignore_missing_imports = true
+
+[[tool.mypy.overrides]]
+module = ["opentelemetry.sdk", "opentelemetry.sdk.*"]
 ignore_missing_imports = true

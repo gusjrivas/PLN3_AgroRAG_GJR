@@ -69,6 +69,7 @@ class Settings(BaseSettings):
     retrieval_candidate_limit: int = Field(default=20, gt=0)
     semantic_local_files_only: bool = True
     catalogue_path: Path = Path("data/processed/catalogue")
+    tracing_enabled: bool = False
     release_version: str = "0.1.0"
     commit_sha: str = "unknown"
     image_digest: str = "unknown"

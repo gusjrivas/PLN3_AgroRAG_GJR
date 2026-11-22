@@ -264,3 +264,22 @@ uv run agro-rag verify-delivery --root .
 
 El comando no instala dependencias, descarga corpus ni llama proveedores. Los resultados
 científicos definitivos siguen sujetos al benchmark humano y a las ejecuciones reales E1/E2/E3.
+
+## Trazas opcionales para la demo académica
+
+Desde PowerShell, con el corpus y el modelo local ya configurados:
+
+```powershell
+uv sync --locked --extra tracing
+$env:AGRO_TRACING_ENABLED = "true"
+uv run --locked --extra tracing uvicorn agro_rag.bootstrap.app:create_app --factory --host 127.0.0.1 --port 8000
+```
+
+Ejecutar una consulta de la demo que alcance a ambos agentes. La terminal de la API muestra
+los spans `retrieval`, `researcher` y `verifier` al finalizar cada etapa. Comparten el
+`trace_id` con `POST /v1/query`, que registra el estado HTTP. La salida es síncrona y local,
+con nombres fijos y sin contenido de consultas, headers ni datos de excepción. Basta la
+terminal de la API. El ajuste está deshabilitado por defecto. Para desactivarlo en esa
+sesión de PowerShell, ejecutar `Remove-Item Env:AGRO_TRACING_ENABLED` y reiniciar la API.
+Si falta el extra `tracing` o `OTEL_SDK_DISABLED=true`, el arranque con trazas habilitadas
+devuelve un error explícito.
