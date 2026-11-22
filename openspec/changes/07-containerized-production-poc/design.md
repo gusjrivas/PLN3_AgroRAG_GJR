@@ -19,6 +19,11 @@ versionado, overlays dev/production/security, secretos por archivo, procesos no 
 digest. Garak vive en una imagen/job separado y ataca el gateway de staging, no el proveedor
 directo.
 
+Mientras Caddy 2.11.9 sea la imagen oficial disponible, el gateway compila su comando estándar
+con `golang.org/x/net v0.62.0` desde un builder oficial fijado por digest. El build comprueba
+la dependencia dentro del binario antes de copiarlo al runtime. El gate de supply chain
+continúa escaneando la imagen final con la política vigente.
+
 Los cambios se integran por fases. Cada fase mantiene pruebas de regresión locales y CI. Ninguna
 imagen descarga pesos o construye índices durante startup. Los artefactos garak crudos son
 restringidos porque contienen prompts y respuestas.

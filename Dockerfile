@@ -2,6 +2,7 @@
 
 ARG PYTHON_IMAGE=python:3.12.16-slim-bookworm@sha256:935c3c5b12357a7e10caa9c1e6ca5692344d97cf229832ef584be2cec9fc03df
 ARG CADDY_IMAGE=caddy:2.11.9-alpine@sha256:0bbb055bda6793c999bde78b1b5ce3e89f829fb031af2cf50056ea1246559fee
+ARG CADDY_BUILDER_IMAGE=caddy:2.11.9-builder-alpine@sha256:646fee578e680989ca5c7fd1ce6f1de574d19fd71ef2221810cc0510a9f40c86
 
 FROM ${PYTHON_IMAGE} AS builder
 
@@ -56,6 +57,18 @@ USER 10001:10001
 EXPOSE 8501
 CMD ["streamlit", "run", "/app/ui.py", "--server.address", "0.0.0.0", "--server.port", "8501", "--browser.gatherUsageStats", "false"]
 
+FROM ${CADDY_BUILDER_IMAGE} AS gateway-builder
+
+ENV CGO_ENABLED=0 GOTOOLCHAIN=local
+WORKDIR /build/caddy
+# Caddy 2.11.9 predates the x/net fix for CVE-2026-78661.
+RUN go mod download github.com/caddyserver/caddy/v2@v2.11.9 \
+    && cp -R "$(go env GOMODCACHE)/github.com/caddyserver/caddy/v2@v2.11.9/." . \
+    && chmod u+w go.mod go.sum \
+    && go get golang.org/x/net@v0.62.0 \
+    && go build -mod=readonly -trimpath -ldflags "-s -w -X github.com/caddyserver/caddy/v2.CustomVersion=v2.11.9" -o /out/caddy ./cmd/caddy \
+    && go version -m /out/caddy | grep -E '^[[:space:]]+dep[[:space:]]+golang\.org/x/net[[:space:]]+v0\.62\.0[[:space:]]'
+
 FROM ${CADDY_IMAGE} AS gateway
 
 ARG APP_VERSION=0.1.0
@@ -68,7 +81,9 @@ LABEL org.opencontainers.image.title="AgroRAG gateway" \
       org.opencontainers.image.version="${APP_VERSION}" \
       org.opencontainers.image.revision="${VCS_REF}"
 
+COPY --from=gateway-builder /out/caddy /usr/bin/caddy
 RUN apk upgrade --no-cache \
+    && setcap cap_net_bind_service=+p /usr/bin/caddy \
     && addgroup -g 10002 -S gateway \
     && adduser -u 10002 -S -D -H -G gateway gateway \
     && mkdir -p /data/caddy /config/caddy \

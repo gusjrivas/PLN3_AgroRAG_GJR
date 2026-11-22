@@ -72,6 +72,17 @@ def test_gateway_v2_carries_the_same_release_identity_as_api_and_ui() -> None:
     assert 'org.opencontainers.image.revision="${VCS_REF}"' in gateway
 
 
+def test_gateway_replaces_caddy_with_binary_built_against_patched_xnet() -> None:
+    dockerfile = _dockerfile()
+    build, gateway = dockerfile.split("FROM ${CADDY_IMAGE} AS gateway", maxsplit=1)
+
+    assert re.search(r"caddy:2\.11\.9-builder-alpine@sha256:[0-9a-f]{64}", build)
+    assert "FROM ${CADDY_BUILDER_IMAGE} AS gateway-builder" in build
+    assert "go get golang.org/x/net@v0.62.0" in build
+    assert "go version -m /out/caddy" in build
+    assert "COPY --from=gateway-builder /out/caddy /usr/bin/caddy" in gateway
+
+
 def test_img_v2_build_context_excludes_private_and_development_artifacts() -> None:
     patterns = {
         line.strip()
