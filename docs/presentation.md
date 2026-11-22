@@ -12,7 +12,9 @@ Versión: 13/11/2026. Nueve diapositivas y guion de 15 minutos en `docs/demo.md`
 
 ## 3. Una interfaz HTTP y dos roles de agente
 
-02:00–03:30. Recorrer la arquitectura. La UI no importa agentes, modelos ni índices. Fuente: docs/architecture.md y docs/report.md §3.
+02:00–03:30. Recorrer el flujo de consulta con los dos agentes. La UI se comunica por HTTP.
+Usar la figura 2 del [informe técnico](../output/pdf/agro-rag-report-2026-11-22.pdf) como
+respaldo si preguntan por Compose, el gateway, la ingesta o Garak en staging.
 
 ## 4. Recuperación medible y límites explícitos
 
