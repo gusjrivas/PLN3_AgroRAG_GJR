@@ -463,3 +463,249 @@ def test_connect_requires_explicit_opt_in_before_creating_index(monkeypatch) -> 
             "spec": {"cloud": "aws", "region": "us-east-1"},
         }
     ]
+
+
+def _embedder_with(encoded):
+    from agro_rag.infrastructure.pinecone import E5Embedder
+
+    class Model(FakeModel):
+        def encode(self, texts, **kwargs):
+            return encoded
+
+    return E5Embedder(Model(), model_name="m", revision="r")
+
+
+@pytest.mark.parametrize(
+    "encoded",
+    ["text", b"bytes", 5, [[1.0, 2.0]], [[1.0, float("nan"), 0.0]], [[1.0, 0.0, 0.0]] * 2],
+)
+def test_e5_rejects_invalid_embeddings(encoded) -> None:
+    with pytest.raises(ValueError, match="embeddings"):
+        _embedder_with(encoded).embed_query("agua")
+
+
+def test_e5_embed_passages_of_nothing_skips_the_model() -> None:
+    assert build_embedder().embed_passages(()) == ()
+
+
+def test_e5_load_builds_sentence_transformer_without_remote_code(monkeypatch) -> None:
+    from agro_rag.infrastructure import pinecone as module
+
+    seen = {}
+
+    def model_factory(name, **kwargs):
+        seen["call"] = (name, kwargs)
+        return FakeModel()
+
+    fake = SimpleNamespace(SentenceTransformer=model_factory)
+    monkeypatch.setattr(module, "import_module", lambda name: fake)
+
+    embedder = module.E5Embedder.load(model_name="m", revision="r", local_files_only=True)
+
+    assert embedder.dimension == 3
+    assert seen["call"][1] == {
+        "revision": "r",
+        "device": None,
+        "local_files_only": True,
+        "trust_remote_code": False,
+    }
+
+
+def _ranker(index):
+    from agro_rag.infrastructure.pinecone import PineconeVectorRanker
+
+    return PineconeVectorRanker(index, "agro-v1", build_embedder(), identity())
+
+
+@pytest.mark.parametrize(
+    "response",
+    [
+        SimpleNamespace(matches=5),
+        SimpleNamespace(matches=(SimpleNamespace(id=1, score=0.5),)),
+        SimpleNamespace(matches=(SimpleNamespace(id="a", score="x"),)),
+    ],
+)
+def test_ranker_rejects_invalid_pinecone_responses(response) -> None:
+    index = FakeIndex()
+    index.query = lambda **kwargs: response
+    with pytest.raises(ValueError, match="inválida de Pinecone"):
+        _ranker(index).rank("riego", None)
+
+
+def test_ranker_applies_crop_stage_and_region_filters() -> None:
+    from agro_rag.application.retrieval import RetrievalFilters
+
+    index = FakeIndex()
+    _ranker(index).rank(
+        "riego",
+        RetrievalFilters(
+            crop="tomato", growth_stage="vegetative_growth", region="ar-mendoza-oasis-norte"
+        ),
+    )
+    clauses = index.query_kwargs["filter"]["$and"]
+    assert len(clauses) == 5
+
+
+@pytest.mark.parametrize("count", [-1, True, "3"])
+def test_namespace_count_rejects_invalid_statistics(count) -> None:
+    from agro_rag.infrastructure.pinecone import _namespace_count
+
+    stats = SimpleNamespace(namespaces={"ns": SimpleNamespace(vector_count=count)})
+    with pytest.raises(ValueError, match="Estadísticas"):
+        _namespace_count(stats, "ns")
+
+
+@pytest.mark.parametrize(
+    "catalogue",
+    [
+        Catalogue("", (evidence("a", "x"),)),
+        Catalogue("v1", ()),
+        Catalogue("v1", (evidence("a", "x"), evidence("a", "y"))),
+        Catalogue("v1", (evidence("ñ", "x"),)),
+        Catalogue("v1", (evidence("__agro_index_manifest__", "x"),)),
+    ],
+)
+def test_validate_catalogue_rejects_unindexable_catalogues(catalogue) -> None:
+    from agro_rag.infrastructure.pinecone import _validate_catalogue
+
+    with pytest.raises(ValueError):
+        _validate_catalogue(catalogue)
+
+
+def test_validate_catalogue_rejects_foreign_corpus_version() -> None:
+    from agro_rag.infrastructure.pinecone import _validate_catalogue
+
+    foreign = replace(evidence("a", "x"), corpus_version="other")
+    with pytest.raises(ValueError, match="Catálogo inválido"):
+        _validate_catalogue(Catalogue("v1", (foreign,)))
+
+
+def test_index_catalogue_rejects_bad_config_and_wrong_dimension() -> None:
+    from agro_rag.infrastructure.pinecone import index_catalogue
+
+    catalogue = Catalogue("v1", (evidence("a", "riego"),))
+    with pytest.raises(ValueError, match="namespace"):
+        index_catalogue(
+            index=FakeIndex(), namespace="", catalogue=catalogue, embedder=build_embedder()
+        )
+    wrong = FakeIndex()
+    wrong.describe_index_stats = lambda: SimpleNamespace(dimension=9, namespaces={})
+    with pytest.raises(ValueError, match="Dimensión"):
+        index_catalogue(
+            index=wrong, namespace="agro-v1", catalogue=catalogue, embedder=build_embedder()
+        )
+
+
+def test_wait_for_ids_detects_foreign_writes_and_malformed_fetch() -> None:
+    from agro_rag.infrastructure.pinecone import _wait_for_ids
+
+    grown = FakeIndex(vector_count=5)
+    with pytest.raises(ValueError, match="cambió durante"):
+        _wait_for_ids(
+            index=grown, namespace="agro-v1", ids=("a",), expected_count=1, timeout=1, batch_size=1
+        )
+    broken = FakeIndex(vector_count=1)
+    broken.fetch = lambda **kwargs: {"vectors": []}
+    with pytest.raises(ValueError, match="al verificar IDs"):
+        _wait_for_ids(
+            index=broken, namespace="agro-v1", ids=("a",), expected_count=1, timeout=1, batch_size=1
+        )
+
+
+def test_handle_close_closes_index_and_client_when_available() -> None:
+    from agro_rag.infrastructure.pinecone import PineconeHandle
+
+    closed = []
+    index = SimpleNamespace(close=lambda: closed.append("index"))
+    client = SimpleNamespace(close=lambda: closed.append("client"))
+    PineconeHandle(client=client, index=index).close()
+    PineconeHandle(client=object(), index=object()).close()
+    assert closed == ["index", "client"]
+
+
+@pytest.mark.parametrize(
+    "kwargs",
+    [
+        {"api_key": " ", "index_name": "i"},
+        {"api_key": "k", "index_name": ""},
+        {"api_key": "k", "index_name": "i", "timeout": 0},
+        {"api_key": "k", "index_name": "i", "create_if_missing": True},
+    ],
+)
+def test_connect_pinecone_rejects_invalid_configuration(kwargs) -> None:
+    from agro_rag.infrastructure.pinecone import connect_pinecone
+
+    with pytest.raises(ValueError, match="Configuración inválida"):
+        connect_pinecone(**kwargs)
+
+
+def _fake_sdk(client):
+    return SimpleNamespace(
+        Pinecone=lambda **kwargs: client,
+        ServerlessSpec=lambda **kwargs: ("spec", kwargs),
+    )
+
+
+def test_connect_pinecone_lists_indexes_when_sdk_lacks_exists(monkeypatch) -> None:
+    from agro_rag.infrastructure import pinecone as module
+
+    class Client:
+        def list_indexes(self):
+            return [SimpleNamespace(name="i")]
+
+        def Index(self, name):
+            return f"index:{name}"
+
+    monkeypatch.setattr(module, "import_module", lambda name: _fake_sdk(Client()))
+    assert module.connect_pinecone(api_key="k", index_name="i").index == "index:i"
+
+
+def test_connect_pinecone_creates_missing_index_when_requested(monkeypatch) -> None:
+    from agro_rag.infrastructure import pinecone as module
+
+    created = {}
+
+    class Client:
+        indexes = SimpleNamespace(exists=lambda name: False)
+
+        def create_index(self, **kwargs):
+            created.update(kwargs)
+
+        def index(self, name):
+            return f"index:{name}"
+
+    monkeypatch.setattr(module, "import_module", lambda name: _fake_sdk(Client()))
+    handle = module.connect_pinecone(
+        api_key="k", index_name="i", create_if_missing=True, dimension=3
+    )
+    assert handle.index == "index:i"
+    assert created["dimension"] == 3 and created["name"] == "i"
+
+
+def test_connect_pinecone_closes_client_when_index_is_missing_or_sdk_incompatible(
+    monkeypatch,
+) -> None:
+    from agro_rag.infrastructure import pinecone as module
+
+    closed = []
+
+    class Missing:
+        indexes = SimpleNamespace(exists=lambda name: False)
+
+        def close(self):
+            closed.append("missing")
+
+    monkeypatch.setattr(module, "import_module", lambda name: _fake_sdk(Missing()))
+    with pytest.raises(ValueError, match="no existe"):
+        module.connect_pinecone(api_key="k", index_name="i")
+
+    class Incompatible:
+        indexes = SimpleNamespace(exists=lambda name: True)
+
+        def close(self):
+            closed.append("incompatible")
+
+    monkeypatch.setattr(module, "import_module", lambda name: _fake_sdk(Incompatible()))
+    with pytest.raises(RuntimeError, match="incompatible"):
+        module.connect_pinecone(api_key="k", index_name="i")
+    assert closed == ["missing", "incompatible"]
