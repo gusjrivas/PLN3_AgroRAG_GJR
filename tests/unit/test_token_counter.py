@@ -49,3 +49,60 @@ def test_transformers_counter_rejects_invalid_tokenizer_output(tokens: object) -
 
     with pytest.raises(ValueError, match="tokenizer"):
         TransformersTokenCounter(Tokenizer(), "model", "revision").count("contexto")
+
+
+class _Tokenizer:
+    def encode(self, text: str, **kwargs: Any) -> list[int]:
+        return [1]
+
+
+@pytest.mark.parametrize(("model", "revision"), [("", "rev"), ("model", "")])
+def test_transformers_counter_rejects_empty_identity(model: str, revision: str) -> None:
+    from agro_rag.infrastructure.tokenizer import TransformersTokenCounter
+
+    with pytest.raises(ValueError, match="Identidad"):
+        TransformersTokenCounter(_Tokenizer(), model, revision)
+    with pytest.raises(ValueError, match="Identidad"):
+        TransformersTokenCounter.load(
+            model_name=model, revision=revision, loader=lambda *a, **k: _Tokenizer()
+        )
+
+
+def test_load_uses_transformers_auto_tokenizer_when_no_loader(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    from types import SimpleNamespace
+
+    from agro_rag.infrastructure import tokenizer as module
+
+    calls: dict[str, Any] = {}
+
+    def from_pretrained(name: str, **kwargs: Any) -> _Tokenizer:
+        calls["args"] = (name, kwargs)
+        return _Tokenizer()
+
+    fake = SimpleNamespace(AutoTokenizer=SimpleNamespace(from_pretrained=from_pretrained))
+    monkeypatch.setattr(module, "import_module", lambda name: fake)
+
+    counter = module.TransformersTokenCounter.load(model_name="m", revision="r")
+
+    assert counter.count("x") == 1
+    assert calls["args"][1]["local_files_only"] is True
+    assert calls["args"][1]["trust_remote_code"] is False
+
+
+@pytest.mark.parametrize(
+    "fake_attrs",
+    [{}, {"AutoTokenizer": object()}, {"AutoTokenizer": type("A", (), {"from_pretrained": 1})}],
+)
+def test_load_rejects_incompatible_transformers(
+    monkeypatch: pytest.MonkeyPatch, fake_attrs: dict[str, Any]
+) -> None:
+    from types import SimpleNamespace
+
+    from agro_rag.infrastructure import tokenizer as module
+
+    monkeypatch.setattr(module, "import_module", lambda name: SimpleNamespace(**fake_attrs))
+
+    with pytest.raises(RuntimeError, match="AutoTokenizer"):
+        module.TransformersTokenCounter.load(model_name="m", revision="r")
