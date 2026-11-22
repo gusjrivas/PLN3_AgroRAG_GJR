@@ -10,9 +10,9 @@ incluye el flujo de consulta y el diagrama del despliegue V2. El guion cubre 15 
 Benchmark histórico: 49 PASS y 11 FAIL de contenido/citas, con 60/60 estados correctos.
 E1/E2 y piloto E3 se ejecutaron sobre `dev`; BM25 sigue como default.
 La ingesta limpia conserva los 27 IDs del corpus histórico y valida los 60 casos congelados.
-Una consulta real con `hybrid_rerank` y GPT‑4o devolvió una cita verificable de INTA Lechuga,
-página 28, en 40,22 s usando el contador de contexto `tiktoken` en un arnés local.
-El perfil de la demo aún requiere documentar cómo reproducir ese contador.
+Una consulta real con `hybrid_rerank`, GPT-4o y `tiktoken` devolvió una cita verificable de
+INTA Lechuga, página 28, en 43,28 s desde el arranque normal de la API.
+[Configuración del perfil de demo](docs/run-local.md#perfil-de-demo-con-gpt-4o-y-tiktoken).
 La aceptación complementaria del 12/11 cerró con **19 casos conformes y 8 incompletos** según
 la rúbrica, revisando tres registros manuales y ejecutando otros 24 por API. El bug #51 está
 corregido y su regresión pidió aclaración sin llamadas LLM. Ver [cierre y evidencia](docs/evidence/acceptance-27/README.md).

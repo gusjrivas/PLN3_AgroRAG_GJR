@@ -185,6 +185,7 @@ Configurar en `.env`:
 ```dotenv
 AGRO_RETRIEVAL_MODE=hybrid
 PINECONE_NAMESPACE=corpus-<version-activa>
+AGRO_RETRIEVAL_TOKENIZER_BACKEND=transformers
 AGRO_RETRIEVAL_TOKENIZER_MODEL=<tokenizer-exacto-del-generador>
 AGRO_RETRIEVAL_TOKENIZER_REVISION=<revision-inmutable>
 AGRO_SEMANTIC_LOCAL_FILES_ONLY=true
@@ -196,13 +197,38 @@ tokenizer o si el manifiesto remoto no coincide exactamente en corpus, embedding
 dimensión. Eso es intencional: no se presenta un resultado lexical como híbrido.
 
 El tokenizer debe corresponder al modelo generador efectivo. Para Ollama, usar el tokenizer de la
-misma familia/revisión del modelo instalado; para un proveedor cuyo tokenizer exacto no pueda
-fijarse localmente, mantener BM25 hasta incorporar un contador compatible. La API publica el modo
-activo en `/v1/corpus` y `<modo>_preview` en `/v1/preview/search`.
+misma familia y revisión del modelo instalado. La API publica el modo activo en `/v1/corpus`
+y `<modo>_preview` en `/v1/preview/search`.
 
 Esta activación permite una corrida controlada, pero no sustituye la revisión humana de qrels ni
 autoriza declarar mejora científica. Después de cambiar el modo, repetir E1/E2/E3 con manifiesto,
 hardware y versiones registrados.
+
+### Perfil de demo con GPT-4o y tiktoken
+
+Con el catálogo, namespace Pinecone y pesos E5/reranker preparados, instalar el extra semántico y
+cargar `o200k_base` una vez. Mantener la misma caché para el proceso de la API.
+
+```powershell
+uv sync --locked --extra semantic
+uv run --locked --extra semantic python -c "import tiktoken; print(tiktoken.encoding_for_model('gpt-4o').name)"
+```
+
+Configurar estas opciones junto con las credenciales locales de OpenAI y Pinecone:
+
+```dotenv
+AGRO_MODEL_PROVIDER=openai
+AGRO_OPENAI_MODEL=gpt-4o
+AGRO_RETRIEVAL_MODE=hybrid_rerank
+AGRO_RETRIEVAL_TOKENIZER_BACKEND=tiktoken
+AGRO_SEMANTIC_LOCAL_FILES_ONLY=true
+```
+
+Iniciar la API con `uv run --locked --extra semantic uvicorn agro_rag.bootstrap.app:create_app
+--factory --host 127.0.0.1 --port 8000`. Si también se habilitan trazas, añadir `--extra tracing`
+antes de `uvicorn`. El perfil usa el modelo OpenAI configurado y omite los dos ajustes de
+Transformers. Con caché ausente o dañada, el arranque local falla con un mensaje de preparación.
+El contador limita el contexto recuperado. El proveedor sigue informando el uso de generación.
 
 ## Pruebas
 

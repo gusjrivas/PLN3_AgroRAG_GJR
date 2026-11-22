@@ -21,7 +21,7 @@ from agro_rag.infrastructure.pinecone import (
 )
 from agro_rag.infrastructure.reranker import CrossEncoderReranker
 from agro_rag.infrastructure.retrieval import LexicalRetriever
-from agro_rag.infrastructure.tokenizer import TransformersTokenCounter
+from agro_rag.infrastructure.tokenizer import TiktokenTokenCounter, TransformersTokenCounter
 
 
 @dataclass(frozen=True)
@@ -30,6 +30,7 @@ class RetrievalFactories:
     load_embedder: Callable[..., Any] = E5Embedder.load
     load_reranker: Callable[..., Any] = CrossEncoderReranker.load
     load_token_counter: Callable[..., Any] = TransformersTokenCounter.load
+    load_tiktoken_counter: Callable[..., Any] = TiktokenTokenCounter.load
 
 
 @dataclass
@@ -50,12 +51,18 @@ def _validate_semantic_config(config: Settings) -> None:
         or not config.pinecone_index
         or not config.embedding_model
         or not config.embedding_revision
-        or not config.retrieval_tokenizer_model
-        or not config.retrieval_tokenizer_revision
+        or (
+            config.retrieval_tokenizer_backend == "transformers"
+            and (not config.retrieval_tokenizer_model or not config.retrieval_tokenizer_revision)
+        )
         or (config.retrieval_mode == "hybrid_rerank" and not config.reranker_model)
         or (config.retrieval_mode == "hybrid_rerank" and not config.reranker_revision)
     ):
         raise ValueError("Configuración semántica incompleta")
+    if config.retrieval_tokenizer_backend == "tiktoken" and (
+        config.model_provider != "openai" or not config.openai_model
+    ):
+        raise ValueError("tiktoken requiere AGRO_MODEL_PROVIDER=openai y AGRO_OPENAI_MODEL")
 
 
 def build_retrieval_runtime(
@@ -93,11 +100,17 @@ def build_retrieval_runtime(
         timeout=config.pinecone_timeout,
     )
     try:
-        token_counter = providers.load_token_counter(
-            model_name=config.retrieval_tokenizer_model,
-            revision=config.retrieval_tokenizer_revision,
-            local_files_only=config.semantic_local_files_only,
-        )
+        if config.retrieval_tokenizer_backend == "tiktoken":
+            token_counter = providers.load_tiktoken_counter(
+                model_name=config.openai_model,
+                local_files_only=config.semantic_local_files_only,
+            )
+        else:
+            token_counter = providers.load_token_counter(
+                model_name=config.retrieval_tokenizer_model,
+                revision=config.retrieval_tokenizer_revision,
+                local_files_only=config.semantic_local_files_only,
+            )
         namespace = config.pinecone_namespace or f"corpus-{catalogue.version[:16]}"
         pinecone_vector = PineconeVectorRanker.from_index(
             index=handle.index,

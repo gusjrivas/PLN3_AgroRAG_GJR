@@ -52,3 +52,10 @@ El contexto MUST limitar fragmentos por source_id y tokens reales, y sólo inclu
 - **GIVEN** candidatos largos o ID obsoleto.
 - **WHEN** se prepara contexto.
 - **THEN** se respeta límite real, se excluye evidencia inválida y se informa insuficiencia si falta soporte.
+
+#### Scenario: RET-03-tiktoken-openai
+- **GIVEN** recuperación semántica con el backend `tiktoken` y un generador OpenAI reconocido por `o200k_base`.
+- **WHEN** se prepara el contexto.
+- **THEN** la API cuenta el texto serializado con esa codificación, sin interpretar tokens especiales en los pasajes.
+- **THEN** en modo local el runtime requiere el archivo de codificación en caché con hash válido.
+  Una configuración incompatible se rechaza al arrancar.

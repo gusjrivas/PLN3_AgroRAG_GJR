@@ -148,10 +148,14 @@ def test_enabled_factories_isolate_traces_and_close(exporters, monkeypatch):
     assert failure[1].status.status_code is trace.StatusCode.ERROR
 
 
-def test_manual_tracing_ignores_fastapi_auto_configuration(exporters, monkeypatch, caplog):
+def test_manual_tracing_ignores_fastapi_auto_configuration(
+    exporters, monkeypatch, caplog, tmp_path
+):
     monkeypatch.setenv("FASTAPI_OTEL_AUTO_CONFIGURE", "true")
     monkeypatch.setenv("OTEL_EXPORTER_OTLP_ENDPOINT", "invalid-endpoint-sentinel")
-    settings = Settings(reader_key=KEY, tracing_enabled=True)
+    settings = Settings(
+        _env_file=None, reader_key=KEY, tracing_enabled=True, catalogue_path=tmp_path
+    )
     with TestClient(create_app(settings)) as client:
         assert post(client).status_code == 503
     assert "FastAPI automatic telemetry configuration failed" not in caplog.text
