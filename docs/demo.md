@@ -1,6 +1,6 @@
 # Guion reproducible de demo - 15 minutos
 
-Commit, corpus, modelo, hardware y fecha se anotan antes de comenzar. Usar el stack local preparado
+Actualización documental: 13/11/2026. Commit, corpus, modelo, hardware y fecha se anotan antes de comenzar. Usar el stack local preparado
 según `docs/run-local.md`. No mostrar `.env`, consolas con secretos ni paneles de proveedor.
 
 ## 00:00 a 02:00 - problema y corpus
@@ -24,7 +24,9 @@ según `docs/run-local.md`. No mostrar `.env`, consolas con secretos ni paneles 
 3. Consultar: "¿Cuándo es crítico evitar la falta de agua en tomate?".
 4. Expandir la cita y mostrar título, edición, página física/impresa y pasaje.
 5. Si OpenAI u Ollama está configurado, cambiar a **Respuesta verificada** y repetir la pregunta.
-6. Mostrar un pedido ambiguo: "¿Cuánto riego aplico?"; debe pedir datos o abstenerse, no inventar litros.
+6. Mostrar la regresión validada: "Hace mucho calor, ¿debería cambiar el riego?", con cultivo,
+   etapa y región sin especificar y suelo vacío. Debe pedir aclaración, sin recomendar un cambio.
+7. Si queda tiempo, mostrar "¿Va a llover mañana en mi lote?": debe indicar evidencia insuficiente.
 
 Criterio de éxito: se observa evidencia resoluble y un estado de negocio explícito. Si el modelo no
 está disponible, mostrar el error real y continuar con el modo lexical.
@@ -39,6 +41,9 @@ está disponible, mostrar el error real y continuar con el modo lexical.
 - Explicar que el dictamen único por par no demuestra una mejora causal del verificador.
 - Mostrar E3 como piloto mínimo: una consulta, tres repeticiones frías/calientes y 156 ms menos de
   mediana sin ahorro de tokens.
+- Dedicar 40 segundos a la aceptación complementaria: 3 registros manuales revisados, 24 casos
+  por API y repetición de P02. Resultado: 19 conformes y 8 incompletos según la rúbrica.
+  No sumar estos casos al benchmark de 60 ni presentar la revisión asistente como anotación humana.
 
 Criterio de éxito: nadie interpreta los fixtures o el smoke como evaluación científica final.
 
@@ -48,6 +53,11 @@ Criterio de éxito: nadie interpreta los fixtures o el smoke como evaluación ci
 - Enumerar límites: `test` cerrado, E3 no generalizable y dictamen E2 único por par, sin puntuación
   separada para estimar el efecto causal del verificador. Revisor y fecha están completos.
 - Declarar asistencia de IA y responsabilidad humana.
+- Explicar Garak en 20 segundos: API key/Base64/prompt injection 32 casos reales por familia sin
+  detecciones; 15 alertas DAN revisadas como falsos positivos. Corresponde a `d38814b4`.
+  No ejecutar el scan durante la demo ni repetirlo para el siguiente entorno limpio.
+- Aclarar que META-01..04 están integradas y META-05..07 siguen pendientes. La extensión docente
+  de metadatos no se presenta como completa.
 - Cerrar con la decisión principal: no activar una mejora aparente sin calidad y latencia validadas.
 
 ## Preparación técnica
@@ -78,3 +88,16 @@ uv run python scripts/build_report.py
 - Si Pinecone falla, no cambiar configuración en vivo: la demo pública usa BM25.
 - Si la red externa falla, el corpus ya ingerido permite la demo local.
 - No usar respuestas fixture sin rotularlas ni borrar un fallo para favorecer la presentación.
+
+## Preguntas esperables de la cátedra
+
+- **¿Qué aporta el verificador?** Impone un contrato de claims/citas y permite revisión acotada;
+  la evaluación disponible no demuestra mejora factual causal.
+- **¿Por qué BM25 sigue activo?** El reranker tuvo p95 de 47,01 s sólo en retrieval y la comparación
+  se limitó a `dev`. El score de ranking no justifica por sí solo cambiar el default.
+- **¿Por qué ocho casos fallaron si tienen citas?** La cita respalda lo dicho, pero no garantiza
+  que se hayan incluido todas las afirmaciones requeridas. Mostrar P17 como ejemplo de omisión.
+- **¿Garak aprobó?** La cobertura documentada quedó completa y sin hallazgos confirmados para la
+  candidata evaluada. No equivale a certificar todos los ataques ni versiones posteriores.
+- **¿Qué falta?** Entorno limpio y ensayo, confirmaciones académicas, promoción formal de V2 y
+  curación/evaluación final de metadatos. Se distinguen de la documentación ya preparada.

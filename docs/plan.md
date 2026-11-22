@@ -4,6 +4,16 @@ La evolución posterior a `v0.1.0` se propone en
 [Plan V2: PoC containerizada y desplegable](plan-v2-production-poc.md) y
 [ADR-015](adr/015.md). Esta referencia no declara la V2 implementada.
 
+## Actualización de cierre documental al 13/11/2026
+
+La campaña complementaria de aceptación queda cerrada con 19 conformes y 8 incompletos según
+la rúbrica; [evidencia](evidence/acceptance-27/README.md). Se actualizan informe y guion sin
+corregir código ni cambiar defaults científicos. Garak tiene cobertura completa para la candidata
+evaluada y no se repite en el siguiente entorno limpio por instrucción del usuario.
+META-01..04 están integradas; META-05..07 siguen abiertas. La promoción formal de V2 sigue pendiente.
+El siguiente trabajo es el checklist de entorno limpio de [entrega](delivery.md), luego ensayo
+y confirmaciones académicas. Las secciones de octubre que siguen son históricas.
+
 ## Estado al 29/10/2026
 
 La primera versión local y el paquete técnico están implementados: corpus curado de 27 fragmentos,

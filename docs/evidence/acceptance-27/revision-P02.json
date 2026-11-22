@@ -1,0 +1,46 @@
+{
+  "request_id": "cb08ef5e-e4a9-457a-a301-a67392510514",
+  "status": "answered",
+  "answer": "Una temperatura mayor a 30 °C es problemática para la lechuga porque afecta negativamente la germinación y el desarrollo del cultivo.",
+  "claims": [
+    {
+      "claim_id": "1",
+      "text": "Una temperatura mayor a 30 °C es problemática para la lechuga porque afecta negativamente la germinación y el desarrollo del cultivo.",
+      "evidence_ids": [
+        "df3b22180f03865d9b37eeb3ad74c72d84b6cd2fed74fc3122a417a42a842c8d"
+      ]
+    }
+  ],
+  "citations": [
+    {
+      "evidence_id": "df3b22180f03865d9b37eeb3ad74c72d84b6cd2fed74fc3122a417a42a842c8d",
+      "source_id": "INTA-HUERTA-2008",
+      "title": "Manual de cultivos para la huerta orgánica familiar",
+      "edition": "1a edición, 2008",
+      "pdf_page": 69,
+      "printed_page": "67",
+      "section": "Lechuga: clima y suelo",
+      "excerpt": "Clima y Suelo\nLa lechuga se desarrolla bien en climas templados frescos, con tempe-\nraturas promedio mensuales comprendidas entre 13o y 18oC, con un\nrango que puede oscilar entre 7o y 24oC, variación que permite su cul-\ntivo durante todo el año, utilizando las variedades adecuadas.\nLa temperatura alta, principalmente aquella que supera los 30oC, es el\nfactor más importante que gravita negativamente en la germinación y\nel posterior desarrollo del cultivo, condicionando el crecimiento.\nEn cuanto a las características del suelo, los que mejor se adaptan son\nlos de alta fertilidad (alto contenido de materia orgánica), de buen dre-\nnaje con alta capacidad de retención de humedad y una acidez neutra.",
+      "source_url": "https://www.argentina.gob.ar/sites/default/files/2023/08/script-tmp-manual_de_cultivos_para_la_huerta_organica_familiar_-.pdf"
+    }
+  ],
+  "missing_information": [],
+  "limitations": [
+    "Corpus piloto; recuperación lexical, sin índice semántico activo.",
+    "Verificación automática pendiente de evaluación agronómica."
+  ],
+  "corpus_version": "e9929440f552b1c7be1349118a1ee98c6cdba41fbd2e2ce05343247c918dfb7d",
+  "verification": {
+    "decision": "approve",
+    "revision_count": 0,
+    "issue_codes": []
+  },
+  "usage": {
+    "llm_calls": 2,
+    "input_tokens": 4065,
+    "output_tokens": 111,
+    "estimated": false,
+    "total_ms": 2953,
+    "cache_hit": true
+  }
+}

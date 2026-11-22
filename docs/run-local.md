@@ -8,8 +8,8 @@ La búsqueda pública usa BM25 por defecto. El runtime permite activar explícit
 hybrid o hybrid_rerank sobre el namespace E5/Pinecone ya indexado, con identidad verificada,
 tokenizer fijado y CrossEncoder opcional. No se degrada silenciosamente a BM25. El default no cambia
 porque la evaluación real se limitó a `dev`, no demostró mejora causal del verificador y el
-reranker excedió ampliamente el objetivo de latencia en CPU. No hay Docker
-Compose aún; no es un requisito de la cátedra.
+reranker excedió ampliamente el objetivo de latencia en CPU. Docker Compose y su evidencia posterior
+se describen en `docs/run-containerized.md`; no es un requisito de la cátedra.
 
 ## Preparar
 

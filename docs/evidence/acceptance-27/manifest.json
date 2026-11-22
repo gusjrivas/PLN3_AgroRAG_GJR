@@ -1,0 +1,21 @@
+{
+  "executed": "2026-11-12",
+  "closed": "2026-11-13",
+  "artifacts": [
+    {
+      "path": "pruebas-27-revisadas.xlsx",
+      "size_bytes": 18067,
+      "sha256": "25c548989810b7e4f11fad72ab3a7829eb6085aa47eebc76a5dc49072964d923"
+    },
+    {
+      "path": "ejecucion-real-24.json",
+      "size_bytes": 93677,
+      "sha256": "da77cbe568c4987adf7c287613dd64f30e424d5a727d72902cd485fbb0c1c94a"
+    },
+    {
+      "path": "revision-P02.json",
+      "size_bytes": 2391,
+      "sha256": "8a7970805e4d2b3ec8c6aaaf221d2aeaa6e783add5e84848b44747041a6785ef"
+    }
+  ]
+}

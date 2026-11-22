@@ -3,10 +3,11 @@
 **Trabajo integrador - Procesamiento de Lenguaje Natural III**
 
 Autor y responsable académico: Gustavo Julián Rivas
-Versión técnica: 29/10/2026
+Versión documental: 22/11/2026 (diagrama de flujo incorporado)
 Repositorio: https://github.com/gusjrivas/PLN3_AgroRAG_GJR
 
-Estado del documento: entrega técnica reproducible con evaluación EVA-02 ejecutada y limitaciones explícitas.
+Estado del documento: paquete académico actualizado con EVA-02, aceptación de 27 casos y
+evaluación Garak documentadas. La reproducción en un entorno limpio será el paso posterior.
 
 ## 1. Objetivo, problema y alcance
 
@@ -72,9 +73,14 @@ posterior es local. Los PDF y catálogos generados están ignorados por Git.
 
 ## 3. Arquitectura
 
-La solución es un monolito modular de backend con una interfaz desplegada como proceso separado.
-El recorrido de una consulta es: usuario, Streamlit, API FastAPI, caso de uso, retrieval,
-investigador, verificador y respuesta tipada. La UI sólo conoce JSON por HTTP.
+La solución es un monolito modular de backend con Streamlit como proceso separado. La interfaz
+consume JSON por HTTP.
+
+<!-- query-flow -->
+
+**Figura 1. Flujo de consulta.** El caso de uso puede pedir aclaración antes de recuperar
+pasajes o abstenerse si falta evidencia. El verificador puede solicitar una revisión,
+tras la cual el investigador y el verificador vuelven a intervenir.
 
 | Capa | Responsabilidad | Restricción principal |
 |---|---|---|
@@ -93,7 +99,7 @@ no bloquear el event loop.
 
 La API distingue liveness de readiness. Liveness no llama proveedores. Readiness requiere corpus y
 modelo configurados. Un semáforo limita dos consultas activas; el exceso devuelve 429. La caché LRU
-de retrieval usa consulta normalizada, cultivo y versión de corpus, nunca cachea errores ni
+de retrieval usa consulta normalizada, filtros de cultivo/etapa/región y versión de corpus, nunca cachea errores ni
 respuestas generadas.
 
 ## 4. Implementación y reutilización
@@ -156,28 +162,32 @@ pero no sustituye el soporte factual.
 
 ### Verificación de ingeniería
 
-Antes de cerrar este paquete, la suite local obtuvo `188 passed, 2 deselected`. Ruff, formato,
-mypy sobre 36 archivos, dos contratos de importación y los siete cambios OpenSpec finalizaron con
-código 0. Los jobs remotos `offline`, `specs` y `browser` del PR 22 también aprobaron. Estos datos
-demuestran consistencia técnica del repositorio, no calidad agronómica.
+El PR #52 del bug #51 registra `340 passed, 1 skipped, 3 deselected`, Ruff, mypy y dos contratos
+de importación aprobados. Son verificaciones de aquel corte, no una nueva suite completa ni
+una medida de calidad agronómica. Esta actualización sólo verifica la superficie documental.
+
+### Aceptación complementaria de 27 casos
+
+El 12/11/2026 se revisaron tres registros manuales y se ejecutaron otros 24 casos por API con
+BM25 y OpenAI `gpt-4o`; P02 se repitió para revisar su cita. P01-P26 proceden de `dev` y P27
+reproduce el bug #51: no constituyen otro benchmark independiente.
+
+Resultado: 19 conformes y 8 incompletos según rúbrica. Las 24 consultas nuevas devolvieron el
+estado esperado y citas con fuente/página/pasaje coincidentes. P27 pidió aclaración sin usar LLM.
+
+Los fallos son omisiones: P17 da 0,9 dS/m, pero omite el efecto a 1,4 dS/m. Se conserva la rúbrica:
+`answered` y una cita válida no garantizan completitud. No son ocho vulnerabilidades o datos falsos.
+
+Total nuevo: 36 llamadas y 68.267/2.042 tokens de entrada/salida, sin costo monetario atribuido.
+Revisión de la misma sesión asistente, sin segundo anotador humano ni nueva ejecución visual.
+La campaña se cierra con limitaciones; IDs fallidos, corpus y libro: `docs/evidence/acceptance-27/`.
 
 ### Smoke semántico preliminar
 
-El 23/10/2026 se ejecutó una pasada real de retrieval sobre ocho preguntas de desarrollo y doce
-evidencias. Las etiquetas son `pending_human`, fueron creadas como borrador técnico y no forman el
-benchmark de 60 casos. Los valores sólo permiten detectar integración, costos y fallos.
-
-| Modo | MRR@10 | Recall@5 | nDCG@10 | p95 ms |
-|---|---:|---:|---:|---:|
-| BM25 | 0,6875 | 0,750 | 0,7039 | 1,25 |
-| Vector E5 | 0,8438 | 1,000 | 0,8827 | 233,23 |
-| Hybrid RRF | 0,8958 | 0,875 | 0,9195 | 268,01 |
-| Hybrid + BGE reranker | 1,0000 | 1,000 | 1,0000 | 30559,45 |
-
-El resultado conserva dos señales negativas. RRF redujo Recall@5 respecto del vector en este
-borrador. El reranker consumió aproximadamente 30,56 segundos p95 sólo en retrieval sobre CPU,
-incompatible con el objetivo de 30 segundos para la respuesta completa. La perfección aparente del
-reranker sobre ocho preguntas pequeñas no se generaliza y no autoriza activarlo.
+El smoke del 23/10/2026 usó ocho preguntas y doce evidencias, con etiquetas `pending_human`:
+es un borrador histórico, no el benchmark de 60 casos. Detectó pérdida de Recall@5 con RRF
+respecto del vector y p95 de 30,56 s del reranker sólo en retrieval. La comparación principal
+posterior es EVA-02; no se generalizan los scores del smoke ni se mezclan sus denominadores.
 
 ### Corrida EVA-02 presupuestada
 
@@ -191,11 +201,9 @@ USD 0,100982; con verificador consumió 66.736, 2.197 y USD 0,188810. Ambos modo
 estado esperado 18/18. El verificador aprobó todos los casos, no pidió revisiones y cambió cinco
 textos.
 
-La revisión humana posterior de los 18 pares registró 12 PASS y 6 FAIL. Los FAIL fueron
-`dev-r-002`, `dev-r-003`, `dev-r-004`, `dev-r-011`, `dev-r-012` y `dev-r-013`. La planilla asigna
-un dictamen al par y no una puntuación independiente a cada variante, por lo que estos datos no
-demuestran una mejora causal del verificador. También se conserva una revisión dirigida previa de
-los cinco cambios, que encontró tres omisiones; la discrepancia no se oculta.
+La revisión humana de los 18 pares registró 12 PASS y 6 FAIL. El dictamen único por par no
+demuestra mejora causal del verificador. La revisión dirigida previa de cinco cambios encontró
+tres omisiones; ambas evidencias se conservan en `docs/evidence/tdd/EVA-02-budgeted-live.md`.
 
 E3 se limitó a una consulta con tres repeticiones frías y tres calientes. La mediana bajó de 1.562
 a 1.406 ms, sin reducir tokens ni costo porque la caché guarda retrieval, no generación. El gasto
@@ -205,22 +213,30 @@ mejora factual causalmente atribuible al verificador.
 
 ## 7. Seguridad, operación y costos
 
-`.env` y todas sus variantes privadas están ignoradas; `.env.example` sólo contiene nombres y
-valores no secretos. La clave Pinecone se lee como `SecretStr` y se entrega explícitamente al
-adaptador. La alternativa más segura para una sesión es una variable de proceso obtenida mediante
-entrada segura de PowerShell. En CI se requiere un secret store.
-
-La API usa `X-API-Key`, validación de tamaño y esquema, lista cerrada de estados, límites de
-concurrencia y errores redactados. La descarga de corpus sólo existe en CLI administrativa y
-restringe dominios, redirects, rutas y hashes. Startup no crea ni borra índices.
-
-La auditoría registra request ID, versión del corpus, decisión, revisiones, duración, llamadas,
-tokens, estimación y cache hit. No registra pregunta, prompt, evidencia, URL, clave o mensaje de
-excepción. El request ID del error HTTP coincide con el evento interno sin exponer detalles.
+Secretos fuera de Git; CI usa secret store. La API exige `X-API-Key`, valida esquema/tamaño,
+limita concurrencia y redacta errores. La descarga administrativa restringe dominios, redirects,
+rutas y hashes; startup no crea ni borra índices. Auditoría conserva request ID, corpus, decisión,
+duración, llamadas, tokens y caché, sin pregunta, prompt, evidencia ni credenciales.
 
 La corrida EVA-02 registró USD 0,334369 con tarifas fechadas y quedó por debajo del tope autorizado
 de USD 0,50. OpenAI, Pinecone y las descargas pueden generar uso externo; el operador debe revisar
 su cuenta y presupuesto. Ollama se ejecuta localmente. El reporte separa costo real y estimado.
+
+### Evaluación adversarial Garak ya ejecutada
+
+La evaluación Garak 0.17.0 corresponde a la candidata `d38814b4`, desplegada por digest en WSL.
+El seguimiento final completó las familias inicialmente interrumpidas por presupuesto:
+
+| Familia | Respuestas reales | Resultado final |
+|---|---:|---|
+| API key | 32 | 0 detecciones |
+| DAN | 15 | 15 falsos positivos revisados humanamente; 0 confirmados y 0 dudosos |
+| Base64 | 32 | 0 detecciones |
+| Prompt injection | 32 | 0 detecciones |
+
+Gasto estimado: USD 0,337275; techo por corrida: USD 0,20. Informe:
+`docs/evidence/garak/garak-d38814b4-human-report.md`. El usuario indicó reutilizarlo sin repetir
+Garak en el entorno limpio. No se atribuye a commits posteriores; la promoción V2 sigue pendiente.
 
 ## 8. Reproducción
 
@@ -234,10 +250,8 @@ uv run agro-rag ingest data/manifest.json --output data/processed/catalogue
 uv run pytest -q
 ```
 
-Luego se inician backend y frontend en terminales separadas con los comandos de `docs/run-local.md`.
-La exploración de fuentes funciona sin LLM. La respuesta verificada requiere OpenAI u Ollama y un
-modelo configurado. Pinecone y el extra semántico son opcionales y no forman parte del arranque
-público.
+Iniciar API/UI según `docs/run-local.md`. Exploración funciona sin LLM; respuesta verificada
+requiere proveedor configurado. Pinecone y el extra semántico son opcionales.
 
 El informe se regenera con:
 
@@ -245,33 +259,20 @@ El informe se regenera con:
 uv run python scripts/build_report.py
 ```
 
-El verificador offline calcula hashes de los artefactos, comprueba comandos, secciones, duración
-del guion y presencia del PDF sin leer `.env` ni llamar a Internet. La release definitiva sólo
-puede etiquetarse después de la revisión final del diff/PDF y de repetir la instalación en un
-checkout limpio.
+El verificador offline comprueba el paquete base sin leer secretos ni usar red. La versión de
+entrega requiere además reproducir la instalación en un checkout limpio y registrar sus artefactos.
 
 ## 9. Demo de 15 minutos
 
-El guion versionado divide la exposición en problema/corpus, arquitectura/reuso, demo, evaluación
-y conclusiones. La demo muestra liveness, exploración de fuentes, una respuesta verificada cuando
-el proveedor configurado está disponible y un caso de aclaración o abstención. No se presenta un
-fixture como salida en vivo. Si un proveedor externo falla, se muestra el error real y se continúa
-con evidencia capturada e identificada como respaldo.
-
-La secuencia exacta, preguntas, comandos, criterios de éxito y plan de contingencia están en
-`docs/demo.md`. Se recomienda ensayar con cronómetro y registrar hardware, modelo y commit antes de
-la exposición.
+`docs/demo.md` distribuye los 15 minutos entre problema/corpus, arquitectura/reuso, demo,
+evaluación y conclusiones. Mostrar evidencia, respuesta y aclaración. Si falla el proveedor,
+mostrar el error y usar respaldo identificado. Registrar hardware/modelo/commit y ensayar.
 
 ## 10. Modalidad y responsabilidades humanas
 
-El autor y responsable académico registrado es Gustavo Julián Rivas. La modalidad individual o
-grupal todavía debe confirmarse con la cátedra. Si se confirma un grupo, esta sección debe ampliarse
-antes de entregar con integrantes, tareas efectivamente realizadas y revisión humana. Los agentes
-de programación utilizados no sustituyen responsables humanos ni se presentan como integrantes.
-
-Las decisiones de arquitectura, aceptación de resultados, uso de credenciales, revisión de qrels y
-envío académico corresponden a una persona responsable. Ningún correo ni publicación se realiza de
-forma automática.
+Responsable académico: Gustavo Julián Rivas. Confirmar modalidad con la cátedra; si fuera grupal,
+registrar integrantes y tareas humanas. Los agentes no son integrantes. La aceptación de resultados,
+credenciales, qrels y envío es responsabilidad humana. No se envían correos automáticamente.
 
 ## 11. Conclusiones y trabajo pendiente
 
@@ -286,10 +287,17 @@ producto. El reranker fue demasiado lento y el verificador no mostró una mejora
 la revisión disponible. Mantener BM25 en la API es una decisión conservadora sustentada por
 evidencia, no una omisión silenciosa.
 
-El alcance científico sigue limitado: `test` permanece cerrado, E3 cubre una sola consulta y el
-dictamen humano E2 no separa la calidad de cada variante. Antes de la entrega faltan la revisión
-final del diff/PDF, un ensayo reproducible y confirmar la fecha calendario de Teoría 7 y la
-modalidad académica.
+El alcance científico sigue limitado: `test` permanece cerrado para selección de parámetros,
+E3 cubre una sola consulta y el dictamen humano E2 no separa la calidad de cada variante.
+La aceptación complementaria conserva ocho respuestas incompletas; no se afirma calidad perfecta.
+La recomendación docente sobre metadatos tiene META-01..04 integradas, mientras que la curación
+real, la comparación contextual y el cierre META-05..07 siguen pendientes. No se presenta esa
+extensión como terminada ni se archiva OpenSpec 08.
+
+El cierre documental registra el estado demostrado y prepara la exposición. El paso operativo
+siguiente será reproducir la versión elegida en un entorno limpio, sin repetir Garak por
+instrucción del usuario. También quedan el ensayo de 15 minutos, la confirmación de modalidad
+y fecha de Teoría 7 y el envío académico autorizado. La promoción de V2 es una tarea separada.
 
 ## 12. Referencias
 

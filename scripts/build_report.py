@@ -2,11 +2,14 @@
 
 from __future__ import annotations
 
+import argparse
 import html
 import re
+from math import atan2, cos, sin
 from pathlib import Path
 from typing import cast
 
+from reportlab.graphics.shapes import Drawing, Line, Polygon, Rect, String
 from reportlab.lib import colors
 from reportlab.lib.enums import TA_CENTER, TA_JUSTIFY
 from reportlab.lib.pagesizes import A4
@@ -16,6 +19,7 @@ from reportlab.pdfgen.canvas import Canvas
 from reportlab.platypus import (
     BaseDocTemplate,
     Flowable,
+    KeepTogether,
     PageBreak,
     Paragraph,
     Preformatted,
@@ -134,6 +138,86 @@ def _table(lines: list[str], body_style: ParagraphStyle) -> Table:
     return table
 
 
+def _query_flow() -> Drawing:
+    """Vector flowchart of the verified-answer path and its early exits."""
+    drawing = Drawing(174 * mm, 150)
+    drawing.hAlign = "LEFT"
+    ink = colors.HexColor("#174A3A")
+    accent = colors.HexColor("#176B87")
+
+    def box(x: int, y: int, width: int, title: str, detail: str) -> None:
+        drawing.add(
+            Rect(
+                x,
+                y,
+                width,
+                32,
+                rx=5,
+                ry=5,
+                fillColor=colors.HexColor("#EDF5F1"),
+                strokeColor=ink,
+                strokeWidth=0.75,
+            )
+        )
+        center = x + width / 2
+        drawing.add(
+            String(
+                center,
+                y + 19,
+                title,
+                fontName="Helvetica-Bold",
+                fontSize=9,
+                textAnchor="middle",
+                fillColor=ink,
+            )
+        )
+        drawing.add(
+            String(
+                center,
+                y + 8,
+                detail,
+                fontName="Helvetica",
+                fontSize=8,
+                textAnchor="middle",
+                fillColor=ink,
+            )
+        )
+
+    def arrow(x1: int, y1: int, x2: int, y2: int, color: colors.Color = ink) -> None:
+        drawing.add(Line(x1, y1, x2, y2, strokeColor=color, strokeWidth=1))
+        angle = atan2(y2 - y1, x2 - x1)
+        points = [x2, y2]
+        for offset in (-0.5, 0.5):
+            points.extend((x2 - 5 * cos(angle + offset), y2 - 5 * sin(angle + offset)))
+        drawing.add(Polygon(points, fillColor=color, strokeColor=None))
+
+    box(0, 115, 140, "Usuario en Streamlit", "Pregunta y contexto del cultivo")
+    box(176, 115, 140, "FastAPI", "Autenticación y validación HTTP")
+    box(352, 115, 140, "Caso de uso", "Comprueba el contexto mínimo")
+    box(352, 59, 140, "Recuperación y ranking", "BM25 o modo semántico")
+    box(176, 59, 140, "Agente investigador", "Propone afirmaciones con evidencia")
+    box(0, 59, 140, "Agente verificador", "Revisa afirmaciones y citas")
+    box(
+        0,
+        0,
+        492,
+        "Respuesta HTTP a Streamlit",
+        "Respuesta con citas, pedido de aclaración o abstención",
+    )
+
+    arrow(140, 131, 176, 131)
+    arrow(316, 131, 352, 131)
+    arrow(422, 115, 422, 91)
+    arrow(352, 75, 316, 75)
+    arrow(176, 75, 140, 75)
+    arrow(70, 59, 70, 32)
+    drawing.add(Line(111, 59, 111, 48, strokeColor=accent))
+    drawing.add(Line(111, 48, 228, 48, strokeColor=accent))
+    arrow(228, 48, 228, 59, accent)
+    drawing.add(String(169, 37, "Una revisión", fontSize=8, textAnchor="middle", fillColor=accent))
+    return drawing
+
+
 def build_pdf(source: Path, target: Path) -> None:
     """Render the supported Markdown subset into a stable, paginated PDF."""
     lines = source.read_text(encoding="utf-8").splitlines()
@@ -147,7 +231,11 @@ def build_pdf(source: Path, target: Path) -> None:
 
     def flush_paragraph() -> None:
         if paragraph:
-            story.append(Paragraph(_inline(" ".join(paragraph)), styles["BodyJustified"]))
+            body = Paragraph(_inline(" ".join(paragraph)), styles["BodyJustified"])
+            if story and isinstance(story[-1], Drawing):
+                story.append(KeepTogether([story.pop(), Spacer(1, 5), body]))
+            else:
+                story.append(body)
             paragraph.clear()
 
     index = 0
@@ -187,7 +275,10 @@ def build_pdf(source: Path, target: Path) -> None:
             body_style = cast(ParagraphStyle, styles["BodyJustified"])
             story.extend((_table(table_lines, body_style), Spacer(1, 7)))
             continue
-        if line.startswith("# "):
+        if line == "<!-- query-flow -->":
+            flush_paragraph()
+            story.append(_query_flow())
+        elif line.startswith("# "):
             flush_paragraph()
             story.extend(
                 (
@@ -198,7 +289,7 @@ def build_pdf(source: Path, target: Path) -> None:
             )
         elif line.startswith("## "):
             flush_paragraph()
-            if story and section_count in {0, 5, 10}:
+            if story and section_count in {0, 10}:
                 story.append(PageBreak())
             section_count += 1
             story.append(Paragraph(_inline(line[3:]), styles["ReportH2"]))
@@ -233,7 +324,10 @@ def build_pdf(source: Path, target: Path) -> None:
 
 def main() -> int:
     root = Path(__file__).parents[1]
-    build_pdf(root / "docs/report.md", root / "output/pdf/agro-rag-report.pdf")
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--output", type=Path, default=root / "output/pdf/agro-rag-report.pdf")
+    args = parser.parse_args()
+    build_pdf(root / "docs/report.md", args.output)
     return 0
 
 
