@@ -2,6 +2,7 @@ import hashlib
 import json
 from pathlib import Path
 
+import pdfplumber
 import pytest
 from reportlab.pdfgen.canvas import Canvas
 
@@ -52,6 +53,27 @@ def test_real_pdf_provenance_and_idempotency(tmp_path):
     assert evidence.text == evidence.original_text[evidence.start : evidence.end]
     assert evidence.corpus_version == first.version
     assert (tmp_path / "catalogues" / "active.json").exists()
+
+
+def test_uncurated_manifest_preserves_legacy_identity(tmp_path):
+    manifest, source = fixture_source(tmp_path)
+    legacy_page = {**source["pages"][0], "start_marker": None, "end_marker": None, "table": None}
+    config = {
+        "manifest": {"sources": [{**source, "pages": [legacy_page]}]},
+        "extractor": f"pdfplumber-{pdfplumber.__version__}",
+        "chunking": "lexical-200-overlap60-v1",
+    }
+    legacy_version = hashlib.sha256(
+        json.dumps(config, sort_keys=True, ensure_ascii=False).encode()
+    ).hexdigest()
+    output = tmp_path / "catalogues"
+    first = build(manifest, output)
+    assert first.version == legacy_version
+
+    source["source_type"] = None
+    source["pages"][0].update(growth_stages=[], applicable_regions=[], applicability="unknown")
+    manifest.write_text(json.dumps({"sources": [source]}))
+    assert build(manifest, output) == first
 
 
 @pytest.mark.parametrize("failure", ["hash", "rights", "review", "pages", "empty", "duplicate"])

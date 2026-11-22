@@ -22,6 +22,11 @@ esos valores a cada evidencia sin inferencias automáticas.
 - **WHEN** se reconstruye el corpus.
 - **THEN** se genera otra versión e IDs deterministas, conservando activa la versión anterior hasta verificación.
 
+#### Scenario: META-01-compatibilidad
+- **GIVEN** un manifiesto sin metadata adicional curada, con sus valores por defecto omitidos o explícitos.
+- **WHEN** se reconstruye el corpus con los mismos PDF, extractor y chunking.
+- **THEN** se conservan la versión y los IDs anteriores a META-01 para validar el benchmark congelado y resolver las referencias del índice existente.
+
 ### Requirement: META-02 Compatibilidad y priorización comunes
 La recuperación MUST excluir candidatos explícitamente incompatibles y MUST priorizar coincidencias
 exactas, evidencia general y metadata desconocida en ese orden, con la misma política para BM25 y

@@ -118,8 +118,25 @@ def build_catalogue(manifest_path: Path, output: Path) -> Catalogue:
     ids = [source.source_id for source in manifest.sources]
     if len(ids) != len(set(ids)):
         raise ValueError("source_id duplicado")
+    manifest_identity = manifest.model_dump()
+    has_curated_metadata = any(
+        source.source_type is not None
+        or any(
+            page.growth_stages or page.applicable_regions or page.applicability != "unknown"
+            for page in source.pages
+        )
+        for source in manifest.sources
+    )
+    # Preserve the frozen benchmark and index identity until the corpus gains curated metadata.
+    if not has_curated_metadata:
+        for source_identity in manifest_identity["sources"]:
+            del source_identity["source_type"]
+            for page_identity in source_identity["pages"]:
+                del page_identity["growth_stages"]
+                del page_identity["applicable_regions"]
+                del page_identity["applicability"]
     config = {
-        "manifest": manifest.model_dump(),
+        "manifest": manifest_identity,
         "extractor": "pdfplumber-" + pdfplumber.__version__,
         "chunking": "lexical-200-overlap60-v1",
     }
