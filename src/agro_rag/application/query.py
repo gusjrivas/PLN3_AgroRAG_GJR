@@ -6,11 +6,12 @@ import time
 import unicodedata
 from collections import OrderedDict
 from dataclasses import dataclass
-from typing import Any, Protocol, cast
+from typing import Any, Literal, Protocol, cast
 from uuid import uuid4
 
 from agro_rag.application.audit import AuditOutcome, AuditSink, QueryAuditEvent
 from agro_rag.application.retrieval import Crop, RetrievalFilters, Retriever
+from agro_rag.application.tracing import trace_stage
 from agro_rag.domain.evidence import ApplicableRegion, Evidence, GrowthStage
 
 
@@ -212,16 +213,17 @@ class QueryService:
             filters.growth_stage,
             filters.region,
         )
-        try:
-            hits = self._retrieval_cache.pop(cache_key)
-            self._retrieval_cache[cache_key] = hits
-            cache_hit = True
-        except KeyError:
-            hits = await asyncio.to_thread(self.retriever.search, question, filters)
-            self._retrieval_cache[cache_key] = hits
-            if len(self._retrieval_cache) > self.retrieval_cache_size:
-                self._retrieval_cache.popitem(last=False)
-            cache_hit = False
+        with trace_stage("retrieval"):
+            try:
+                hits = self._retrieval_cache.pop(cache_key)
+                self._retrieval_cache[cache_key] = hits
+                cache_hit = True
+            except KeyError:
+                hits = await asyncio.to_thread(self.retriever.search, question, filters)
+                self._retrieval_cache[cache_key] = hits
+                if len(self._retrieval_cache) > self.retrieval_cache_size:
+                    self._retrieval_cache.popitem(last=False)
+                cache_hit = False
         available = {item.evidence_id: item for item in hits}
         usage = {
             "llm_calls": 0,
@@ -304,7 +306,9 @@ class QueryService:
             )
             return result
 
-        async def generate(role: str, payload: dict[str, Any]) -> dict[str, Any]:
+        async def generate(
+            role: Literal["researcher", "verifier"], payload: dict[str, Any]
+        ) -> dict[str, Any]:
             # Byte count is a conservative upper estimate for UTF-8 BPE input;
             # reserve room for the system instructions and capped output.
             reserve = len(json.dumps(payload, ensure_ascii=False).encode()) + 2048
@@ -314,7 +318,8 @@ class QueryService:
             remaining = self.deadline_seconds - (time.monotonic() - started)
             if remaining <= 0:
                 raise TimeoutError
-            generated = await self.model.generate(role, payload, remaining)
+            with trace_stage(role):
+                generated = await self.model.generate(role, payload, remaining)
             if generated.input_tokens < 0 or generated.output_tokens < 0:
                 raise UpstreamError("Usage inválido")
             usage["llm_calls"] += 1

@@ -4,7 +4,7 @@ import sys
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 from time import perf_counter
-from typing import Annotated
+from typing import TYPE_CHECKING, Annotated
 from uuid import uuid4
 
 import httpx
@@ -23,6 +23,9 @@ from agro_rag.infrastructure.audit import LoggingAuditSink
 from agro_rag.infrastructure.corpus import load_catalogue
 from agro_rag.infrastructure.ollama import OllamaModel
 from agro_rag.infrastructure.openai import OpenAIModel
+
+if TYPE_CHECKING:
+    from agro_rag.infrastructure.tracing import ConsoleTracing
 
 
 def _http_logger() -> logging.Logger:
@@ -74,16 +77,39 @@ def create_app(
             retrieval_mode=retrieval_runtime.mode,
         )
 
+    tracing: ConsoleTracing | None = None
+
     @asynccontextmanager
     async def lifespan(app: FastAPI) -> AsyncIterator[None]:
+        nonlocal tracing
         try:
+            if config.tracing_enabled:
+                try:
+                    from agro_rag.infrastructure.tracing import ConsoleTracing
+                except ModuleNotFoundError as exc:
+                    if exc.name not in {"opentelemetry", "opentelemetry.sdk"}:
+                        raise
+                    raise RuntimeError(
+                        "AGRO_TRACING_ENABLED requires uv sync --extra tracing"
+                    ) from None
+                tracing = ConsoleTracing()
             yield
         finally:
-            await client.aclose()
-            if retrieval_runtime is not None:
-                retrieval_runtime.close()
+            try:
+                if tracing is not None:
+                    tracing.shutdown()
+            finally:
+                tracing = None
+                await client.aclose()
+                if retrieval_runtime is not None:
+                    retrieval_runtime.close()
 
-    app = FastAPI(title="AgroRAG", version=config.release_version, lifespan=lifespan)
+    app = FastAPI(
+        title="AgroRAG",
+        version=config.release_version,
+        lifespan=lifespan,
+        telemetry={"tracing": False, "metrics": False, "logs": False, "auto_configure": False},
+    )
 
     @app.middleware("http")
     async def structured_http_log(request: Request, call_next: RequestResponseEndpoint) -> Response:
@@ -105,6 +131,21 @@ def create_app(
                 "duration_ms": max(0, round((perf_counter() - started) * 1000)),
             }
             http_logger.info(json.dumps(payload, ensure_ascii=True, separators=(",", ":")))
+
+    if config.tracing_enabled:
+
+        @app.middleware("http")
+        async def trace_query(request: Request, call_next: RequestResponseEndpoint) -> Response:
+            if tracing is None or request.method != "POST" or request.scope["path"] != "/v1/query":
+                return await call_next(request)
+            with tracing.query() as record_status:
+                status_code = 500
+                try:
+                    response = await call_next(request)
+                    status_code = response.status_code
+                    return response
+                finally:
+                    record_status(status_code)
 
     app.include_router(router)
     app.include_router(
