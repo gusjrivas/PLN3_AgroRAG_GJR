@@ -17,7 +17,7 @@ La implementación se entrega como diff local por decisión del coordinador.
 ## GREEN y regresión
 
 - `uv sync --locked --extra tracing` y `uv run --no-sync python -c "import opentelemetry.sdk.trace"`
-  (código 0). Lockfile con SDK 1.45.1 y convenciones 0.66b1.
+  (código 0). Lockfile con SDK 1.45.1 y convenciones 0.66b1 (actualizado a 1.45.2 y 0.66b2 por CVE-2026-126360).
 - `python -m pytest -q tests/contract/test_academic_tracing.py --tb=short`
   (código 0, cuatro contratos). Exportador en memoria del SDK, modelos y búsqueda dobles.
   Se verificaron jerarquía y estados 200/422/502/503, ausencia de datos centinela,
