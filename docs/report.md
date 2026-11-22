@@ -3,11 +3,11 @@
 **Trabajo integrador - Procesamiento de Lenguaje Natural III**
 
 Autor y responsable académico: Gustavo Julián Rivas
-Versión documental: 22/11/2026 (diagrama de flujo incorporado)
+Versión documental: 22/11/2026 (flujos de consulta y despliegue V2)
 Repositorio: https://github.com/gusjrivas/PLN3_AgroRAG_GJR
 
-Estado del documento: paquete académico actualizado con EVA-02, aceptación de 27 casos y
-evaluación Garak documentadas. La reproducción en un entorno limpio será el paso posterior.
+Estado del documento: paquete académico con EVA-02, aceptación de 27 casos, evaluación Garak y
+reproducción en un entorno limpio documentadas. La promoción V2 y el ensayo siguen pendientes.
 
 ## 1. Objetivo, problema y alcance
 
@@ -78,9 +78,10 @@ consume JSON por HTTP.
 
 <!-- query-flow -->
 
-**Figura 1. Flujo de consulta.** El caso de uso puede pedir aclaración antes de recuperar
-pasajes o abstenerse si falta evidencia. El verificador puede solicitar una revisión,
-tras la cual el investigador y el verificador vuelven a intervenir.
+**Figura 1. Flujo de consulta.** El caso de uso consulta la caché o recupera pasajes antes de
+evaluar si puede avanzar a generación. Un contexto incompleto o la falta de evidencia permiten
+terminar antes de llamar al modelo. El modo híbrido combina BM25 y E5/Pinecone mediante RRF.
+`hybrid_rerank` añade un CrossEncoder. El verificador puede pedir una revisión.
 
 | Capa | Responsabilidad | Restricción principal |
 |---|---|---|
@@ -101,6 +102,31 @@ La API distingue liveness de readiness. Liveness no llama proveedores. Readiness
 modelo configurados. Un semáforo limita dos consultas activas; el exceso devuelve 429. La caché LRU
 de retrieval usa consulta normalizada, filtros de cultivo/etapa/región y versión de corpus, nunca cachea errores ni
 respuestas generadas.
+
+### Despliegue y operación de la PoC V2
+
+<!-- deployment-flow -->
+
+**Figura 2. Despliegue V2.** Vista consolidada de `docs/architecture.md` y
+`docs/plan-v2-production-poc.md`. Las flechas azules muestran operaciones administrativas
+y de evaluación fuera del servicio de consultas.
+
+Compose ejecuta la PoC en un host. Sólo Caddy expone puertos, aplica TLS y autenticación,
+y enruta a Streamlit o FastAPI. La UI llama a la API por HTTP interno con credencial de
+servicio. La API monta el catálogo en sólo lectura. `catalogue-admin` escribe el snapshot
+verificado y, en una operación explícita, prepara un namespace Pinecone compatible.
+OpenAI y Pinecone se habilitan por perfil. Ollama es una alternativa local.
+
+El preflight valida imágenes por digest, volumen y permisos de secretos antes del arranque.
+`/health/version` identifica release, commit y corpus para el smoke de staging. El rollback
+combina el snapshot restaurado con las imágenes de la release anterior. Garak prueba el
+gateway de una candidata a través de un adaptador loopback y conserva reportes crudos
+restringidos. Su ejecución está separada de las consultas normales.
+
+Gateway y API emiten logs estructurados. La API puede exportar a consola una traza
+OpenTelemetry de la consulta y sus etapas de recuperación, investigación y verificación,
+sin contenido de la consulta ni credenciales. La instrumentación es opcional. La promoción
+formal V2 sigue pendiente. Los detalles operativos están en `docs/run-containerized.md`.
 
 ## 4. Implementación y reutilización
 
@@ -256,11 +282,11 @@ requiere proveedor configurado. Pinecone y el extra semántico son opcionales.
 El informe se regenera con:
 
 ```powershell
-uv run python scripts/build_report.py
+uv run python scripts/build_report.py --output output/pdf/agro-rag-report-2026-11-22.pdf
 ```
 
-El verificador offline comprueba el paquete base sin leer secretos ni usar red. La versión de
-entrega requiere además reproducir la instalación en un checkout limpio y registrar sus artefactos.
+El verificador offline comprueba el paquete base sin leer secretos ni usar red. Un checkout limpio
+ya reprodujo instalación, ingesta, API y navegador. Queda verificar el commit final de entrega.
 
 ## 9. Demo de 15 minutos
 
@@ -294,10 +320,9 @@ La recomendación docente sobre metadatos tiene META-01..04 integradas, mientras
 real, la comparación contextual y el cierre META-05..07 siguen pendientes. No se presenta esa
 extensión como terminada ni se archiva OpenSpec 08.
 
-El cierre documental registra el estado demostrado y prepara la exposición. El paso operativo
-siguiente será reproducir la versión elegida en un entorno limpio, sin repetir Garak por
-instrucción del usuario. También quedan el ensayo de 15 minutos, la confirmación de modalidad
-y fecha de Teoría 7 y el envío académico autorizado. La promoción de V2 es una tarea separada.
+Quedan verificar el commit final de entrega, ensayar los 15 minutos y confirmar modalidad y fecha
+de Teoría 7. El envío académico requiere autorización. Se conserva la evidencia Garak existente.
+La promoción de V2 es una tarea separada.
 
 ## 12. Referencias
 

@@ -48,7 +48,7 @@ def test_del_01_informe_builds_a_readable_pdf(tmp_path):
     with pdfplumber.open(target) as document:
         text = "\n".join(page.extract_text() or "" for page in document.pages)
         assert len(document.pages) >= 6
-        assert len(document.pages) <= 7
+        assert len(document.pages) <= 8
         diagram_page = next(
             (
                 page
@@ -63,6 +63,15 @@ def test_del_01_informe_builds_a_readable_pdf(tmp_path):
         assert "Agente verificador" in diagram_text
         assert "Una revisión" in diagram_text
         assert len(diagram_page.lines) > 8
+        deployment_page = next(
+            (page for page in document.pages if "Figura 2. Despliegue V2" in page.extract_text()),
+            None,
+        )
+        assert deployment_page is not None
+        deployment_text = deployment_page.extract_text()
+        for label in ("Gateway Caddy", "catalogue-admin", "Catálogo SQLite", "Garak", "Preflight"):
+            assert label in deployment_text
+        assert len(deployment_page.lines) > 8
     assert "AgroRAG" in text
     assert "Resultados y evidencia" in text
     assert "Declaración de asistencia de IA" in text

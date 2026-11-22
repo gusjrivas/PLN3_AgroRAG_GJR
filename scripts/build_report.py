@@ -138,66 +138,73 @@ def _table(lines: list[str], body_style: ParagraphStyle) -> Table:
     return table
 
 
+DIAGRAM_INK = colors.HexColor("#174A3A")
+DIAGRAM_ACCENT = colors.HexColor("#176B87")
+
+
+def _box(drawing: Drawing, x: int, y: int, width: int, title: str, detail: str) -> None:
+    drawing.add(
+        Rect(
+            x,
+            y,
+            width,
+            32,
+            rx=5,
+            ry=5,
+            fillColor=colors.HexColor("#EDF5F1"),
+            strokeColor=DIAGRAM_INK,
+            strokeWidth=0.75,
+        )
+    )
+    center = x + width / 2
+    drawing.add(
+        String(
+            center,
+            y + 19,
+            title,
+            fontName="Helvetica-Bold",
+            fontSize=9,
+            textAnchor="middle",
+            fillColor=DIAGRAM_INK,
+        )
+    )
+    drawing.add(
+        String(
+            center,
+            y + 8,
+            detail,
+            fontName="Helvetica",
+            fontSize=8,
+            textAnchor="middle",
+            fillColor=DIAGRAM_INK,
+        )
+    )
+
+
+def _arrow(
+    drawing: Drawing, x1: int, y1: int, x2: int, y2: int, color: colors.Color = DIAGRAM_INK
+) -> None:
+    drawing.add(Line(x1, y1, x2, y2, strokeColor=color, strokeWidth=1))
+    angle = atan2(y2 - y1, x2 - x1)
+    points = [x2, y2]
+    for offset in (-0.5, 0.5):
+        points.extend((x2 - 5 * cos(angle + offset), y2 - 5 * sin(angle + offset)))
+    drawing.add(Polygon(points, fillColor=color, strokeColor=None))
+
+
 def _query_flow() -> Drawing:
     """Vector flowchart of the verified-answer path and its early exits."""
     drawing = Drawing(174 * mm, 150)
     drawing.hAlign = "LEFT"
-    ink = colors.HexColor("#174A3A")
-    accent = colors.HexColor("#176B87")
 
-    def box(x: int, y: int, width: int, title: str, detail: str) -> None:
-        drawing.add(
-            Rect(
-                x,
-                y,
-                width,
-                32,
-                rx=5,
-                ry=5,
-                fillColor=colors.HexColor("#EDF5F1"),
-                strokeColor=ink,
-                strokeWidth=0.75,
-            )
-        )
-        center = x + width / 2
-        drawing.add(
-            String(
-                center,
-                y + 19,
-                title,
-                fontName="Helvetica-Bold",
-                fontSize=9,
-                textAnchor="middle",
-                fillColor=ink,
-            )
-        )
-        drawing.add(
-            String(
-                center,
-                y + 8,
-                detail,
-                fontName="Helvetica",
-                fontSize=8,
-                textAnchor="middle",
-                fillColor=ink,
-            )
-        )
-
-    def arrow(x1: int, y1: int, x2: int, y2: int, color: colors.Color = ink) -> None:
-        drawing.add(Line(x1, y1, x2, y2, strokeColor=color, strokeWidth=1))
-        angle = atan2(y2 - y1, x2 - x1)
-        points = [x2, y2]
-        for offset in (-0.5, 0.5):
-            points.extend((x2 - 5 * cos(angle + offset), y2 - 5 * sin(angle + offset)))
-        drawing.add(Polygon(points, fillColor=color, strokeColor=None))
-
-    box(0, 115, 140, "Usuario en Streamlit", "Pregunta y contexto del cultivo")
-    box(176, 115, 140, "FastAPI", "Autenticación y validación HTTP")
-    box(352, 115, 140, "Caso de uso", "Comprueba el contexto mínimo")
-    box(352, 59, 140, "Recuperación y ranking", "BM25 o modo semántico")
-    box(176, 59, 140, "Agente investigador", "Propone afirmaciones con evidencia")
-    box(0, 59, 140, "Agente verificador", "Revisa afirmaciones y citas")
-    box(
+    _box(drawing, 0, 115, 140, "Usuario en Streamlit", "Pregunta y contexto del cultivo")
+    _box(drawing, 176, 115, 140, "FastAPI", "Autenticación y validación HTTP")
+    _box(drawing, 352, 115, 140, "Caso de uso", "Coordina búsqueda y agentes")
+    _box(drawing, 352, 59, 140, "Recuperación y ranking", "BM25 / E5 + Pinecone / RRF")
+    _box(drawing, 176, 59, 140, "Agente investigador", "Propone afirmaciones con evidencia")
+    _box(drawing, 0, 59, 140, "Agente verificador", "Revisa afirmaciones y citas")
+    _box(
+        drawing,
         0,
         0,
         492,
@@ -205,16 +212,68 @@ def _query_flow() -> Drawing:
         "Respuesta con citas, pedido de aclaración o abstención",
     )
 
-    arrow(140, 131, 176, 131)
-    arrow(316, 131, 352, 131)
-    arrow(422, 115, 422, 91)
-    arrow(352, 75, 316, 75)
-    arrow(176, 75, 140, 75)
-    arrow(70, 59, 70, 32)
-    drawing.add(Line(111, 59, 111, 48, strokeColor=accent))
-    drawing.add(Line(111, 48, 228, 48, strokeColor=accent))
-    arrow(228, 48, 228, 59, accent)
-    drawing.add(String(169, 37, "Una revisión", fontSize=8, textAnchor="middle", fillColor=accent))
+    _arrow(drawing, 140, 131, 176, 131)
+    _arrow(drawing, 316, 131, 352, 131)
+    _arrow(drawing, 422, 115, 422, 91)
+    _arrow(drawing, 352, 75, 316, 75)
+    _arrow(drawing, 176, 75, 140, 75)
+    _arrow(drawing, 70, 59, 70, 32)
+    drawing.add(Line(111, 59, 111, 48, strokeColor=DIAGRAM_ACCENT))
+    drawing.add(Line(111, 48, 228, 48, strokeColor=DIAGRAM_ACCENT))
+    _arrow(drawing, 228, 48, 228, 59, DIAGRAM_ACCENT)
+    drawing.add(
+        String(169, 37, "Una revisión", fontSize=8, textAnchor="middle", fillColor=DIAGRAM_ACCENT)
+    )
+    return drawing
+
+
+def _deployment_flow() -> Drawing:
+    drawing = Drawing(174 * mm, 203)
+    drawing.hAlign = "LEFT"
+    width = 113
+    for x, y, title, detail in (
+        (0, 147, "Usuario", "HTTPS"),
+        (126, 147, "Gateway Caddy", "TLS y acceso · 80/443"),
+        (252, 147, "Streamlit", "Red interna · no root"),
+        (378, 147, "FastAPI", "Red interna · no root"),
+        (0, 81, "Garak en staging", "Runner y adaptador local"),
+        (126, 81, "catalogue-admin", "Ingesta e índice explícitos"),
+        (252, 81, "Catálogo SQLite", "Snapshot activo versionado"),
+        (378, 81, "Servicios opcionales", "OpenAI y Pinecone"),
+        (0, 12, "Reportes restringidos", "Hallazgos y revisión"),
+        (126, 12, "Preflight del host", "Imágenes, volumen y secretos"),
+        (252, 12, "Backup y rollback", "Snapshot y digests OCI"),
+        (378, 12, "Logs JSON", "Gateway y API"),
+    ):
+        _box(drawing, x, y, width, title, detail)
+
+    for start, stop in ((113, 126), (239, 252), (365, 378)):
+        _arrow(drawing, start, 163, stop, 163)
+    drawing.add(Line(182, 179, 182, 189, strokeColor=DIAGRAM_INK))
+    drawing.add(Line(182, 189, 434, 189, strokeColor=DIAGRAM_INK))
+    _arrow(drawing, 434, 189, 434, 179)
+    drawing.add(
+        String(
+            308,
+            193,
+            "/health/* y /v1/*",
+            fontName="Helvetica",
+            fontSize=8,
+            textAnchor="middle",
+            fillColor=DIAGRAM_INK,
+        )
+    )
+
+    _arrow(drawing, 56, 81, 56, 44, DIAGRAM_ACCENT)
+    drawing.add(Line(56, 113, 56, 126, strokeColor=DIAGRAM_ACCENT))
+    drawing.add(Line(56, 126, 182, 126, strokeColor=DIAGRAM_ACCENT))
+    _arrow(drawing, 182, 126, 182, 147, DIAGRAM_ACCENT)
+    _arrow(drawing, 239, 97, 252, 97, DIAGRAM_ACCENT)
+    drawing.add(Line(401, 147, 401, 132, strokeColor=DIAGRAM_INK))
+    drawing.add(Line(401, 132, 308, 132, strokeColor=DIAGRAM_INK))
+    _arrow(drawing, 308, 132, 308, 113)
+    _arrow(drawing, 453, 147, 453, 113)
+    _arrow(drawing, 308, 81, 308, 44, DIAGRAM_ACCENT)
     return drawing
 
 
@@ -275,9 +334,9 @@ def build_pdf(source: Path, target: Path) -> None:
             body_style = cast(ParagraphStyle, styles["BodyJustified"])
             story.extend((_table(table_lines, body_style), Spacer(1, 7)))
             continue
-        if line == "<!-- query-flow -->":
+        if line in {"<!-- query-flow -->", "<!-- deployment-flow -->"}:
             flush_paragraph()
-            story.append(_query_flow())
+            story.append(_query_flow() if line == "<!-- query-flow -->" else _deployment_flow())
         elif line.startswith("# "):
             flush_paragraph()
             story.extend(

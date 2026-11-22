@@ -32,13 +32,13 @@ La cátedra solicita repositorio funcional, informe técnico PDF y exposición f
 9. Referencias y declaración de asistencia de IA utilizada.
 
 La fuente está en `docs/report.md`; el PDF vigente es
-[`agro-rag-report-2026-11-22.pdf`](../output/pdf/agro-rag-report-2026-11-22.pdf). Tiene siete páginas
-e incluye el diagrama de flujo de consulta en la sección de arquitectura.
+[`agro-rag-report-2026-11-22.pdf`](../output/pdf/agro-rag-report-2026-11-22.pdf). Tiene ocho páginas
+e incluye dos figuras en arquitectura: el flujo de consulta y el despliegue V2.
 El archivo sin fecha conserva el cierre de octubre porque no se pudo sobrescribir en esta sesión.
 Para regenerar el informe vigente, usar
 `uv run python scripts/build_report.py --output output/pdf/agro-rag-report-2026-11-22.pdf`.
-El test del repositorio exige de seis a siete páginas; es una restricción técnica local, no una
-exigencia de la cátedra. La versión vigente fue renderizada y revisada completa.
+El test del repositorio admite de seis a ocho páginas para incluir el diagrama y la explicación
+del despliegue. La versión vigente fue renderizada y revisada completa.
 
 ## Exposición de 15 minutos
 

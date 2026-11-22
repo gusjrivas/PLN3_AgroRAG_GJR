@@ -6,7 +6,7 @@ Autor y responsable académico: Gustavo Julián Rivas. Fecha del plan: 21/10/202
 Repositorio independiente: https://github.com/gusjrivas/PLN3_AgroRAG_GJR
 
 **Estado al 22/11/2026:** POC local reproducido desde un checkout limpio. El informe vigente
-incluye el diagrama de flujo de arquitectura y el guion cubre los 15 minutos de exposición.
+incluye el flujo de consulta y el diagrama del despliegue V2. El guion cubre 15 minutos.
 Benchmark histórico: 49 PASS y 11 FAIL de contenido/citas, con 60/60 estados correctos.
 E1/E2 y piloto E3 se ejecutaron sobre `dev`; BM25 sigue como default.
 La ingesta limpia conserva los 27 IDs del corpus histórico y valida los 60 casos congelados.
