@@ -1,37 +1,29 @@
 # Estado actual y próxima sesión
 
-La base y el corpus ya se implementaron. Para ejecutar la primera versión, seguir [run-local](run-local.md). Revisar PR #4 y su CI antes de continuar; no repetir bootstrap ni reemplazar archivos del clon.
+Actualización: 13/11/2026. La validación complementaria está cerrada y documentada; no hay que
+repetir el bootstrap ni interpretar listas históricas como funcionalidades aún inexistentes.
 
-Próximas tareas: configurar y probar un modelo real; ampliar corpus revisado; integrar recuperación semántica/reranker; benchmark. Conservar TDD y dependencias por PR. Las instrucciones iniciales debajo son el plan histórico y no deben ejecutarse de nuevo sobre la versión actual.
+- V1 local: API/UI, corpus piloto de 27 fragmentos, agentes, citas, caché y evaluación implementados.
+- Bug #51: corregido por PR #52; regresión verificada con cero llamadas al modelo.
+- Aceptación: 19 conformes y 8 incompletos según rúbrica. Ver [evidencia](evidence/acceptance-27/README.md).
+- Garak: cobertura completada sin hallazgos confirmados para `d38814b4`. No repetirlo en la próxima
+  fase, por instrucción del usuario; conservar su alcance de versión.
+- META-01..04: integradas. META-05..07: pendientes; no declararlas terminadas.
+- Documentación académica: [informe](report.md), [PDF vigente](../output/pdf/agro-rag-report-2026-11-13.pdf),
+  [guion de 15 minutos](demo.md) y [entrega](delivery.md).
 
-# Primera sesión de desarrollo
+## Siguiente paso
 
-## Resultado esperado
+Preparar después un entorno limpio para la versión de entrega: checkout y dependencias fijadas,
+corpus con hashes, suite offline, arranque API/UI y revisión de la demo. No ejecutar Garak.
+Registrar commit, hardware y resultados reales. Esta fase todavía no se realizó.
 
-Repositorio independiente organizado, entorno reproducible y primera funcionalidad mínima desarrollada con TDD. Luego integrar Engram y probar memoria persistente. La planificación ya contiene arquitectura, ADR y cambios SDD; no hace falta generarlos otra vez.
+Antes de entregar faltan ensayo, confirmación de modalidad y fecha calendario de Teoría 7 y
+envío autorizado. La promoción formal V2 y la extensión de metadatos tienen seguimiento separado.
 
-## Preparación del repositorio nuevo
+## Reglas de continuidad
 
-1. Clonar el repositorio independiente desde `C:\Repo` si la carpeta destino todavía no existe:
-
-   ```powershell
-   git clone https://github.com/gusjrivas/PLN3_AgroRAG_GJR.git
-   cd PLN3_AgroRAG_GJR
-   ```
-
-2. Si ya existe una copia local, verificar `git remote -v` y `git status --short`; preservar cambios locales y actualizar sin reset/clean. No volver a ejecutar git init ni copiar .git del repositorio docente.
-3. Abrir `C:\Repo\PLN3_AgroRAG_GJR` en VS Code y comprobar que se cargue AGENTS.md.
-4. Leer esta planificación y crear la rama `feat/00-foundation` desde main actualizado. La aplicación todavía no existe; evitar comandos de arranque supuestos.
-5. Ejecutar la primera etapa con TDD y luego la integración local de Engram. La existencia del repositorio no completa el entorno ni las pruebas de 00-foundation.
-
-## Encargo inicial para Codex o Claude Code
-
-Leer README.md, AGENTS.md, docs/requirements.md, docs/architecture.md, docs/tdd.md y los ADR-001/003/008. Ejecutar únicamente openspec/changes/00-foundation con TDD estricto. Respetar dependencias y alcance. Crear Python 3.12, pyproject.toml/uv.lock, estructura modular y CI. Empezar por un test de salud que falle por funcionalidad ausente, luego implementar lo mínimo y refactorizar. Registrar comandos y resultados reales. No implementar corpus/RAG/agentes/UI todavía. No modificar el repositorio docente ni instalar software global sin revisar instalaciones existentes. Al cerrar, resumir archivos, verificaciones y bloqueos.
-
-## Encargo siguiente
-
-Con 00 integrado, aplicar 01-engram según docs/setup-engram.md. Configurar sólo los clientes utilizados y verificar recuperación tras reinicio. Guardar primeras memorias con referencias a ADR y requisitos. Continuar con 02-corpus cuando corresponda. No habilitar sync/cloud por defecto.
-
-## Regla de avance
-
-Una etapa se cierra por comportamiento probado y evidencia, no por haber escrito documentos ni porque el agente dice terminado. Mantener tareas abiertas cuando falten credenciales o integración real.
+Conservar cambios locales, `.env` y datos. Seguir [run-local](run-local.md) o
+[run-containerized](run-containerized.md) según el entorno. Leer README, requisitos, arquitectura,
+ADR aplicables y TDD; usar ODD directo para cambios pequeños y OpenSpec para trabajo contractual.
+La planificación original permanece en [plan](plan.md); el estado se decide por evidencia y Git.

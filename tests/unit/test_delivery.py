@@ -49,6 +49,20 @@ def test_del_01_informe_builds_a_readable_pdf(tmp_path):
         text = "\n".join(page.extract_text() or "" for page in document.pages)
         assert len(document.pages) >= 6
         assert len(document.pages) <= 7
+        diagram_page = next(
+            (
+                page
+                for page in document.pages
+                if "Figura 1. Flujo de consulta" in page.extract_text()
+            ),
+            None,
+        )
+        assert diagram_page is not None
+        diagram_text = diagram_page.extract_text()
+        assert "Agente investigador" in diagram_text
+        assert "Agente verificador" in diagram_text
+        assert "Una revisión" in diagram_text
+        assert len(diagram_page.lines) > 8
     assert "AgroRAG" in text
     assert "Resultados y evidencia" in text
     assert "Declaración de asistencia de IA" in text

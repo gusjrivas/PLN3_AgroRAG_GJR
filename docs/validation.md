@@ -1,4 +1,18 @@
-# Validación del paquete documental
+# Validación documental
+
+## Estado de cierre al 13/11/2026
+
+La revisión complementaria está cerrada en [acceptance-27](evidence/acceptance-27/README.md):
+19 casos conformes y 8 incompletos; 24 consultas nuevas por API, tres registros manuales
+revisados y repetición de P02. No se presenta esta revisión asistida como evaluación humana
+independiente ni se agregan sus casos a los 60 del benchmark histórico.
+
+La cobertura de Garak se completó según su [informe final](evidence/garak/garak-d38814b4-human-report.md).
+No se ejecutará de nuevo en el siguiente entorno limpio. Sigue pendiente la promoción formal V2.
+La reproducción limpia de la versión actual se hará después del cierre documental, sin atribuirle
+los resultados de un checkout anterior. META-05..07 continúan pendientes.
+
+## Validación inicial histórica
 
 Fecha: 21/10/2026 (America/Buenos_Aires).
 

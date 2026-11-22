@@ -1,2 +1,5 @@
 data/evaluation/*.jsonl text eol=lf
 *.pdf binary
+# Preserve the original bytes recorded by the acceptance manifest.
+docs/evidence/acceptance-27/ejecucion-real-24.json -text whitespace=cr-at-eol
+docs/evidence/acceptance-27/revision-P02.json -text whitespace=cr-at-eol

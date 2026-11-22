@@ -5,33 +5,32 @@ Autor y responsable académico: Gustavo Julián Rivas. Fecha del plan: 21/10/202
 
 Repositorio independiente: https://github.com/gusjrivas/PLN3_AgroRAG_GJR
 
-**Estado: V1 local y paquete de entrega técnica implementados. V2 containerizada en ejecución bajo
-ADR-015/OpenSpec 07: settings por secret files, imágenes API/UI/gateway no root, Compose local,
-catálogo persistente/read-only y overlay productivo endurecido ya tienen evidencia; CI de imágenes,
-identidad de release, logs HTTP JSON y rollback validado ya tienen evidencia; supply chain aprobó
-en GitHub y las imágenes API/UI/gateway del merge `41ba62f` están publicadas por digest en GHCR.
-El runner Garak 0.17.0 aprobó sus contratos offline y fue publicado por digest desde `5a11a29`.
-El scan manual autorizado tiene un workflow fail-closed. El smoke de staging también ata
-manifiesto, identidad, catálogo y una consulta citada en evidencia sanitizada. El preflight de host
-valida digests, identidad OCI, volumen y secretos antes de levantar producción. La candidata
-`41ba62f` está desplegada y verificada en el staging local WSL. El primer scan Garak real quedó
-`BLOCKED` por timeout tras 129 POST (39 HTTP 200 y 90 HTTP 422); el runner endurecido trata los 422
-sin retries, protege evidencia parcial y aplica un techo fail-closed de USD 0,20. La repetición
-controlada se ejecutó sobre `d38814b4`: el control detuvo llamadas en USD 0,080445 antes de que la
-siguiente reserva superara USD 0,20. API key obtuvo 32 casos reales sin detección; el triage humano
-clasificó las 15 respuestas DAN reales como falsos positivos, sin confirmados ni dudosos. Base64 y
-prompt injection quedaron sin cobertura real por agotamiento preventivo. La ejecución y el triage
-están cerrados, pero la promoción continúa `BLOCKED`; no se reintenta sin una nueva decisión de
-alcance y presupuesto.
-El benchmark congelado de 60 casos conserva 49 PASS y 11
-FAIL de contenido/citas, con 60/60 estados observados correctos. E1/E2 y el piloto mínimo E3 se
-ejecutaron sobre `dev`; BM25 permanece como default.**
+**Estado al 22/11/2026:** POC local reproducido desde un checkout limpio. El informe vigente
+incluye el diagrama de flujo de arquitectura y el guion cubre los 15 minutos de exposición.
+Benchmark histórico: 49 PASS y 11 FAIL de contenido/citas, con 60/60 estados correctos.
+E1/E2 y piloto E3 se ejecutaron sobre `dev`; BM25 sigue como default.
+La ingesta limpia conserva los 27 IDs del corpus histórico y valida los 60 casos congelados.
+Una consulta real con `hybrid_rerank` y GPT‑4o devolvió una cita verificable de INTA Lechuga,
+página 28, en 40,22 s usando el contador de contexto `tiktoken` en un arnés local.
+El perfil de la demo aún requiere documentar cómo reproducir ese contador.
+La aceptación complementaria del 12/11 cerró con **19 casos conformes y 8 incompletos** según
+la rúbrica, revisando tres registros manuales y ejecutando otros 24 por API. El bug #51 está
+corregido y su regresión pidió aclaración sin llamadas LLM. Ver [cierre y evidencia](docs/evidence/acceptance-27/README.md).
+
+**Garak ya ejecutado:** API key, Base64 y prompt injection alcanzaron 32 respuestas reales por
+familia sin detecciones; las 15 alertas DAN se revisaron como falsos positivos. Se conserva la
+evidencia de la candidata `d38814b4`; por instrucción del usuario no se repite el scan para el
+siguiente entorno limpio. La promoción formal V2 continúa pendiente. Ver [informe de seguridad](docs/evidence/garak/garak-d38814b4-human-report.md).
+
+**Metadatos docentes:** META-01..04 integradas; curación real, evaluación comparativa y cierre
+META-05..07 pendientes. El cierre documental no completa ni archiva esa extensión.
+Queda ensayar la exposición, completar las métricas pendientes y confirmar la fecha de Teoría 7.
+
 Engram 3.5.2 está instalado y verificado en el entorno de trabajo remoto; `.engram/config.json` identifica este proyecto. La instalación en la notebook y la activación de los clientes permanecen pendientes. Ver [evidencia](docs/evidence/engram-setup.md). Los ADR son propuestas técnicas; TDD y Python son requisitos expresos del usuario.
 
 ## Empezar aquí
 
-**Para ejecutarlo localmente:** seguir [run-local](docs/run-local.md). **La V2 containerizada está
-en implementación incremental:** consultar [run-containerized](docs/run-containerized.md). **Para
+**Para ejecutarlo localmente:** seguir [run-local](docs/run-local.md). **La V2 containerizada tiene promoción formal pendiente:** consultar [run-containerized](docs/run-containerized.md). **Para
 continuar el desarrollo:** [start-here](docs/start-here.md). Repositorio independiente:
 `PLN3_AgroRAG_GJR`.
 
@@ -40,11 +39,13 @@ continuar el desarrollo:** [start-here](docs/start-here.md). Repositorio indepen
 3. [Arquitectura](docs/architecture.md) y [ADR](docs/adr/README.md).
 4. [Protocolo TDD](docs/tdd.md) y [agentes de desarrollo](docs/development-agents.md).
 5. [Preparación local y Engram](docs/setup-engram.md).
-6. [Cambios OpenSpec](openspec/README.md): todas las tareas funcionales empiezan pendientes.
+6. [Cambios OpenSpec](openspec/README.md): estado y evidencia por tarea; algunas listas contienen planificación histórica.
 
-## Stack propuesto
+## Stack
 
-Python 3.12; FastAPI + Pydantic v2 en backend; Streamlit en frontend Python; httpx como cliente HTTP; LangGraph encapsulado para el flujo de agentes; pdfplumber, BM25, Sentence Transformers, Pinecone y Cross-Encoder para RAG; SQLite para catálogo de evidencias y JSONL para auditoría.
+Python 3.12, FastAPI y Pydantic v2 en backend, Streamlit en frontend y httpx como cliente HTTP.
+El caso de uso orquesta los dos agentes. El RAG usa pdfplumber, BM25, Sentence Transformers,
+Pinecone y Cross-Encoder. SQLite conserva el catálogo y la auditoría emite eventos JSON.
 pytest, pytest-cov, Hypothesis, Streamlit AppTest y Playwright Python para pruebas; Ruff, mypy e import-linter para calidad. uv y uv.lock fijan dependencias. Docker Compose ensambla API, UI, gateway y jobs explícitos sin cambiar los límites del monolito modular. Ninguna versión de librería del producto se presenta como validada fuera de la evidencia registrada.
 
 OpenSpec 1.14.3 es la versión de tooling seleccionada para validar esta planificación. Engram usa una versión estable registrada al instalar. Son herramientas del desarrollo y quedan fuera del contenedor del producto.
@@ -77,7 +78,10 @@ TDD obligatorio; ningún test no ejecutado se informa como aprobado. Las evaluac
 
 Ver [fuentes](docs/sources.md), [protocolo de evaluación](docs/evaluation.md) y [estado de validación](docs/validation.md).
 
-Informe técnico: [PDF](output/pdf/agro-rag-report.pdf) y [fuente versionada](docs/report.md).
+Informe técnico vigente: [PDF del 22/11/2026](output/pdf/agro-rag-report-2026-11-22.pdf) y
+[fuente versionada](docs/report.md). El PDF sin fecha conserva el cierre histórico de octubre.
+Presentación de nueve diapositivas: [PowerPoint editable](output/presentations/agro-rag-catedra.pptx),
+[PDF](output/pdf/agro-rag-catedra.pdf) y [notas de exposición](docs/presentation.md).
 Seguridad Garak: [informe legible](docs/evidence/garak/garak-d38814b4-human-report.md),
 [PDF](output/pdf/garak-d38814b4-human-report.pdf) y
 [libro de revisión DAN](docs/evidence/workbooks/garak-d38814b4-revision-humana-dan.xlsx).
@@ -93,5 +97,11 @@ uv run uvicorn agro_rag.bootstrap.app:create_app --factory --host 127.0.0.1 --po
 ```
 
 `GET /health/live` devuelve `{"status":"ok"}`. Pruebas: `uv run pytest --cov`.
+
+**OpenTelemetry para la demo.** La API puede exportar a consola una traza de cada consulta con
+recuperación, investigador y verificador. Está desactivado por defecto. Instalar con
+`uv sync --locked --extra tracing` y activar `AGRO_TRACING_ENABLED=true` antes de arrancar la API.
+La traza omite preguntas, pasajes, respuestas y credenciales.
+[Instrucciones](docs/run-local.md#trazas-opcionales-para-la-demo-académica).
 
 Descargar e ingerir el corpus piloto: [docs/corpus.md](docs/corpus.md). La selección vigente contiene 27 fragmentos revisados de cinco fuentes institucionales; no equivale a una evaluación científica completa.

@@ -13,3 +13,7 @@ corridas sanitizadas.
 
 Los archivos `~$*.xlsx`, las inspecciones `.ndjson` y las vistas previas PNG son auxiliares locales y
 no forman parte de la evidencia versionada.
+
+La campaña complementaria de noviembre conserva su libro final y manifest de hashes en
+[`../acceptance-27/`](../acceptance-27/README.md): tres registros manuales revisados y 24 consultas
+reales por API, con 19 casos conformes y 8 incompletos. No modifica estos cuatro libros históricos.

@@ -1,0 +1,1568 @@
+{
+  "provider": "openai",
+  "model": "gpt-4o",
+  "corpus": {
+    "corpus_version": "e9929440f552b1c7be1349118a1ee98c6cdba41fbd2e2ce05343247c918dfb7d",
+    "evidence_count": 27,
+    "mode": "lexical_preview",
+    "sources": [
+      "FAO56-1998",
+      "INTA-HUERTA-2008",
+      "INTA-LECHUGA-2022",
+      "INTA-RIEGO-HORTICOLAS-2024",
+      "INTA-TOMATE-2020"
+    ]
+  },
+  "results": [
+    {
+      "id": "P04",
+      "benchmark_id": "dev-r-004",
+      "question": "¿El corpus contempla riego por aspersión y por goteo en lechuga?",
+      "crop": "lettuce",
+      "expected_status": "answered",
+      "reference": "Sí. Las fuentes enumeran la aspersión y el riego por goteo entre los sistemas utilizados en lechuga.",
+      "required_claims": [
+        "La aspersión está mencionada para lechuga.",
+        "El goteo está mencionado para lechuga."
+      ],
+      "expected_sources": [
+        "INTA-HUERTA-2008:72",
+        "INTA-LECHUGA-2022:40"
+      ],
+      "timestamp": "2026-11-13T02:53:23.282797+00:00",
+      "http_status": 200,
+      "response": {
+        "request_id": "ac7b442a-5be7-44e7-9fe1-aaaf8cb3e00a",
+        "status": "answered",
+        "answer": "El corpus contempla riego por aspersión y por goteo en lechuga.",
+        "claims": [
+          {
+            "claim_id": "1",
+            "text": "El corpus contempla riego por aspersión y por goteo en lechuga.",
+            "evidence_ids": [
+              "8eda9b1a3456cede493fadcb22c3baf3f33036c34ae4cffb1465d44512ecfa9c"
+            ]
+          }
+        ],
+        "citations": [
+          {
+            "evidence_id": "8eda9b1a3456cede493fadcb22c3baf3f33036c34ae4cffb1465d44512ecfa9c",
+            "source_id": "INTA-LECHUGA-2022",
+            "title": "Lechuga",
+            "edition": "1ra edición, septiembre de 2022",
+            "pdf_page": 40,
+            "printed_page": "40",
+            "section": "Lechuga: exceso de agua y sistemas de riego",
+            "excerpt": "El aumento de las cantidades de agua aportadas en el cultivo acrecienta el volumen de\nlas plantas cosechadas, pero hasta un límite, el exceso de agua puede ser perjudicial\npara la producción (asfixia radicular y arrastre de elementos fertilizantes).\nLos sistemas de riego utilizados son diversos según las zonas de producción y tipo de\nlechuga. Entre ello se puede citar: riego gravitacional por pulso, riego por aspersión y\nriego por goteo (Figura 5.1).\nFigura 5.1\nSistemas de riego: por aspersión y por goteo. Fotografías: M. Lopez Bilbao.",
+            "source_url": "https://repositorio.inta.gob.ar/xmlui/bitstream/handle/20.500.12123/13040/INTA_CICVyA_InstitutodeBiotecnologia_LopezBilbao_Lechuga.pdf?isAllowed=y&sequence=1"
+          }
+        ],
+        "missing_information": [],
+        "limitations": [
+          "Corpus piloto; recuperación lexical, sin índice semántico activo.",
+          "Verificación automática pendiente de evaluación agronómica."
+        ],
+        "corpus_version": "e9929440f552b1c7be1349118a1ee98c6cdba41fbd2e2ce05343247c918dfb7d",
+        "verification": {
+          "decision": "approve",
+          "revision_count": 0,
+          "issue_codes": []
+        },
+        "usage": {
+          "llm_calls": 2,
+          "input_tokens": 4276,
+          "output_tokens": 106,
+          "estimated": false,
+          "total_ms": 2890,
+          "cache_hit": false
+        }
+      },
+      "citation_checks": [
+        {
+          "evidence_id": "8eda9b1a3456cede493fadcb22c3baf3f33036c34ae4cffb1465d44512ecfa9c",
+          "http_status": 200,
+          "source_matches": true,
+          "page_matches": true,
+          "excerpt_in_source": true,
+          "crop": "lettuce",
+          "text": "El aumento de las cantidades de agua aportadas en el cultivo acrecienta el volumen de\nlas plantas cosechadas, pero hasta un límite, el exceso de agua puede ser perjudicial\npara la producción (asfixia radicular y arrastre de elementos fertilizantes).\nLos sistemas de riego utilizados son diversos según las zonas de producción y tipo de\nlechuga. Entre ello se puede citar: riego gravitacional por pulso, riego por aspersión y\nriego por goteo (Figura 5.1).\nFigura 5.1\nSistemas de riego: por aspersión y por goteo. Fotografías: M. Lopez Bilbao."
+        }
+      ],
+      "elapsed_seconds": 2.92
+    },
+    {
+      "id": "P05",
+      "benchmark_id": "dev-r-005",
+      "question": "¿Qué nivel de humedad del suelo se recomienda para el tomate?",
+      "crop": "tomato",
+      "expected_status": "answered",
+      "reference": "La fuente recomienda mantener el suelo cerca del 70 % de su capacidad de retención máxima.",
+      "required_claims": [
+        "La recomendación citada es 70 % de la capacidad de retención máxima."
+      ],
+      "expected_sources": [
+        "INTA-HUERTA-2008:103"
+      ],
+      "timestamp": "2026-11-13T02:53:26.197610+00:00",
+      "http_status": 200,
+      "response": {
+        "request_id": "2b74014a-aa0c-4867-b259-769ca5dd649b",
+        "status": "answered",
+        "answer": "Se recomienda mantener el suelo con un 70% de su capacidad de retención máxima para el cultivo de tomate.",
+        "claims": [
+          {
+            "claim_id": "1",
+            "text": "Se recomienda mantener el suelo con un 70% de su capacidad de retención máxima para el cultivo de tomate.",
+            "evidence_ids": [
+              "354faf3532b9536270b9f42f380fcbb1d53de7f3d9b57a5d0d64ca8310e90c78"
+            ]
+          }
+        ],
+        "citations": [
+          {
+            "evidence_id": "354faf3532b9536270b9f42f380fcbb1d53de7f3d9b57a5d0d64ca8310e90c78",
+            "source_id": "INTA-HUERTA-2008",
+            "title": "Manual de cultivos para la huerta orgánica familiar",
+            "edition": "1a edición, 2008",
+            "pdf_page": 103,
+            "printed_page": "101",
+            "section": "Tomate: riego",
+            "excerpt": "En lo que respecta al riego, lo ideal es mantener el suelo con un 70%\nde su capacidad de retención máxima. Los riegos más frecuentes hacen\naumentar los rendimientos pero hay un límite fijado por las condicio-\nnes del suelo, que puede retener el agua hasta una cierta capacidad.\nSi esta capacidad se sobrepasa con riegos demasiados abundantes o fre-\ncuentes, todo ese exceso de agua dificulta o impide la respiración de\nlas raíces: además de un consumo inútil de agua, se provoca el „lava-\ndo‰ de sustancias que dan fertilidad al suelo.",
+            "source_url": "https://www.argentina.gob.ar/sites/default/files/2023/08/script-tmp-manual_de_cultivos_para_la_huerta_organica_familiar_-.pdf"
+          }
+        ],
+        "missing_information": [],
+        "limitations": [
+          "Corpus piloto; recuperación lexical, sin índice semántico activo.",
+          "Verificación automática pendiente de evaluación agronómica."
+        ],
+        "corpus_version": "e9929440f552b1c7be1349118a1ee98c6cdba41fbd2e2ce05343247c918dfb7d",
+        "verification": {
+          "decision": "approve",
+          "revision_count": 0,
+          "issue_codes": []
+        },
+        "usage": {
+          "llm_calls": 2,
+          "input_tokens": 3260,
+          "output_tokens": 106,
+          "estimated": false,
+          "total_ms": 2453,
+          "cache_hit": false
+        }
+      },
+      "citation_checks": [
+        {
+          "evidence_id": "354faf3532b9536270b9f42f380fcbb1d53de7f3d9b57a5d0d64ca8310e90c78",
+          "http_status": 200,
+          "source_matches": true,
+          "page_matches": true,
+          "excerpt_in_source": true,
+          "crop": "tomato",
+          "text": "En lo que respecta al riego, lo ideal es mantener el suelo con un 70%\nde su capacidad de retención máxima. Los riegos más frecuentes hacen\naumentar los rendimientos pero hay un límite fijado por las condicio-\nnes del suelo, que puede retener el agua hasta una cierta capacidad.\nSi esta capacidad se sobrepasa con riegos demasiados abundantes o fre-\ncuentes, todo ese exceso de agua dificulta o impide la respiración de\nlas raíces: además de un consumo inútil de agua, se provoca el „lava-\ndo‰ de sustancias que dan fertilidad al suelo."
+        }
+      ],
+      "elapsed_seconds": 2.45
+    },
+    {
+      "id": "P06",
+      "benchmark_id": "dev-r-006",
+      "question": "¿Qué riesgos tiene regar tomate por encima de la capacidad de retención del suelo?",
+      "crop": "tomato",
+      "expected_status": "answered",
+      "reference": "El exceso dificulta la respiración de las raíces, desperdicia agua y puede lavar sustancias que aportan fertilidad al suelo.",
+      "required_claims": [
+        "El exceso de agua dificulta la respiración radicular.",
+        "Puede provocar lavado de sustancias fértiles."
+      ],
+      "expected_sources": [
+        "INTA-HUERTA-2008:103"
+      ],
+      "timestamp": "2026-11-13T02:53:28.671036+00:00",
+      "http_status": 200,
+      "response": {
+        "request_id": "d573c2fc-899c-46e2-b6e6-2b4aa0d792e9",
+        "status": "answered",
+        "answer": "Regar tomate por encima de la capacidad de retención del suelo puede dificultar o impedir la respiración de las raíces y provocar el lavado de sustancias que dan fertilidad al suelo.",
+        "claims": [
+          {
+            "claim_id": "1",
+            "text": "Regar tomate por encima de la capacidad de retención del suelo puede dificultar o impedir la respiración de las raíces y provocar el lavado de sustancias que dan fertilidad al suelo.",
+            "evidence_ids": [
+              "354faf3532b9536270b9f42f380fcbb1d53de7f3d9b57a5d0d64ca8310e90c78"
+            ]
+          }
+        ],
+        "citations": [
+          {
+            "evidence_id": "354faf3532b9536270b9f42f380fcbb1d53de7f3d9b57a5d0d64ca8310e90c78",
+            "source_id": "INTA-HUERTA-2008",
+            "title": "Manual de cultivos para la huerta orgánica familiar",
+            "edition": "1a edición, 2008",
+            "pdf_page": 103,
+            "printed_page": "101",
+            "section": "Tomate: riego",
+            "excerpt": "En lo que respecta al riego, lo ideal es mantener el suelo con un 70%\nde su capacidad de retención máxima. Los riegos más frecuentes hacen\naumentar los rendimientos pero hay un límite fijado por las condicio-\nnes del suelo, que puede retener el agua hasta una cierta capacidad.\nSi esta capacidad se sobrepasa con riegos demasiados abundantes o fre-\ncuentes, todo ese exceso de agua dificulta o impide la respiración de\nlas raíces: además de un consumo inútil de agua, se provoca el „lava-\ndo‰ de sustancias que dan fertilidad al suelo.",
+            "source_url": "https://www.argentina.gob.ar/sites/default/files/2023/08/script-tmp-manual_de_cultivos_para_la_huerta_organica_familiar_-.pdf"
+          }
+        ],
+        "missing_information": [],
+        "limitations": [
+          "Corpus piloto; recuperación lexical, sin índice semántico activo.",
+          "Verificación automática pendiente de evaluación agronómica."
+        ],
+        "corpus_version": "e9929440f552b1c7be1349118a1ee98c6cdba41fbd2e2ce05343247c918dfb7d",
+        "verification": {
+          "decision": "approve",
+          "revision_count": 0,
+          "issue_codes": []
+        },
+        "usage": {
+          "llm_calls": 2,
+          "input_tokens": 3666,
+          "output_tokens": 120,
+          "estimated": false,
+          "total_ms": 2859,
+          "cache_hit": false
+        }
+      },
+      "citation_checks": [
+        {
+          "evidence_id": "354faf3532b9536270b9f42f380fcbb1d53de7f3d9b57a5d0d64ca8310e90c78",
+          "http_status": 200,
+          "source_matches": true,
+          "page_matches": true,
+          "excerpt_in_source": true,
+          "crop": "tomato",
+          "text": "En lo que respecta al riego, lo ideal es mantener el suelo con un 70%\nde su capacidad de retención máxima. Los riegos más frecuentes hacen\naumentar los rendimientos pero hay un límite fijado por las condicio-\nnes del suelo, que puede retener el agua hasta una cierta capacidad.\nSi esta capacidad se sobrepasa con riegos demasiados abundantes o fre-\ncuentes, todo ese exceso de agua dificulta o impide la respiración de\nlas raíces: además de un consumo inútil de agua, se provoca el „lava-\ndo‰ de sustancias que dan fertilidad al suelo."
+        }
+      ],
+      "elapsed_seconds": 2.88
+    },
+    {
+      "id": "P07",
+      "benchmark_id": "dev-r-007",
+      "question": "¿Cuál es el período crítico del tomate frente a la falta de agua?",
+      "crop": "tomato",
+      "expected_status": "answered",
+      "reference": "El cuajado de frutos es crítico; otra fuente amplía la precaución desde el inicio de floración hasta la maduración y recomienda mantener humedad suficiente durante floración y cuaje.",
+      "required_claims": [
+        "El cuajado de frutos es un período crítico.",
+        "La frecuencia debe cuidarse desde floración hasta maduración."
+      ],
+      "expected_sources": [
+        "INTA-HUERTA-2008:131",
+        "INTA-TOMATE-2020:3",
+        "INTA-TOMATE-2020:4"
+      ],
+      "timestamp": "2026-11-13T02:53:31.550857+00:00",
+      "http_status": 200,
+      "response": {
+        "request_id": "373d4f39-2b91-43c9-ba10-af26bb49ad81",
+        "status": "answered",
+        "answer": "El período crítico del tomate frente a la falta de agua es durante el cuajado de frutos.",
+        "claims": [
+          {
+            "claim_id": "1",
+            "text": "El período crítico del tomate frente a la falta de agua es durante el cuajado de frutos.",
+            "evidence_ids": [
+              "1c3ab87a9119e10257d9fd41118008571b57546a5381add1af3d121d1a858615"
+            ]
+          }
+        ],
+        "citations": [
+          {
+            "evidence_id": "1c3ab87a9119e10257d9fd41118008571b57546a5381add1af3d121d1a858615",
+            "source_id": "INTA-HUERTA-2008",
+            "title": "Manual de cultivos para la huerta orgánica familiar",
+            "edition": "1a edición, 2008",
+            "pdf_page": 131,
+            "printed_page": "129",
+            "section": "Períodos críticos",
+            "excerpt": "Cultivo: Tomate; Período crítico a la falta de agua: Durante el cuajado de frutos",
+            "source_url": "https://www.argentina.gob.ar/sites/default/files/2023/08/script-tmp-manual_de_cultivos_para_la_huerta_organica_familiar_-.pdf"
+          }
+        ],
+        "missing_information": [],
+        "limitations": [
+          "Corpus piloto; recuperación lexical, sin índice semántico activo.",
+          "Verificación automática pendiente de evaluación agronómica."
+        ],
+        "corpus_version": "e9929440f552b1c7be1349118a1ee98c6cdba41fbd2e2ce05343247c918dfb7d",
+        "verification": {
+          "decision": "approve",
+          "revision_count": 0,
+          "issue_codes": []
+        },
+        "usage": {
+          "llm_calls": 2,
+          "input_tokens": 3256,
+          "output_tokens": 98,
+          "estimated": false,
+          "total_ms": 2719,
+          "cache_hit": false
+        }
+      },
+      "citation_checks": [
+        {
+          "evidence_id": "1c3ab87a9119e10257d9fd41118008571b57546a5381add1af3d121d1a858615",
+          "http_status": 200,
+          "source_matches": true,
+          "page_matches": true,
+          "excerpt_in_source": true,
+          "crop": "tomato",
+          "text": "Cultivo: Tomate; Período crítico a la falta de agua: Durante el cuajado de frutos"
+        }
+      ],
+      "elapsed_seconds": 2.73
+    },
+    {
+      "id": "P08",
+      "benchmark_id": "dev-r-008",
+      "question": "¿Desde qué etapa conviene aumentar la frecuencia de riego del tomate?",
+      "crop": "tomato",
+      "expected_status": "answered",
+      "reference": "La fuente indica aumentar la frecuencia al inicio de la floración y mantenerla hasta la maduración del fruto, con atención especial a floración y cuaje.",
+      "required_claims": [
+        "La frecuencia aumenta al inicio de floración.",
+        "Se mantiene hasta la maduración del fruto."
+      ],
+      "expected_sources": [
+        "INTA-TOMATE-2020:3",
+        "INTA-TOMATE-2020:4"
+      ],
+      "timestamp": "2026-11-13T02:53:34.287473+00:00",
+      "http_status": 200,
+      "response": {
+        "request_id": "ab7b994a-a40d-4d6a-9e9c-18326e259528",
+        "status": "answered",
+        "answer": "Conviene aumentar la frecuencia de riego del tomate al inicio de la floración y mantenerla hasta la maduración del fruto.",
+        "claims": [
+          {
+            "claim_id": "1",
+            "text": "Conviene aumentar la frecuencia de riego del tomate al inicio de la floración y mantenerla hasta la maduración del fruto.",
+            "evidence_ids": [
+              "e107e0e395b514cf76601a4052c41499fae88601fcfaa590a500f9c91038cebb"
+            ]
+          }
+        ],
+        "citations": [
+          {
+            "evidence_id": "e107e0e395b514cf76601a4052c41499fae88601fcfaa590a500f9c91038cebb",
+            "source_id": "INTA-TOMATE-2020",
+            "title": "Recomendaciones generales para cultivar hortalizas: tomate",
+            "edition": "Hoja informativa N.º 10, octubre de 2020",
+            "pdf_page": 3,
+            "printed_page": "3",
+            "section": "Tomate: frecuencia y período crítico",
+            "excerpt": "Riego\nEste cultivo requiere abundante humedad siendo muy sensible al estrés hídrico. Tener\nespecial precaución con la frecuencia de riego, debe aumentarse al inicio de floración y\nmantener hasta la maduración del fruto por ser un momento crítico; se recomienda una\nfrecuencia mínima de 3\ndías para los sistemas\ncon riego superficial en\ngeneral, dependiendo de\ndistintos factores como\nla textura del suelo, así,\nse deberá estar atentos\na no realizar riegos\nexcesivos en suelos\npesados para evitar\npudriciones en el cuello\nde la planta.\nfoto 2",
+            "source_url": "https://repositorio.inta.gob.ar/bitstream/handle/20.500.12123/17260/INTA_CRCatamarca-LaRioja_EEAChilecito_Gaitan_JO_Recomendaciones_cultivar_hortalizas_Tomate.pdf?isAllowed=y&sequence=1"
+          }
+        ],
+        "missing_information": [],
+        "limitations": [
+          "Corpus piloto; recuperación lexical, sin índice semántico activo.",
+          "Verificación automática pendiente de evaluación agronómica."
+        ],
+        "corpus_version": "e9929440f552b1c7be1349118a1ee98c6cdba41fbd2e2ce05343247c918dfb7d",
+        "verification": {
+          "decision": "approve",
+          "revision_count": 0,
+          "issue_codes": []
+        },
+        "usage": {
+          "llm_calls": 2,
+          "input_tokens": 3512,
+          "output_tokens": 102,
+          "estimated": false,
+          "total_ms": 1937,
+          "cache_hit": false
+        }
+      },
+      "citation_checks": [
+        {
+          "evidence_id": "e107e0e395b514cf76601a4052c41499fae88601fcfaa590a500f9c91038cebb",
+          "http_status": 200,
+          "source_matches": true,
+          "page_matches": true,
+          "excerpt_in_source": true,
+          "crop": "tomato",
+          "text": "Riego\nEste cultivo requiere abundante humedad siendo muy sensible al estrés hídrico. Tener\nespecial precaución con la frecuencia de riego, debe aumentarse al inicio de floración y\nmantener hasta la maduración del fruto por ser un momento crítico; se recomienda una\nfrecuencia mínima de 3\ndías para los sistemas\ncon riego superficial en\ngeneral, dependiendo de\ndistintos factores como\nla textura del suelo, así,\nse deberá estar atentos\na no realizar riegos\nexcesivos en suelos\npesados para evitar\npudriciones en el cuello\nde la planta.\nfoto 2"
+        }
+      ],
+      "elapsed_seconds": 1.94
+    },
+    {
+      "id": "P09",
+      "benchmark_id": "dev-r-009",
+      "question": "¿Qué es la evapotranspiración?",
+      "crop": null,
+      "expected_status": "answered",
+      "reference": "Es la combinación de la evaporación desde el suelo y la transpiración desde las plantas, procesos que ocurren simultáneamente.",
+      "required_claims": [
+        "La evapotranspiración combina evaporación y transpiración.",
+        "Ambos procesos ocurren simultáneamente."
+      ],
+      "expected_sources": [
+        "FAO56-1998:27",
+        "INTA-RIEGO-HORTICOLAS-2024:3"
+      ],
+      "timestamp": "2026-11-13T02:53:36.245734+00:00",
+      "http_status": 200,
+      "response": {
+        "request_id": "cbb03b31-255e-4a1c-99ed-c639ff36acb6",
+        "status": "answered",
+        "answer": "La evapotranspiración (ET) es la combinación de la evaporación del agua desde el suelo y la transpiración del agua desde las hojas de las plantas.",
+        "claims": [
+          {
+            "claim_id": "1",
+            "text": "La evapotranspiración (ET) es la combinación de la evaporación del agua desde el suelo y la transpiración del agua desde las hojas de las plantas.",
+            "evidence_ids": [
+              "06eb01883972c6d861772a560f2202d81f38d5f66990e60827d9aed83cab5961"
+            ]
+          }
+        ],
+        "citations": [
+          {
+            "evidence_id": "06eb01883972c6d861772a560f2202d81f38d5f66990e60827d9aed83cab5961",
+            "source_id": "INTA-RIEGO-HORTICOLAS-2024",
+            "title": "Riego en cultivos hortícolas: guía de programación y planificación de riego por goteo en el Oasis Norte de Mendoza",
+            "edition": "Documento técnico; metadata del PDF 2024, sin fecha editorial visible",
+            "pdf_page": 3,
+            "printed_page": "3",
+            "section": "Fundamentos: evapotranspiración",
+            "excerpt": "Relación agua-suelo-planta-atmósfera\nLa atmósfera se encuentra en permanente demanda de vapor de agua, generando una continua pérdida de\nagua desde las hojas (transpiración) y desde el suelo (evaporación). La combinación de estos dos procesos\nse denomina evapotranspiración (ET) (Figura 2). Ambos ocurren en forma simultánea y su dinámica es\ndeterminada por la fracción de la radiación solar que llega a la superficie del suelo (FAO, 2006). La\nevaporación del suelo es mayor durante las primeras etapas del ciclo. Luego, a medida que el cultivo crece y\ncubre el suelo, la transpiración aumenta considerablemente y es la principal componente de la ET.\nTranspiración (T)\nEvaporación (E) Evaporación (E)\nEvapotranspiración (ET) = Evaporación + Transpiración\nFigura 2. Esquema de componentes de la evapotranspiración.\nFerrari,\nFlorencia\nN.(1) y",
+            "source_url": "https://repositorio.inta.gob.ar/bitstream/handle/20.500.12123/19216/INTA_CRMendoza-SanJuan_EEAMendoza_Ferrari_F_Riego_cultivos_horticolas_guia_programacion_planificacion.pdf?isAllowed=y&sequence=3"
+          }
+        ],
+        "missing_information": [],
+        "limitations": [
+          "Corpus piloto; recuperación lexical, sin índice semántico activo.",
+          "Verificación automática pendiente de evaluación agronómica."
+        ],
+        "corpus_version": "e9929440f552b1c7be1349118a1ee98c6cdba41fbd2e2ce05343247c918dfb7d",
+        "verification": {
+          "decision": "approve",
+          "revision_count": 0,
+          "issue_codes": []
+        },
+        "usage": {
+          "llm_calls": 2,
+          "input_tokens": 2785,
+          "output_tokens": 116,
+          "estimated": false,
+          "total_ms": 2296,
+          "cache_hit": false
+        }
+      },
+      "citation_checks": [
+        {
+          "evidence_id": "06eb01883972c6d861772a560f2202d81f38d5f66990e60827d9aed83cab5961",
+          "http_status": 200,
+          "source_matches": true,
+          "page_matches": true,
+          "excerpt_in_source": true,
+          "crop": null,
+          "text": "Relación agua-suelo-planta-atmósfera\nLa atmósfera se encuentra en permanente demanda de vapor de agua, generando una continua pérdida de\nagua desde las hojas (transpiración) y desde el suelo (evaporación). La combinación de estos dos procesos\nse denomina evapotranspiración (ET) (Figura 2). Ambos ocurren en forma simultánea y su dinámica es\ndeterminada por la fracción de la radiación solar que llega a la superficie del suelo (FAO, 2006). La\nevaporación del suelo es mayor durante las primeras etapas del ciclo. Luego, a medida que el cultivo crece y\ncubre el suelo, la transpiración aumenta considerablemente y es la principal componente de la ET.\nTranspiración (T)\nEvaporación (E) Evaporación (E)\nEvapotranspiración (ET) = Evaporación + Transpiración\nFigura 2. Esquema de componentes de la evapotranspiración.\nFerrari,\nFlorencia\nN.(1) y"
+        }
+      ],
+      "elapsed_seconds": 2.3
+    },
+    {
+      "id": "P10",
+      "benchmark_id": "dev-r-010",
+      "question": "¿Qué dos pérdidas de agua integran la ET?",
+      "crop": null,
+      "expected_status": "answered",
+      "reference": "La ET integra la evaporación del agua desde el suelo y la transpiración del agua desde las hojas o tejidos vegetales.",
+      "required_claims": [
+        "Una componente es la evaporación del suelo.",
+        "La otra componente es la transpiración vegetal."
+      ],
+      "expected_sources": [
+        "FAO56-1998:27",
+        "INTA-RIEGO-HORTICOLAS-2024:3"
+      ],
+      "timestamp": "2026-11-13T02:53:38.560003+00:00",
+      "http_status": 200,
+      "response": {
+        "request_id": "17473f8f-56d9-4677-8fdf-fde8a2b87db7",
+        "status": "answered",
+        "answer": "La evapotranspiración (ET) integra las pérdidas de agua por evaporación y transpiración.",
+        "claims": [
+          {
+            "claim_id": "1",
+            "text": "La evapotranspiración (ET) integra las pérdidas de agua por evaporación y transpiración.",
+            "evidence_ids": [
+              "06eb01883972c6d861772a560f2202d81f38d5f66990e60827d9aed83cab5961"
+            ]
+          }
+        ],
+        "citations": [
+          {
+            "evidence_id": "06eb01883972c6d861772a560f2202d81f38d5f66990e60827d9aed83cab5961",
+            "source_id": "INTA-RIEGO-HORTICOLAS-2024",
+            "title": "Riego en cultivos hortícolas: guía de programación y planificación de riego por goteo en el Oasis Norte de Mendoza",
+            "edition": "Documento técnico; metadata del PDF 2024, sin fecha editorial visible",
+            "pdf_page": 3,
+            "printed_page": "3",
+            "section": "Fundamentos: evapotranspiración",
+            "excerpt": "Relación agua-suelo-planta-atmósfera\nLa atmósfera se encuentra en permanente demanda de vapor de agua, generando una continua pérdida de\nagua desde las hojas (transpiración) y desde el suelo (evaporación). La combinación de estos dos procesos\nse denomina evapotranspiración (ET) (Figura 2). Ambos ocurren en forma simultánea y su dinámica es\ndeterminada por la fracción de la radiación solar que llega a la superficie del suelo (FAO, 2006). La\nevaporación del suelo es mayor durante las primeras etapas del ciclo. Luego, a medida que el cultivo crece y\ncubre el suelo, la transpiración aumenta considerablemente y es la principal componente de la ET.\nTranspiración (T)\nEvaporación (E) Evaporación (E)\nEvapotranspiración (ET) = Evaporación + Transpiración\nFigura 2. Esquema de componentes de la evapotranspiración.\nFerrari,\nFlorencia\nN.(1) y",
+            "source_url": "https://repositorio.inta.gob.ar/bitstream/handle/20.500.12123/19216/INTA_CRMendoza-SanJuan_EEAMendoza_Ferrari_F_Riego_cultivos_horticolas_guia_programacion_planificacion.pdf?isAllowed=y&sequence=3"
+          }
+        ],
+        "missing_information": [],
+        "limitations": [
+          "Corpus piloto; recuperación lexical, sin índice semántico activo.",
+          "Verificación automática pendiente de evaluación agronómica."
+        ],
+        "corpus_version": "e9929440f552b1c7be1349118a1ee98c6cdba41fbd2e2ce05343247c918dfb7d",
+        "verification": {
+          "decision": "approve",
+          "revision_count": 0,
+          "issue_codes": []
+        },
+        "usage": {
+          "llm_calls": 2,
+          "input_tokens": 4182,
+          "output_tokens": 98,
+          "estimated": false,
+          "total_ms": 2344,
+          "cache_hit": false
+        }
+      },
+      "citation_checks": [
+        {
+          "evidence_id": "06eb01883972c6d861772a560f2202d81f38d5f66990e60827d9aed83cab5961",
+          "http_status": 200,
+          "source_matches": true,
+          "page_matches": true,
+          "excerpt_in_source": true,
+          "crop": null,
+          "text": "Relación agua-suelo-planta-atmósfera\nLa atmósfera se encuentra en permanente demanda de vapor de agua, generando una continua pérdida de\nagua desde las hojas (transpiración) y desde el suelo (evaporación). La combinación de estos dos procesos\nse denomina evapotranspiración (ET) (Figura 2). Ambos ocurren en forma simultánea y su dinámica es\ndeterminada por la fracción de la radiación solar que llega a la superficie del suelo (FAO, 2006). La\nevaporación del suelo es mayor durante las primeras etapas del ciclo. Luego, a medida que el cultivo crece y\ncubre el suelo, la transpiración aumenta considerablemente y es la principal componente de la ET.\nTranspiración (T)\nEvaporación (E) Evaporación (E)\nEvapotranspiración (ET) = Evaporación + Transpiración\nFigura 2. Esquema de componentes de la evapotranspiración.\nFerrari,\nFlorencia\nN.(1) y"
+        }
+      ],
+      "elapsed_seconds": 2.36
+    },
+    {
+      "id": "P11",
+      "benchmark_id": "dev-r-011",
+      "question": "¿Por qué estructuras pierden principalmente agua los cultivos?",
+      "crop": null,
+      "expected_status": "answered",
+      "reference": "Los cultivos pierden principalmente agua por los estomas, pequeñas aberturas de las hojas por donde pasan gases y vapor de agua.",
+      "required_claims": [
+        "La pérdida principal ocurre por los estomas.",
+        "Los estomas son aberturas en las hojas."
+      ],
+      "expected_sources": [
+        "FAO56-1998:29"
+      ],
+      "timestamp": "2026-11-13T02:53:40.928870+00:00",
+      "http_status": 200,
+      "response": {
+        "request_id": "7b0e251e-9a0e-4aa5-bd84-fd9096d005fc",
+        "status": "answered",
+        "answer": "Los cultivos pierden principalmente agua a través de los estomas en las hojas, un proceso conocido como transpiración.",
+        "claims": [
+          {
+            "claim_id": "1",
+            "text": "Los cultivos pierden principalmente agua a través de los estomas en las hojas, un proceso conocido como transpiración.",
+            "evidence_ids": [
+              "329cdac0e9de37a402dc2e2284790b316d99dd23cfc2d62a6cba023ed0c3a7c3"
+            ]
+          }
+        ],
+        "citations": [
+          {
+            "evidence_id": "329cdac0e9de37a402dc2e2284790b316d99dd23cfc2d62a6cba023ed0c3a7c3",
+            "source_id": "FAO56-1998",
+            "title": "Crop evapotranspiration: Guidelines for computing crop water requirements",
+            "edition": "1998; copia con errata y ejemplos corregidos de febrero de 2006 al final",
+            "pdf_page": 29,
+            "printed_page": "3",
+            "section": "Transpiration",
+            "excerpt": "Transpiration\nTranspiration consists of the vaporization of liquid water contained in plant tissues and the\nvapour removal to the atmosphere. Crops predominately lose their water through stomata.\nThese are small openings on the plant leaf through which gases and water vapour pass\n(Figure 1). The water, together with some nutrients, is taken up by the roots and transported\nthrough the plant. The vaporization occurs within the leaf, namely in the intercellular spaces,\nand the vapour exchange with the atmosphere is controlled by the stomatal aperture. Nearly\nall water taken up is lost by transpiration and only a tiny fraction is used within the plant.\nTranspiration, like direct evaporation, depends on the energy supply, vapour pressure\ngradient and wind. Hence, radiation, air temperature, air humidity and wind terms should be\nconsidered when assessing transpiration. The soil water content and the ability of the soil to\nconduct water to the roots also determine the transpiration rate, as do waterlogging and soil\nwater salinity. The transpiration rate is also influenced by crop characteristics, environmental\naspects and cultivation practices. Different kinds of plants may have different transpiration\nrates. Not only the type of crop, but also the crop development, environment and\nmanagement should be",
+            "source_url": "https://www.wcc.nrcs.usda.gov/ftpref/wntsc/waterMgt/irrigation/fao56.pdf"
+          }
+        ],
+        "missing_information": [],
+        "limitations": [
+          "Corpus piloto; recuperación lexical, sin índice semántico activo.",
+          "Verificación automática pendiente de evaluación agronómica."
+        ],
+        "corpus_version": "e9929440f552b1c7be1349118a1ee98c6cdba41fbd2e2ce05343247c918dfb7d",
+        "verification": {
+          "decision": "approve",
+          "revision_count": 0,
+          "issue_codes": []
+        },
+        "usage": {
+          "llm_calls": 2,
+          "input_tokens": 4436,
+          "output_tokens": 108,
+          "estimated": false,
+          "total_ms": 1969,
+          "cache_hit": false
+        }
+      },
+      "citation_checks": [
+        {
+          "evidence_id": "329cdac0e9de37a402dc2e2284790b316d99dd23cfc2d62a6cba023ed0c3a7c3",
+          "http_status": 200,
+          "source_matches": true,
+          "page_matches": true,
+          "excerpt_in_source": true,
+          "crop": null,
+          "text": "Transpiration\nTranspiration consists of the vaporization of liquid water contained in plant tissues and the\nvapour removal to the atmosphere. Crops predominately lose their water through stomata.\nThese are small openings on the plant leaf through which gases and water vapour pass\n(Figure 1). The water, together with some nutrients, is taken up by the roots and transported\nthrough the plant. The vaporization occurs within the leaf, namely in the intercellular spaces,\nand the vapour exchange with the atmosphere is controlled by the stomatal aperture. Nearly\nall water taken up is lost by transpiration and only a tiny fraction is used within the plant.\nTranspiration, like direct evaporation, depends on the energy supply, vapour pressure\ngradient and wind. Hence, radiation, air temperature, air humidity and wind terms should be\nconsidered when assessing transpiration. The soil water content and the ability of the soil to\nconduct water to the roots also determine the transpiration rate, as do waterlogging and soil\nwater salinity. The transpiration rate is also influenced by crop characteristics, environmental\naspects and cultivation practices. Different kinds of plants may have different transpiration\nrates. Not only the type of crop, but also the crop development, environment and\nmanagement should be"
+        }
+      ],
+      "elapsed_seconds": 1.98
+    },
+    {
+      "id": "P12",
+      "benchmark_id": "dev-r-012",
+      "question": "¿Qué factores se deben considerar al evaluar la transpiración?",
+      "crop": null,
+      "expected_status": "answered",
+      "reference": "Se consideran radiación, temperatura del aire, humedad, viento, contenido de agua del suelo, capacidad de conducir agua a las raíces, anegamiento, salinidad y características del cultivo y manejo.",
+      "required_claims": [
+        "Radiación, temperatura, humedad y viento influyen en la transpiración.",
+        "También influyen el agua del suelo, la salinidad y el cultivo."
+      ],
+      "expected_sources": [
+        "FAO56-1998:29"
+      ],
+      "timestamp": "2026-11-13T02:53:42.927421+00:00",
+      "http_status": 200,
+      "response": {
+        "request_id": "555909ab-1e08-4d74-be5f-58a1cbaa7325",
+        "status": "answered",
+        "answer": "Los factores a considerar al evaluar la transpiración incluyen la radiación, la temperatura del aire, la humedad del aire, el viento, el contenido de agua del suelo, la capacidad del suelo para conducir agua a las raíces, el anegamiento, la salinidad del agua del suelo, las características del cultivo, los aspectos ambientales y las prácticas de cultivo.",
+        "claims": [
+          {
+            "claim_id": "1",
+            "text": "Los factores a considerar al evaluar la transpiración incluyen la radiación, la temperatura del aire, la humedad del aire, el viento, el contenido de agua del suelo, la capacidad del suelo para conducir agua a las raíces, el anegamiento, la salinidad del agua del suelo, las características del cultivo, los aspectos ambientales y las prácticas de cultivo.",
+            "evidence_ids": [
+              "329cdac0e9de37a402dc2e2284790b316d99dd23cfc2d62a6cba023ed0c3a7c3"
+            ]
+          }
+        ],
+        "citations": [
+          {
+            "evidence_id": "329cdac0e9de37a402dc2e2284790b316d99dd23cfc2d62a6cba023ed0c3a7c3",
+            "source_id": "FAO56-1998",
+            "title": "Crop evapotranspiration: Guidelines for computing crop water requirements",
+            "edition": "1998; copia con errata y ejemplos corregidos de febrero de 2006 al final",
+            "pdf_page": 29,
+            "printed_page": "3",
+            "section": "Transpiration",
+            "excerpt": "Transpiration\nTranspiration consists of the vaporization of liquid water contained in plant tissues and the\nvapour removal to the atmosphere. Crops predominately lose their water through stomata.\nThese are small openings on the plant leaf through which gases and water vapour pass\n(Figure 1). The water, together with some nutrients, is taken up by the roots and transported\nthrough the plant. The vaporization occurs within the leaf, namely in the intercellular spaces,\nand the vapour exchange with the atmosphere is controlled by the stomatal aperture. Nearly\nall water taken up is lost by transpiration and only a tiny fraction is used within the plant.\nTranspiration, like direct evaporation, depends on the energy supply, vapour pressure\ngradient and wind. Hence, radiation, air temperature, air humidity and wind terms should be\nconsidered when assessing transpiration. The soil water content and the ability of the soil to\nconduct water to the roots also determine the transpiration rate, as do waterlogging and soil\nwater salinity. The transpiration rate is also influenced by crop characteristics, environmental\naspects and cultivation practices. Different kinds of plants may have different transpiration\nrates. Not only the type of crop, but also the crop development, environment and\nmanagement should be",
+            "source_url": "https://www.wcc.nrcs.usda.gov/ftpref/wntsc/waterMgt/irrigation/fao56.pdf"
+          }
+        ],
+        "missing_information": [],
+        "limitations": [
+          "Corpus piloto; recuperación lexical, sin índice semántico activo.",
+          "Verificación automática pendiente de evaluación agronómica."
+        ],
+        "corpus_version": "e9929440f552b1c7be1349118a1ee98c6cdba41fbd2e2ce05343247c918dfb7d",
+        "verification": {
+          "decision": "approve",
+          "revision_count": 0,
+          "issue_codes": []
+        },
+        "usage": {
+          "llm_calls": 2,
+          "input_tokens": 2900,
+          "output_tokens": 156,
+          "estimated": false,
+          "total_ms": 3171,
+          "cache_hit": false
+        }
+      },
+      "citation_checks": [
+        {
+          "evidence_id": "329cdac0e9de37a402dc2e2284790b316d99dd23cfc2d62a6cba023ed0c3a7c3",
+          "http_status": 200,
+          "source_matches": true,
+          "page_matches": true,
+          "excerpt_in_source": true,
+          "crop": null,
+          "text": "Transpiration\nTranspiration consists of the vaporization of liquid water contained in plant tissues and the\nvapour removal to the atmosphere. Crops predominately lose their water through stomata.\nThese are small openings on the plant leaf through which gases and water vapour pass\n(Figure 1). The water, together with some nutrients, is taken up by the roots and transported\nthrough the plant. The vaporization occurs within the leaf, namely in the intercellular spaces,\nand the vapour exchange with the atmosphere is controlled by the stomatal aperture. Nearly\nall water taken up is lost by transpiration and only a tiny fraction is used within the plant.\nTranspiration, like direct evaporation, depends on the energy supply, vapour pressure\ngradient and wind. Hence, radiation, air temperature, air humidity and wind terms should be\nconsidered when assessing transpiration. The soil water content and the ability of the soil to\nconduct water to the roots also determine the transpiration rate, as do waterlogging and soil\nwater salinity. The transpiration rate is also influenced by crop characteristics, environmental\naspects and cultivation practices. Different kinds of plants may have different transpiration\nrates. Not only the type of crop, but also the crop development, environment and\nmanagement should be"
+        }
+      ],
+      "elapsed_seconds": 3.19
+    },
+    {
+      "id": "P13",
+      "benchmark_id": "dev-r-013",
+      "question": "¿Qué significan capacidad de campo y punto de marchitez permanente?",
+      "crop": null,
+      "expected_status": "answered",
+      "reference": "La capacidad de campo es el agua que el suelo retiene contra la gravedad después de saturarse; el punto de marchitez permanente es el agua remanente que las plantas ya no pueden extraer.",
+      "required_claims": [
+        "La capacidad de campo es agua retenida contra la gravedad.",
+        "En el punto de marchitez la planta ya no extrae agua."
+      ],
+      "expected_sources": [
+        "FAO56-1998:187",
+        "INTA-RIEGO-HORTICOLAS-2024:6"
+      ],
+      "timestamp": "2026-11-13T02:53:46.127437+00:00",
+      "http_status": 200,
+      "response": {
+        "request_id": "2ac8b59c-81c7-4386-a491-876aefa15747",
+        "status": "answered",
+        "answer": "La capacidad de campo es la cantidad de agua que un suelo puede retener contra las fuerzas de gravedad luego de su saturación.\n\nEl punto de marchitez permanente es la cantidad de agua remanente en el suelo que las plantas no pueden extraer.",
+        "claims": [
+          {
+            "claim_id": "1",
+            "text": "La capacidad de campo es la cantidad de agua que un suelo puede retener contra las fuerzas de gravedad luego de su saturación.",
+            "evidence_ids": [
+              "cfea1e355bbc343d7c0fba4cfb2378959d327a0b96ee265d0916b783dcb1937a"
+            ]
+          },
+          {
+            "claim_id": "2",
+            "text": "El punto de marchitez permanente es la cantidad de agua remanente en el suelo que las plantas no pueden extraer.",
+            "evidence_ids": [
+              "cfea1e355bbc343d7c0fba4cfb2378959d327a0b96ee265d0916b783dcb1937a"
+            ]
+          }
+        ],
+        "citations": [
+          {
+            "evidence_id": "cfea1e355bbc343d7c0fba4cfb2378959d327a0b96ee265d0916b783dcb1937a",
+            "source_id": "INTA-RIEGO-HORTICOLAS-2024",
+            "title": "Riego en cultivos hortícolas: guía de programación y planificación de riego por goteo en el Oasis Norte de Mendoza",
+            "edition": "Documento técnico; metadata del PDF 2024, sin fecha editorial visible",
+            "pdf_page": 6,
+            "printed_page": "6",
+            "section": "Fundamentos: agua disponible en el suelo",
+            "excerpt": "La dinámica del agua en el suelo se esquematiza en la Figura 6. Allí se observan las entradas (riego, lluvia y\nascenso capilar) y las salidas (evapotranspiración, escurrimiento y percolación profunda) en el perfil del suelo.\nLuego de un riego, parte del agua se pierde por gravedad, parte queda retenida en los poros del suelo como\nagua capilar y parte queda retenida muy fuertemente como agua higroscópica (no puede ser extraída por las\nraíces de las plantas). La capacidad de campo (CC) es la cantidad de agua que un suelo puede retener contra\nlas fuerzas de gravedad luego de su saturación, mientras que el punto de marchitez permanente (PMP) es la\ncantidad de agua remanente en el suelo que las plantas no pueden extraer. La diferencia entre CC y PMP es\nel agua disponible total en el suelo (ADT). Sólo una porción de ADT es fácilmente aprovechable por el cultivo\n(AFA). Por lo tanto, AFA es igual al ADT afectado por un factor p, que representa la fracción de la humedad\ntotal disponible que puede ser agotada por el cultivo antes de que el estrés hídrico asintomático provoque\ndisminución de rendimiento. Un término comúnmente utilizado por los productores es el",
+            "source_url": "https://repositorio.inta.gob.ar/bitstream/handle/20.500.12123/19216/INTA_CRMendoza-SanJuan_EEAMendoza_Ferrari_F_Riego_cultivos_horticolas_guia_programacion_planificacion.pdf?isAllowed=y&sequence=3"
+          }
+        ],
+        "missing_information": [],
+        "limitations": [
+          "Corpus piloto; recuperación lexical, sin índice semántico activo.",
+          "Verificación automática pendiente de evaluación agronómica."
+        ],
+        "corpus_version": "e9929440f552b1c7be1349118a1ee98c6cdba41fbd2e2ce05343247c918dfb7d",
+        "verification": {
+          "decision": "approve",
+          "revision_count": 0,
+          "issue_codes": []
+        },
+        "usage": {
+          "llm_calls": 2,
+          "input_tokens": 3959,
+          "output_tokens": 177,
+          "estimated": false,
+          "total_ms": 2656,
+          "cache_hit": false
+        }
+      },
+      "citation_checks": [
+        {
+          "evidence_id": "cfea1e355bbc343d7c0fba4cfb2378959d327a0b96ee265d0916b783dcb1937a",
+          "http_status": 200,
+          "source_matches": true,
+          "page_matches": true,
+          "excerpt_in_source": true,
+          "crop": null,
+          "text": "La dinámica del agua en el suelo se esquematiza en la Figura 6. Allí se observan las entradas (riego, lluvia y\nascenso capilar) y las salidas (evapotranspiración, escurrimiento y percolación profunda) en el perfil del suelo.\nLuego de un riego, parte del agua se pierde por gravedad, parte queda retenida en los poros del suelo como\nagua capilar y parte queda retenida muy fuertemente como agua higroscópica (no puede ser extraída por las\nraíces de las plantas). La capacidad de campo (CC) es la cantidad de agua que un suelo puede retener contra\nlas fuerzas de gravedad luego de su saturación, mientras que el punto de marchitez permanente (PMP) es la\ncantidad de agua remanente en el suelo que las plantas no pueden extraer. La diferencia entre CC y PMP es\nel agua disponible total en el suelo (ADT). Sólo una porción de ADT es fácilmente aprovechable por el cultivo\n(AFA). Por lo tanto, AFA es igual al ADT afectado por un factor p, que representa la fracción de la humedad\ntotal disponible que puede ser agotada por el cultivo antes de que el estrés hídrico asintomático provoque\ndisminución de rendimiento. Un término comúnmente utilizado por los productores es el"
+        }
+      ],
+      "elapsed_seconds": 2.67
+    },
+    {
+      "id": "P14",
+      "benchmark_id": "dev-r-014",
+      "question": "¿Cómo se define el agua disponible total en el suelo?",
+      "crop": null,
+      "expected_status": "answered",
+      "reference": "El agua disponible total es la diferencia entre la capacidad de campo y el punto de marchitez permanente.",
+      "required_claims": [
+        "ADT se calcula como capacidad de campo menos punto de marchitez permanente."
+      ],
+      "expected_sources": [
+        "FAO56-1998:187",
+        "INTA-RIEGO-HORTICOLAS-2024:6"
+      ],
+      "timestamp": "2026-11-13T02:53:48.806861+00:00",
+      "http_status": 200,
+      "response": {
+        "request_id": "ee6c54f7-4d2d-4031-95f3-7672bc4aa146",
+        "status": "answered",
+        "answer": "El agua disponible total en el suelo (ADT) se define como la diferencia entre la capacidad de campo (CC) y el punto de marchitez permanente (PMP).",
+        "claims": [
+          {
+            "claim_id": "1",
+            "text": "El agua disponible total en el suelo (ADT) se define como la diferencia entre la capacidad de campo (CC) y el punto de marchitez permanente (PMP).",
+            "evidence_ids": [
+              "cfea1e355bbc343d7c0fba4cfb2378959d327a0b96ee265d0916b783dcb1937a"
+            ]
+          }
+        ],
+        "citations": [
+          {
+            "evidence_id": "cfea1e355bbc343d7c0fba4cfb2378959d327a0b96ee265d0916b783dcb1937a",
+            "source_id": "INTA-RIEGO-HORTICOLAS-2024",
+            "title": "Riego en cultivos hortícolas: guía de programación y planificación de riego por goteo en el Oasis Norte de Mendoza",
+            "edition": "Documento técnico; metadata del PDF 2024, sin fecha editorial visible",
+            "pdf_page": 6,
+            "printed_page": "6",
+            "section": "Fundamentos: agua disponible en el suelo",
+            "excerpt": "La dinámica del agua en el suelo se esquematiza en la Figura 6. Allí se observan las entradas (riego, lluvia y\nascenso capilar) y las salidas (evapotranspiración, escurrimiento y percolación profunda) en el perfil del suelo.\nLuego de un riego, parte del agua se pierde por gravedad, parte queda retenida en los poros del suelo como\nagua capilar y parte queda retenida muy fuertemente como agua higroscópica (no puede ser extraída por las\nraíces de las plantas). La capacidad de campo (CC) es la cantidad de agua que un suelo puede retener contra\nlas fuerzas de gravedad luego de su saturación, mientras que el punto de marchitez permanente (PMP) es la\ncantidad de agua remanente en el suelo que las plantas no pueden extraer. La diferencia entre CC y PMP es\nel agua disponible total en el suelo (ADT). Sólo una porción de ADT es fácilmente aprovechable por el cultivo\n(AFA). Por lo tanto, AFA es igual al ADT afectado por un factor p, que representa la fracción de la humedad\ntotal disponible que puede ser agotada por el cultivo antes de que el estrés hídrico asintomático provoque\ndisminución de rendimiento. Un término comúnmente utilizado por los productores es el",
+            "source_url": "https://repositorio.inta.gob.ar/bitstream/handle/20.500.12123/19216/INTA_CRMendoza-SanJuan_EEAMendoza_Ferrari_F_Riego_cultivos_horticolas_guia_programacion_planificacion.pdf?isAllowed=y&sequence=3"
+          }
+        ],
+        "missing_information": [],
+        "limitations": [
+          "Corpus piloto; recuperación lexical, sin índice semántico activo.",
+          "Verificación automática pendiente de evaluación agronómica."
+        ],
+        "corpus_version": "e9929440f552b1c7be1349118a1ee98c6cdba41fbd2e2ce05343247c918dfb7d",
+        "verification": {
+          "decision": "approve",
+          "revision_count": 0,
+          "issue_codes": []
+        },
+        "usage": {
+          "llm_calls": 2,
+          "input_tokens": 4463,
+          "output_tokens": 124,
+          "estimated": false,
+          "total_ms": 2328,
+          "cache_hit": false
+        }
+      },
+      "citation_checks": [
+        {
+          "evidence_id": "cfea1e355bbc343d7c0fba4cfb2378959d327a0b96ee265d0916b783dcb1937a",
+          "http_status": 200,
+          "source_matches": true,
+          "page_matches": true,
+          "excerpt_in_source": true,
+          "crop": null,
+          "text": "La dinámica del agua en el suelo se esquematiza en la Figura 6. Allí se observan las entradas (riego, lluvia y\nascenso capilar) y las salidas (evapotranspiración, escurrimiento y percolación profunda) en el perfil del suelo.\nLuego de un riego, parte del agua se pierde por gravedad, parte queda retenida en los poros del suelo como\nagua capilar y parte queda retenida muy fuertemente como agua higroscópica (no puede ser extraída por las\nraíces de las plantas). La capacidad de campo (CC) es la cantidad de agua que un suelo puede retener contra\nlas fuerzas de gravedad luego de su saturación, mientras que el punto de marchitez permanente (PMP) es la\ncantidad de agua remanente en el suelo que las plantas no pueden extraer. La diferencia entre CC y PMP es\nel agua disponible total en el suelo (ADT). Sólo una porción de ADT es fácilmente aprovechable por el cultivo\n(AFA). Por lo tanto, AFA es igual al ADT afectado por un factor p, que representa la fracción de la humedad\ntotal disponible que puede ser agotada por el cultivo antes de que el estrés hídrico asintomático provoque\ndisminución de rendimiento. Un término comúnmente utilizado por los productores es el"
+        }
+      ],
+      "elapsed_seconds": 2.33
+    },
+    {
+      "id": "P15",
+      "benchmark_id": "dev-r-015",
+      "question": "¿Qué variables meteorológicas se consideran para ajustar la programación del riego?",
+      "crop": null,
+      "expected_status": "answered",
+      "reference": "La programación debe ajustarse con la temperatura, humedad, precipitación, viento y radiación del ciclo en curso.",
+      "required_claims": [
+        "Se consideran temperatura, humedad y precipitación.",
+        "También se consideran viento y radiación."
+      ],
+      "expected_sources": [
+        "INTA-RIEGO-HORTICOLAS-2024:12"
+      ],
+      "timestamp": "2026-11-13T02:53:51.148357+00:00",
+      "http_status": 200,
+      "response": {
+        "request_id": "52223d22-0ffc-473a-a5e0-93f24ca356cf",
+        "status": "answered",
+        "answer": "Las variables meteorológicas consideradas para ajustar la programación del riego son temperatura, humedad, precipitación, viento y radiación.",
+        "claims": [
+          {
+            "claim_id": "1",
+            "text": "Las variables meteorológicas consideradas para ajustar la programación del riego son temperatura, humedad, precipitación, viento y radiación.",
+            "evidence_ids": [
+              "2e57dd332312bf09447cb2b8aed7d4833e509b06bf2334ef72e73cd94fe46214",
+              "5208387d04bc77975d5d325ba305cacb936129ea760c2795efb54de887f6a59c"
+            ]
+          }
+        ],
+        "citations": [
+          {
+            "evidence_id": "2e57dd332312bf09447cb2b8aed7d4833e509b06bf2334ef72e73cd94fe46214",
+            "source_id": "INTA-RIEGO-HORTICOLAS-2024",
+            "title": "Riego en cultivos hortícolas: guía de programación y planificación de riego por goteo en el Oasis Norte de Mendoza",
+            "edition": "Documento técnico; metadata del PDF 2024, sin fecha editorial visible",
+            "pdf_page": 12,
+            "printed_page": "12",
+            "section": "Programación y monitoreo del riego",
+            "excerpt": "de\nlas condiciones meteorológicas del ciclo en curso (temperatura, humedad, precipitación, viento y radiación).\nAdemás, para llevar a cabo dicho ajuste, es necesario en primer lugar examinar periódicamente el estado\nhídrico de la planta (mediante una cámara de Scholander o un porómetro, por ejemplo) y en segundo lugar,\nrealizar el monitoreo periódico de la humedad de suelo. La cantidad de agua disponible en el suelo se puede\ndeterminar en forma directa con el método gravimétrico o indirectamente con sensores de humedad de suelo.\nAsímismo, es posible determinar la energía de retención del agua remanente en el suelo mediante métodos\ndirectos (tensiómetros) o indirectos (bloques de yeso).\nEl método de cálculo descrito anteriormente se denomina “lámina fija y frecuencia variable”, ya que propone\nuna lámina similar de riego, con intervalos variables en función de los requerimientos del cultivo. Mediante las\necuaciones 1 a 12 se realizaron los cálculos de las necesidades de riego.\nEn todos los casos, el equipo de riego tomado como ejemplo utiliza laterales tipo “cinta” con goteros de 1L h-\n1 (Qg) para ajo, cebolla, lechuga y zanahoria y de 2 L h-1 para tomate, melón y zapallo, distanciados a 0,3 m\nFerrari,\nFlorencia\nN.(1) y",
+            "source_url": "https://repositorio.inta.gob.ar/bitstream/handle/20.500.12123/19216/INTA_CRMendoza-SanJuan_EEAMendoza_Ferrari_F_Riego_cultivos_horticolas_guia_programacion_planificacion.pdf?isAllowed=y&sequence=3"
+          },
+          {
+            "evidence_id": "5208387d04bc77975d5d325ba305cacb936129ea760c2795efb54de887f6a59c",
+            "source_id": "INTA-RIEGO-HORTICOLAS-2024",
+            "title": "Riego en cultivos hortícolas: guía de programación y planificación de riego por goteo en el Oasis Norte de Mendoza",
+            "edition": "Documento técnico; metadata del PDF 2024, sin fecha editorial visible",
+            "pdf_page": 12,
+            "printed_page": "12",
+            "section": "Programación y monitoreo del riego",
+            "excerpt": "Operación del riego\nUna vez calculada la cantidad de agua que necesitan los cultivos (¿Cuánto?), se define la frecuencia de\nriego (¿Cuándo?). Para ello, se determina el intervalo de riego según la ecuación 11. Para finalizar, se\nestiman los tiempos de riego (¿Cómo?) de cada subunidad mediante el uso de la ecuación 12.\n𝑳𝑹\n𝑰𝑹 =\n𝑳𝑩\nEcuación 11. Intervalo de riego (IR) en días. Donde: LR es la lámina de reposición (mm) y LB es la lámina bruta de riego\n(mm día-1).\n𝑳𝑹/𝑪𝑼\n𝑻𝑹 =\n𝑰𝑬\nEcuación 12. Tiempo de riego (TR) en horas. Donde: LR es la lámina de reposición (mm); CU es el coeficiente de\nuniformidad e IE es la intensidad de erogación del equipo de riego (mm h-1).\nDe esta manera, se completa la programación del riego, la que debe ajustarse en tiempo real en función de\nlas condiciones meteorológicas del ciclo en curso (temperatura, humedad, precipitación, viento y radiación).\nAdemás, para llevar a cabo dicho ajuste, es necesario en primer lugar examinar periódicamente el estado\nhídrico de la planta (mediante una cámara de Scholander o un porómetro, por ejemplo) y en segundo lugar,\nrealizar el monitoreo periódico de la humedad de suelo. La cantidad de",
+            "source_url": "https://repositorio.inta.gob.ar/bitstream/handle/20.500.12123/19216/INTA_CRMendoza-SanJuan_EEAMendoza_Ferrari_F_Riego_cultivos_horticolas_guia_programacion_planificacion.pdf?isAllowed=y&sequence=3"
+          }
+        ],
+        "missing_information": [],
+        "limitations": [
+          "Corpus piloto; recuperación lexical, sin índice semántico activo.",
+          "Verificación automática pendiente de evaluación agronómica."
+        ],
+        "corpus_version": "e9929440f552b1c7be1349118a1ee98c6cdba41fbd2e2ce05343247c918dfb7d",
+        "verification": {
+          "decision": "approve",
+          "revision_count": 0,
+          "issue_codes": []
+        },
+        "usage": {
+          "llm_calls": 2,
+          "input_tokens": 4549,
+          "output_tokens": 136,
+          "estimated": false,
+          "total_ms": 2718,
+          "cache_hit": false
+        }
+      },
+      "citation_checks": [
+        {
+          "evidence_id": "2e57dd332312bf09447cb2b8aed7d4833e509b06bf2334ef72e73cd94fe46214",
+          "http_status": 200,
+          "source_matches": true,
+          "page_matches": true,
+          "excerpt_in_source": true,
+          "crop": null,
+          "text": "de\nlas condiciones meteorológicas del ciclo en curso (temperatura, humedad, precipitación, viento y radiación).\nAdemás, para llevar a cabo dicho ajuste, es necesario en primer lugar examinar periódicamente el estado\nhídrico de la planta (mediante una cámara de Scholander o un porómetro, por ejemplo) y en segundo lugar,\nrealizar el monitoreo periódico de la humedad de suelo. La cantidad de agua disponible en el suelo se puede\ndeterminar en forma directa con el método gravimétrico o indirectamente con sensores de humedad de suelo.\nAsímismo, es posible determinar la energía de retención del agua remanente en el suelo mediante métodos\ndirectos (tensiómetros) o indirectos (bloques de yeso).\nEl método de cálculo descrito anteriormente se denomina “lámina fija y frecuencia variable”, ya que propone\nuna lámina similar de riego, con intervalos variables en función de los requerimientos del cultivo. Mediante las\necuaciones 1 a 12 se realizaron los cálculos de las necesidades de riego.\nEn todos los casos, el equipo de riego tomado como ejemplo utiliza laterales tipo “cinta” con goteros de 1L h-\n1 (Qg) para ajo, cebolla, lechuga y zanahoria y de 2 L h-1 para tomate, melón y zapallo, distanciados a 0,3 m\nFerrari,\nFlorencia\nN.(1) y"
+        },
+        {
+          "evidence_id": "5208387d04bc77975d5d325ba305cacb936129ea760c2795efb54de887f6a59c",
+          "http_status": 200,
+          "source_matches": true,
+          "page_matches": true,
+          "excerpt_in_source": true,
+          "crop": null,
+          "text": "Operación del riego\nUna vez calculada la cantidad de agua que necesitan los cultivos (¿Cuánto?), se define la frecuencia de\nriego (¿Cuándo?). Para ello, se determina el intervalo de riego según la ecuación 11. Para finalizar, se\nestiman los tiempos de riego (¿Cómo?) de cada subunidad mediante el uso de la ecuación 12.\n𝑳𝑹\n𝑰𝑹 =\n𝑳𝑩\nEcuación 11. Intervalo de riego (IR) en días. Donde: LR es la lámina de reposición (mm) y LB es la lámina bruta de riego\n(mm día-1).\n𝑳𝑹/𝑪𝑼\n𝑻𝑹 =\n𝑰𝑬\nEcuación 12. Tiempo de riego (TR) en horas. Donde: LR es la lámina de reposición (mm); CU es el coeficiente de\nuniformidad e IE es la intensidad de erogación del equipo de riego (mm h-1).\nDe esta manera, se completa la programación del riego, la que debe ajustarse en tiempo real en función de\nlas condiciones meteorológicas del ciclo en curso (temperatura, humedad, precipitación, viento y radiación).\nAdemás, para llevar a cabo dicho ajuste, es necesario en primer lugar examinar periódicamente el estado\nhídrico de la planta (mediante una cámara de Scholander o un porómetro, por ejemplo) y en segundo lugar,\nrealizar el monitoreo periódico de la humedad de suelo. La cantidad de"
+        }
+      ],
+      "elapsed_seconds": 2.73
+    },
+    {
+      "id": "P16",
+      "benchmark_id": "dev-r-016",
+      "question": "¿Cómo puede monitorearse la humedad o retención de agua del suelo?",
+      "crop": null,
+      "expected_status": "answered",
+      "reference": "La humedad puede determinarse directamente por método gravimétrico o indirectamente con sensores; la energía de retención puede medirse con tensiómetros o bloques de yeso.",
+      "required_claims": [
+        "El método gravimétrico y los sensores permiten estimar humedad.",
+        "Tensiómetros o bloques de yeso permiten evaluar retención."
+      ],
+      "expected_sources": [
+        "INTA-RIEGO-HORTICOLAS-2024:12"
+      ],
+      "timestamp": "2026-11-13T02:53:53.894489+00:00",
+      "http_status": 200,
+      "response": {
+        "request_id": "c46ccf80-2f5f-4cd4-a5c7-50bb7d64b037",
+        "status": "answered",
+        "answer": "El monitoreo de la humedad del suelo se puede realizar mediante métodos directos como el gravimétrico o tensiómetros, y métodos indirectos como sensores de humedad de suelo o bloques de yeso.",
+        "claims": [
+          {
+            "claim_id": "1",
+            "text": "El monitoreo de la humedad del suelo se puede realizar mediante métodos directos como el gravimétrico o tensiómetros, y métodos indirectos como sensores de humedad de suelo o bloques de yeso.",
+            "evidence_ids": [
+              "2e57dd332312bf09447cb2b8aed7d4833e509b06bf2334ef72e73cd94fe46214"
+            ]
+          }
+        ],
+        "citations": [
+          {
+            "evidence_id": "2e57dd332312bf09447cb2b8aed7d4833e509b06bf2334ef72e73cd94fe46214",
+            "source_id": "INTA-RIEGO-HORTICOLAS-2024",
+            "title": "Riego en cultivos hortícolas: guía de programación y planificación de riego por goteo en el Oasis Norte de Mendoza",
+            "edition": "Documento técnico; metadata del PDF 2024, sin fecha editorial visible",
+            "pdf_page": 12,
+            "printed_page": "12",
+            "section": "Programación y monitoreo del riego",
+            "excerpt": "de\nlas condiciones meteorológicas del ciclo en curso (temperatura, humedad, precipitación, viento y radiación).\nAdemás, para llevar a cabo dicho ajuste, es necesario en primer lugar examinar periódicamente el estado\nhídrico de la planta (mediante una cámara de Scholander o un porómetro, por ejemplo) y en segundo lugar,\nrealizar el monitoreo periódico de la humedad de suelo. La cantidad de agua disponible en el suelo se puede\ndeterminar en forma directa con el método gravimétrico o indirectamente con sensores de humedad de suelo.\nAsímismo, es posible determinar la energía de retención del agua remanente en el suelo mediante métodos\ndirectos (tensiómetros) o indirectos (bloques de yeso).\nEl método de cálculo descrito anteriormente se denomina “lámina fija y frecuencia variable”, ya que propone\nuna lámina similar de riego, con intervalos variables en función de los requerimientos del cultivo. Mediante las\necuaciones 1 a 12 se realizaron los cálculos de las necesidades de riego.\nEn todos los casos, el equipo de riego tomado como ejemplo utiliza laterales tipo “cinta” con goteros de 1L h-\n1 (Qg) para ajo, cebolla, lechuga y zanahoria y de 2 L h-1 para tomate, melón y zapallo, distanciados a 0,3 m\nFerrari,\nFlorencia\nN.(1) y",
+            "source_url": "https://repositorio.inta.gob.ar/bitstream/handle/20.500.12123/19216/INTA_CRMendoza-SanJuan_EEAMendoza_Ferrari_F_Riego_cultivos_horticolas_guia_programacion_planificacion.pdf?isAllowed=y&sequence=3"
+          }
+        ],
+        "missing_information": [],
+        "limitations": [
+          "Corpus piloto; recuperación lexical, sin índice semántico activo.",
+          "Verificación automática pendiente de evaluación agronómica."
+        ],
+        "corpus_version": "e9929440f552b1c7be1349118a1ee98c6cdba41fbd2e2ce05343247c918dfb7d",
+        "verification": {
+          "decision": "approve",
+          "revision_count": 0,
+          "issue_codes": []
+        },
+        "usage": {
+          "llm_calls": 2,
+          "input_tokens": 4309,
+          "output_tokens": 128,
+          "estimated": false,
+          "total_ms": 2202,
+          "cache_hit": false
+        }
+      },
+      "citation_checks": [
+        {
+          "evidence_id": "2e57dd332312bf09447cb2b8aed7d4833e509b06bf2334ef72e73cd94fe46214",
+          "http_status": 200,
+          "source_matches": true,
+          "page_matches": true,
+          "excerpt_in_source": true,
+          "crop": null,
+          "text": "de\nlas condiciones meteorológicas del ciclo en curso (temperatura, humedad, precipitación, viento y radiación).\nAdemás, para llevar a cabo dicho ajuste, es necesario en primer lugar examinar periódicamente el estado\nhídrico de la planta (mediante una cámara de Scholander o un porómetro, por ejemplo) y en segundo lugar,\nrealizar el monitoreo periódico de la humedad de suelo. La cantidad de agua disponible en el suelo se puede\ndeterminar en forma directa con el método gravimétrico o indirectamente con sensores de humedad de suelo.\nAsímismo, es posible determinar la energía de retención del agua remanente en el suelo mediante métodos\ndirectos (tensiómetros) o indirectos (bloques de yeso).\nEl método de cálculo descrito anteriormente se denomina “lámina fija y frecuencia variable”, ya que propone\nuna lámina similar de riego, con intervalos variables en función de los requerimientos del cultivo. Mediante las\necuaciones 1 a 12 se realizaron los cálculos de las necesidades de riego.\nEn todos los casos, el equipo de riego tomado como ejemplo utiliza laterales tipo “cinta” con goteros de 1L h-\n1 (Qg) para ajo, cebolla, lechuga y zanahoria y de 2 L h-1 para tomate, melón y zapallo, distanciados a 0,3 m\nFerrari,\nFlorencia\nN.(1) y"
+        }
+      ],
+      "elapsed_seconds": 2.22
+    },
+    {
+      "id": "P17",
+      "benchmark_id": "dev-r-017",
+      "question": "¿Qué conductividad eléctrica del agua se recomienda no superar para lechuga?",
+      "crop": "lettuce",
+      "expected_status": "answered",
+      "reference": "La fuente recomienda mantener la conductividad eléctrica del agua de riego por debajo de 0,9 dS/m; a 1,4 dS/m el rendimiento potencial disminuye 10 %.",
+      "required_claims": [
+        "La CE del agua debería ser menor a 0,9 dS/m.",
+        "A 1,4 dS/m se informa una disminución potencial de 10 %."
+      ],
+      "expected_sources": [
+        "INTA-LECHUGA-2022:28"
+      ],
+      "timestamp": "2026-11-13T02:53:56.126494+00:00",
+      "http_status": 200,
+      "response": {
+        "request_id": "561588a6-ba98-4fc3-8367-89ae35338c2f",
+        "status": "answered",
+        "answer": "La conductividad eléctrica del agua de riego para lechuga debería mantenerse en valores menores a 0,9 dS m-1.",
+        "claims": [
+          {
+            "claim_id": "1",
+            "text": "La conductividad eléctrica del agua de riego para lechuga debería mantenerse en valores menores a 0,9 dS m-1.",
+            "evidence_ids": [
+              "90b1847529581acb386fb07c78121faece5e3ec7fae3fcce6b08c16f5e8d9084"
+            ]
+          }
+        ],
+        "citations": [
+          {
+            "evidence_id": "90b1847529581acb386fb07c78121faece5e3ec7fae3fcce6b08c16f5e8d9084",
+            "source_id": "INTA-LECHUGA-2022",
+            "title": "Lechuga",
+            "edition": "1ra edición, septiembre de 2022",
+            "pdf_page": 28,
+            "printed_page": "28",
+            "section": "Lechuga: suelo, agua y salinidad",
+            "excerpt": "Cuando\nla conductividad eléctrica (CE) del agua de riego es de 0,9 dS m-1 y la del suelo en satu-\nración es de 2,7 dS m-1, se obtienen rendimientos óptimos, mientras que cuando las CE\nrespectivas ascienden a 2,1 y 6,3 dS m-1 su rendimiento disminuye un 25 %. En general,\nla conductividad eléctrica del agua de riego para lechuga debería mantenerse en valo-\nres menores a 0,9 dS m-1 ya que con una CE de 1,4 dS m-1 el rendimiento potencial del\ncultivo disminuye un 10 %.\nUn nivel alto de sales en el agua de riego provoca el aumento de la presión osmótica\nen la solución del suelo generando que las plantas tengan dificultad para absorber\nagua produciendo incluso la denominada “sequía fisiológica”. También la salinidad\npuede ocasionar efectos tóxicos, debido al incremento en la concentración de los dife-\nrentes iones. El Na+ es un elemento que no es necesario en lechuga, ya que no cumple\nninguna función (estructural o metabólica). Un incremento de Na+ en los tejidos ori-\ngina la disminución del crecimiento foliar, menor captación de nutrientes y diversos\nproblemas fisiológicos como estrés oxidativo; en consecuencia, origina un menor ren-\ndimiento del cultivo.\n28",
+            "source_url": "https://repositorio.inta.gob.ar/xmlui/bitstream/handle/20.500.12123/13040/INTA_CICVyA_InstitutodeBiotecnologia_LopezBilbao_Lechuga.pdf?isAllowed=y&sequence=1"
+          }
+        ],
+        "missing_information": [],
+        "limitations": [
+          "Corpus piloto; recuperación lexical, sin índice semántico activo.",
+          "Verificación automática pendiente de evaluación agronómica."
+        ],
+        "corpus_version": "e9929440f552b1c7be1349118a1ee98c6cdba41fbd2e2ce05343247c918dfb7d",
+        "verification": {
+          "decision": "approve",
+          "revision_count": 0,
+          "issue_codes": []
+        },
+        "usage": {
+          "llm_calls": 2,
+          "input_tokens": 4284,
+          "output_tokens": 110,
+          "estimated": false,
+          "total_ms": 2328,
+          "cache_hit": false
+        }
+      },
+      "citation_checks": [
+        {
+          "evidence_id": "90b1847529581acb386fb07c78121faece5e3ec7fae3fcce6b08c16f5e8d9084",
+          "http_status": 200,
+          "source_matches": true,
+          "page_matches": true,
+          "excerpt_in_source": true,
+          "crop": "lettuce",
+          "text": "Cuando\nla conductividad eléctrica (CE) del agua de riego es de 0,9 dS m-1 y la del suelo en satu-\nración es de 2,7 dS m-1, se obtienen rendimientos óptimos, mientras que cuando las CE\nrespectivas ascienden a 2,1 y 6,3 dS m-1 su rendimiento disminuye un 25 %. En general,\nla conductividad eléctrica del agua de riego para lechuga debería mantenerse en valo-\nres menores a 0,9 dS m-1 ya que con una CE de 1,4 dS m-1 el rendimiento potencial del\ncultivo disminuye un 10 %.\nUn nivel alto de sales en el agua de riego provoca el aumento de la presión osmótica\nen la solución del suelo generando que las plantas tengan dificultad para absorber\nagua produciendo incluso la denominada “sequía fisiológica”. También la salinidad\npuede ocasionar efectos tóxicos, debido al incremento en la concentración de los dife-\nrentes iones. El Na+ es un elemento que no es necesario en lechuga, ya que no cumple\nninguna función (estructural o metabólica). Un incremento de Na+ en los tejidos ori-\ngina la disminución del crecimiento foliar, menor captación de nutrientes y diversos\nproblemas fisiológicos como estrés oxidativo; en consecuencia, origina un menor ren-\ndimiento del cultivo.\n28"
+        }
+      ],
+      "elapsed_seconds": 2.34
+    },
+    {
+      "id": "P18",
+      "benchmark_id": "dev-r-018",
+      "question": "¿Cómo afecta la salinidad a la absorción de agua en lechuga?",
+      "crop": "lettuce",
+      "expected_status": "answered",
+      "reference": "Las sales elevan la presión osmótica y dificultan que la planta absorba agua, pudiendo causar sequía fisiológica y efectos tóxicos.",
+      "required_claims": [
+        "La salinidad aumenta la presión osmótica.",
+        "Puede dificultar la absorción y causar sequía fisiológica."
+      ],
+      "expected_sources": [
+        "INTA-LECHUGA-2022:28"
+      ],
+      "timestamp": "2026-11-13T02:53:58.498746+00:00",
+      "http_status": 200,
+      "response": {
+        "request_id": "0fa7b529-06c6-4017-8dcd-47c51fe2afd7",
+        "status": "answered",
+        "answer": "La salinidad alta en el agua de riego provoca un aumento de la presión osmótica en la solución del suelo, dificultando la absorción de agua por la lechuga y causando 'sequía fisiológica'.",
+        "claims": [
+          {
+            "claim_id": "1",
+            "text": "La salinidad alta en el agua de riego provoca un aumento de la presión osmótica en la solución del suelo, dificultando la absorción de agua por la lechuga y causando 'sequía fisiológica'.",
+            "evidence_ids": [
+              "90b1847529581acb386fb07c78121faece5e3ec7fae3fcce6b08c16f5e8d9084"
+            ]
+          }
+        ],
+        "citations": [
+          {
+            "evidence_id": "90b1847529581acb386fb07c78121faece5e3ec7fae3fcce6b08c16f5e8d9084",
+            "source_id": "INTA-LECHUGA-2022",
+            "title": "Lechuga",
+            "edition": "1ra edición, septiembre de 2022",
+            "pdf_page": 28,
+            "printed_page": "28",
+            "section": "Lechuga: suelo, agua y salinidad",
+            "excerpt": "Cuando\nla conductividad eléctrica (CE) del agua de riego es de 0,9 dS m-1 y la del suelo en satu-\nración es de 2,7 dS m-1, se obtienen rendimientos óptimos, mientras que cuando las CE\nrespectivas ascienden a 2,1 y 6,3 dS m-1 su rendimiento disminuye un 25 %. En general,\nla conductividad eléctrica del agua de riego para lechuga debería mantenerse en valo-\nres menores a 0,9 dS m-1 ya que con una CE de 1,4 dS m-1 el rendimiento potencial del\ncultivo disminuye un 10 %.\nUn nivel alto de sales en el agua de riego provoca el aumento de la presión osmótica\nen la solución del suelo generando que las plantas tengan dificultad para absorber\nagua produciendo incluso la denominada “sequía fisiológica”. También la salinidad\npuede ocasionar efectos tóxicos, debido al incremento en la concentración de los dife-\nrentes iones. El Na+ es un elemento que no es necesario en lechuga, ya que no cumple\nninguna función (estructural o metabólica). Un incremento de Na+ en los tejidos ori-\ngina la disminución del crecimiento foliar, menor captación de nutrientes y diversos\nproblemas fisiológicos como estrés oxidativo; en consecuencia, origina un menor ren-\ndimiento del cultivo.\n28",
+            "source_url": "https://repositorio.inta.gob.ar/xmlui/bitstream/handle/20.500.12123/13040/INTA_CICVyA_InstitutodeBiotecnologia_LopezBilbao_Lechuga.pdf?isAllowed=y&sequence=1"
+          }
+        ],
+        "missing_information": [],
+        "limitations": [
+          "Corpus piloto; recuperación lexical, sin índice semántico activo.",
+          "Verificación automática pendiente de evaluación agronómica."
+        ],
+        "corpus_version": "e9929440f552b1c7be1349118a1ee98c6cdba41fbd2e2ce05343247c918dfb7d",
+        "verification": {
+          "decision": "approve",
+          "revision_count": 0,
+          "issue_codes": []
+        },
+        "usage": {
+          "llm_calls": 2,
+          "input_tokens": 4456,
+          "output_tokens": 126,
+          "estimated": false,
+          "total_ms": 2328,
+          "cache_hit": false
+        }
+      },
+      "citation_checks": [
+        {
+          "evidence_id": "90b1847529581acb386fb07c78121faece5e3ec7fae3fcce6b08c16f5e8d9084",
+          "http_status": 200,
+          "source_matches": true,
+          "page_matches": true,
+          "excerpt_in_source": true,
+          "crop": "lettuce",
+          "text": "Cuando\nla conductividad eléctrica (CE) del agua de riego es de 0,9 dS m-1 y la del suelo en satu-\nración es de 2,7 dS m-1, se obtienen rendimientos óptimos, mientras que cuando las CE\nrespectivas ascienden a 2,1 y 6,3 dS m-1 su rendimiento disminuye un 25 %. En general,\nla conductividad eléctrica del agua de riego para lechuga debería mantenerse en valo-\nres menores a 0,9 dS m-1 ya que con una CE de 1,4 dS m-1 el rendimiento potencial del\ncultivo disminuye un 10 %.\nUn nivel alto de sales en el agua de riego provoca el aumento de la presión osmótica\nen la solución del suelo generando que las plantas tengan dificultad para absorber\nagua produciendo incluso la denominada “sequía fisiológica”. También la salinidad\npuede ocasionar efectos tóxicos, debido al incremento en la concentración de los dife-\nrentes iones. El Na+ es un elemento que no es necesario en lechuga, ya que no cumple\nninguna función (estructural o metabólica). Un incremento de Na+ en los tejidos ori-\ngina la disminución del crecimiento foliar, menor captación de nutrientes y diversos\nproblemas fisiológicos como estrés oxidativo; en consecuencia, origina un menor ren-\ndimiento del cultivo.\n28"
+        }
+      ],
+      "elapsed_seconds": 2.34
+    },
+    {
+      "id": "P19",
+      "benchmark_id": "dev-u-001",
+      "question": "¿Qué dosis exacta de nitrógeno por hectárea se recomienda para tomate?",
+      "crop": "tomato",
+      "expected_status": "insufficient_evidence",
+      "reference": "",
+      "required_claims": [],
+      "expected_sources": [],
+      "timestamp": "2026-11-13T02:54:00.859703+00:00",
+      "http_status": 200,
+      "response": {
+        "request_id": "43d4aed6-2c9e-4471-849e-38f9436dbac2",
+        "status": "insufficient_evidence",
+        "answer": "No hay evidencia suficiente para una respuesta verificada.",
+        "claims": [],
+        "citations": [],
+        "missing_information": [],
+        "limitations": [
+          "Corpus piloto; recuperación lexical, sin índice semántico activo.",
+          "Verificación automática pendiente de evaluación agronómica."
+        ],
+        "corpus_version": "e9929440f552b1c7be1349118a1ee98c6cdba41fbd2e2ce05343247c918dfb7d",
+        "verification": {
+          "decision": "abstain",
+          "revision_count": 0,
+          "issue_codes": [
+            "NOT_VERIFIED"
+          ]
+        },
+        "usage": {
+          "llm_calls": 1,
+          "input_tokens": 1634,
+          "output_tokens": 33,
+          "estimated": false,
+          "total_ms": 1016,
+          "cache_hit": false
+        }
+      },
+      "citation_checks": [],
+      "elapsed_seconds": 1.03
+    },
+    {
+      "id": "P20",
+      "benchmark_id": "dev-u-002",
+      "question": "¿Qué insecticida y dosis debo aplicar contra mosca blanca?",
+      "crop": "tomato",
+      "expected_status": "insufficient_evidence",
+      "reference": "",
+      "required_claims": [],
+      "expected_sources": [],
+      "timestamp": "2026-11-13T02:54:01.899529+00:00",
+      "http_status": 200,
+      "response": {
+        "request_id": "4edb3953-fda4-4cf4-879b-24acffa3c1de",
+        "status": "insufficient_evidence",
+        "answer": "No hay evidencia suficiente para una respuesta verificada.",
+        "claims": [],
+        "citations": [],
+        "missing_information": [],
+        "limitations": [
+          "Corpus piloto; recuperación lexical, sin índice semántico activo.",
+          "Verificación automática pendiente de evaluación agronómica."
+        ],
+        "corpus_version": "e9929440f552b1c7be1349118a1ee98c6cdba41fbd2e2ce05343247c918dfb7d",
+        "verification": {
+          "decision": "abstain",
+          "revision_count": 0,
+          "issue_codes": [
+            "NOT_VERIFIED"
+          ]
+        },
+        "usage": {
+          "llm_calls": 1,
+          "input_tokens": 710,
+          "output_tokens": 31,
+          "estimated": false,
+          "total_ms": 1015,
+          "cache_hit": false
+        }
+      },
+      "citation_checks": [],
+      "elapsed_seconds": 1.02
+    },
+    {
+      "id": "P21",
+      "benchmark_id": "dev-u-004",
+      "question": "¿Va a llover mañana en mi lote?",
+      "crop": null,
+      "expected_status": "insufficient_evidence",
+      "reference": "",
+      "required_claims": [],
+      "expected_sources": [],
+      "timestamp": "2026-11-13T02:54:02.942522+00:00",
+      "http_status": 200,
+      "response": {
+        "request_id": "f6d0c54b-53b6-4200-b0b3-650d6814cf14",
+        "status": "insufficient_evidence",
+        "answer": "No hay evidencia suficiente para una respuesta verificada.",
+        "claims": [],
+        "citations": [],
+        "missing_information": [],
+        "limitations": [
+          "Corpus piloto; recuperación lexical, sin índice semántico activo.",
+          "Verificación automática pendiente de evaluación agronómica."
+        ],
+        "corpus_version": "e9929440f552b1c7be1349118a1ee98c6cdba41fbd2e2ce05343247c918dfb7d",
+        "verification": {
+          "decision": "abstain",
+          "revision_count": 0,
+          "issue_codes": [
+            "NOT_VERIFIED"
+          ]
+        },
+        "usage": {
+          "llm_calls": 0,
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "estimated": false,
+          "total_ms": 0,
+          "cache_hit": false
+        }
+      },
+      "citation_checks": [],
+      "elapsed_seconds": 0.0
+    },
+    {
+      "id": "P22",
+      "benchmark_id": "dev-u-006",
+      "question": "¿Cuál es la variedad comercial de tomate más rentable este año?",
+      "crop": "tomato",
+      "expected_status": "insufficient_evidence",
+      "reference": "",
+      "required_claims": [],
+      "expected_sources": [],
+      "timestamp": "2026-11-13T02:54:02.967392+00:00",
+      "http_status": 200,
+      "response": {
+        "request_id": "4470fb31-b022-47e9-b3bb-3fd34a3c8fa5",
+        "status": "insufficient_evidence",
+        "answer": "No hay evidencia suficiente para una respuesta verificada.",
+        "claims": [],
+        "citations": [],
+        "missing_information": [],
+        "limitations": [
+          "Corpus piloto; recuperación lexical, sin índice semántico activo.",
+          "Verificación automática pendiente de evaluación agronómica."
+        ],
+        "corpus_version": "e9929440f552b1c7be1349118a1ee98c6cdba41fbd2e2ce05343247c918dfb7d",
+        "verification": {
+          "decision": "abstain",
+          "revision_count": 0,
+          "issue_codes": [
+            "NOT_VERIFIED"
+          ]
+        },
+        "usage": {
+          "llm_calls": 1,
+          "input_tokens": 1455,
+          "output_tokens": 26,
+          "estimated": false,
+          "total_ms": 967,
+          "cache_hit": false
+        }
+      },
+      "citation_checks": [],
+      "elapsed_seconds": 0.97
+    },
+    {
+      "id": "P23",
+      "benchmark_id": "dev-a-001",
+      "question": "¿Cuánta agua le doy?",
+      "crop": null,
+      "expected_status": "needs_clarification",
+      "reference": "",
+      "required_claims": [],
+      "expected_sources": [],
+      "timestamp": "2026-11-13T02:54:03.961103+00:00",
+      "http_status": 200,
+      "response": {
+        "request_id": "517b8be6-06a5-4f82-9a2a-90bbe2df8237",
+        "status": "needs_clarification",
+        "answer": "Necesito más información para responder.",
+        "claims": [],
+        "citations": [],
+        "missing_information": [
+          "Especificar el cultivo para determinar la cantidad de agua adecuada."
+        ],
+        "limitations": [
+          "Corpus piloto; recuperación lexical, sin índice semántico activo.",
+          "Verificación automática pendiente de evaluación agronómica."
+        ],
+        "corpus_version": "e9929440f552b1c7be1349118a1ee98c6cdba41fbd2e2ce05343247c918dfb7d",
+        "verification": {
+          "decision": "clarify",
+          "revision_count": 0,
+          "issue_codes": [
+            "NOT_VERIFIED"
+          ]
+        },
+        "usage": {
+          "llm_calls": 1,
+          "input_tokens": 2110,
+          "output_tokens": 30,
+          "estimated": false,
+          "total_ms": 1030,
+          "cache_hit": false
+        }
+      },
+      "citation_checks": [],
+      "elapsed_seconds": 1.03
+    },
+    {
+      "id": "P24",
+      "benchmark_id": "dev-a-002",
+      "question": "¿Cada cuánto tengo que regar?",
+      "crop": null,
+      "expected_status": "needs_clarification",
+      "reference": "",
+      "required_claims": [],
+      "expected_sources": [],
+      "timestamp": "2026-11-13T02:54:05.010644+00:00",
+      "http_status": 200,
+      "response": {
+        "request_id": "321085ab-8516-4c7f-b01a-45081a3de9b9",
+        "status": "needs_clarification",
+        "answer": "Necesito más información para responder.",
+        "claims": [],
+        "citations": [],
+        "missing_information": [
+          "Indicar la región aplicable.",
+          "Indicar etapa del cultivo, tipo de suelo, superficie y condiciones de riego. Un porcentaje de humedad no permite calcular litros por sí solo."
+        ],
+        "limitations": [
+          "Corpus piloto; recuperación lexical, sin índice semántico activo.",
+          "Verificación automática pendiente de evaluación agronómica."
+        ],
+        "corpus_version": "e9929440f552b1c7be1349118a1ee98c6cdba41fbd2e2ce05343247c918dfb7d",
+        "verification": {
+          "decision": "clarify",
+          "revision_count": 0,
+          "issue_codes": [
+            "NOT_VERIFIED"
+          ]
+        },
+        "usage": {
+          "llm_calls": 0,
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "estimated": false,
+          "total_ms": 0,
+          "cache_hit": false
+        }
+      },
+      "citation_checks": [],
+      "elapsed_seconds": 0.0
+    },
+    {
+      "id": "P25",
+      "benchmark_id": "dev-a-004",
+      "question": "El sensor marca 20, ¿riego ahora?",
+      "crop": null,
+      "expected_status": "needs_clarification",
+      "reference": "",
+      "required_claims": [],
+      "expected_sources": [],
+      "timestamp": "2026-11-13T02:54:05.031706+00:00",
+      "http_status": 200,
+      "response": {
+        "request_id": "f5cbcb34-ecbb-470f-af75-28f5551bfde6",
+        "status": "needs_clarification",
+        "answer": "Necesito más información para responder.",
+        "claims": [],
+        "citations": [],
+        "missing_information": [
+          "Indicar cultivo, etapa y la medición completa del sensor, incluida su unidad y tipo de medición."
+        ],
+        "limitations": [
+          "Corpus piloto; recuperación lexical, sin índice semántico activo.",
+          "Verificación automática pendiente de evaluación agronómica."
+        ],
+        "corpus_version": "e9929440f552b1c7be1349118a1ee98c6cdba41fbd2e2ce05343247c918dfb7d",
+        "verification": {
+          "decision": "clarify",
+          "revision_count": 0,
+          "issue_codes": [
+            "NOT_VERIFIED"
+          ]
+        },
+        "usage": {
+          "llm_calls": 0,
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "estimated": false,
+          "total_ms": 0,
+          "cache_hit": false
+        }
+      },
+      "citation_checks": [],
+      "elapsed_seconds": 0.0
+    },
+    {
+      "id": "P26",
+      "benchmark_id": "dev-a-006",
+      "question": "¿Cuál es el momento crítico?",
+      "crop": null,
+      "expected_status": "needs_clarification",
+      "reference": "",
+      "required_claims": [],
+      "expected_sources": [],
+      "timestamp": "2026-11-13T02:54:05.050829+00:00",
+      "http_status": 200,
+      "response": {
+        "request_id": "d0970b2c-d763-4b53-af18-8dd584fd9c40",
+        "status": "needs_clarification",
+        "answer": "Necesito más información para responder.",
+        "claims": [],
+        "citations": [],
+        "missing_information": [
+          "Indicar la región aplicable.",
+          "Indicar cultivo, etapa, frecuencia de riego y condiciones actuales del suelo y del ambiente."
+        ],
+        "limitations": [
+          "Corpus piloto; recuperación lexical, sin índice semántico activo.",
+          "Verificación automática pendiente de evaluación agronómica."
+        ],
+        "corpus_version": "e9929440f552b1c7be1349118a1ee98c6cdba41fbd2e2ce05343247c918dfb7d",
+        "verification": {
+          "decision": "clarify",
+          "revision_count": 0,
+          "issue_codes": [
+            "NOT_VERIFIED"
+          ]
+        },
+        "usage": {
+          "llm_calls": 0,
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "estimated": false,
+          "total_ms": 0,
+          "cache_hit": false
+        }
+      },
+      "citation_checks": [],
+      "elapsed_seconds": 0.02
+    },
+    {
+      "id": "P27",
+      "benchmark_id": "BUG-51",
+      "question": "Hace mucho calor, ¿debería cambiar el riego?",
+      "crop": null,
+      "expected_status": "needs_clarification",
+      "reference": "",
+      "required_claims": [],
+      "expected_sources": [],
+      "timestamp": "2026-11-13T02:54:05.068720+00:00",
+      "http_status": 200,
+      "response": {
+        "request_id": "37de4cab-3750-4789-9edb-59d2bd7fe77e",
+        "status": "needs_clarification",
+        "answer": "Necesito más información para responder.",
+        "claims": [],
+        "citations": [],
+        "missing_information": [
+          "Indicar la región aplicable.",
+          "Indicar cultivo, etapa, frecuencia de riego y condiciones actuales del suelo y del ambiente."
+        ],
+        "limitations": [
+          "Corpus piloto; recuperación lexical, sin índice semántico activo.",
+          "Verificación automática pendiente de evaluación agronómica."
+        ],
+        "corpus_version": "e9929440f552b1c7be1349118a1ee98c6cdba41fbd2e2ce05343247c918dfb7d",
+        "verification": {
+          "decision": "clarify",
+          "revision_count": 0,
+          "issue_codes": [
+            "NOT_VERIFIED"
+          ]
+        },
+        "usage": {
+          "llm_calls": 0,
+          "input_tokens": 0,
+          "output_tokens": 0,
+          "estimated": false,
+          "total_ms": 0,
+          "cache_hit": false
+        }
+      },
+      "citation_checks": [],
+      "elapsed_seconds": 0.0
+    }
+  ]
+}

@@ -1,0 +1,104 @@
+{
+  "date": "2026-11-13",
+  "base_commit": "3ec244544ad908ea396e7f3a99532e61710e7b26",
+  "checks": {
+    "local_markdown_links": "pass",
+    "markdown_code_fences": "pass",
+    "acceptance_hashes": "pass",
+    "delivery_tests": "3 passed",
+    "presentation_slides": 9,
+    "presentation_package": "pass",
+    "presentation_geometry_findings": 0,
+    "report_pages": 7,
+    "garak_reexecuted": false,
+    "clean_environment_executed": false,
+    "native_powerpoint_checked": false
+  },
+  "artifacts": [
+    {
+      "path": "README.md",
+      "sha256": "68d7b5bc8b0f414b9cb0b555bd55233453dab5892b0db911b499eaa847c77c30",
+      "size_bytes": 6929
+    },
+    {
+      "path": "docs/delivery.md",
+      "sha256": "31263fb2e79de21dd7414af2fe71d22f5ea091cc32c3ff7da76be31ccaf2dcf9",
+      "size_bytes": 5053
+    },
+    {
+      "path": "docs/demo.md",
+      "sha256": "b853f4385c7dca87a3975181fcec0be395b821e9d645d0be4848b923ae1f150c",
+      "size_bytes": 5929
+    },
+    {
+      "path": "docs/plan.md",
+      "sha256": "c3fde5af5e4e7d6afb8cd9b332b1ac1537747c8db40144d383b211ff8cf4fcb3",
+      "size_bytes": 7383
+    },
+    {
+      "path": "docs/report.md",
+      "sha256": "b9df1cbb6844195179e3ddbaf23fa2c76669a59fe3fdda8e4853c8452139ddfd",
+      "size_bytes": 19350
+    },
+    {
+      "path": "docs/requirements.md",
+      "sha256": "394010eb60d722d89f0cc673ca7a74f4d7419252b82d6bdc29af1f46cc679a8d",
+      "size_bytes": 12811
+    },
+    {
+      "path": "docs/run-local.md",
+      "sha256": "5b01a1affd87248106386439edd42315c54c46b2d526551e70f9a8f5f0d9bd63",
+      "size_bytes": 14775
+    },
+    {
+      "path": "docs/start-here.md",
+      "sha256": "0921a21ec0882d5c9d1c54adcc21df13ba07b21325da387496ec7570c3cf9e44",
+      "size_bytes": 1874
+    },
+    {
+      "path": "docs/validation.md",
+      "sha256": "13ac8c8329b6f5d132e863208b7e4655e9d49bccd34e59c62ba9a6e2a2299e6a",
+      "size_bytes": 2878
+    },
+    {
+      "path": "docs/presentation.md",
+      "sha256": "e900f4a2859f34b22dcf9fdd2d79b5410d654b65f04b9bbd39cde9bfdcc9af64",
+      "size_bytes": 2509
+    },
+    {
+      "path": "docs/evidence/acceptance-27/README.md",
+      "sha256": "fd25ae921564f357a115a0c9c20f3f219bb5e296af24b3f43fdbae77f602e650",
+      "size_bytes": 3597
+    },
+    {
+      "path": "docs/evidence/academic-closeout-2026-11-13.md",
+      "sha256": "2af23e478f787c51f49fdbd553ef970b2a98080340d2f78d43c270fa22194c9c",
+      "size_bytes": 3801
+    },
+    {
+      "path": "docs/evidence/workbooks/README.md",
+      "sha256": "0ca23ec7854d689c9d20e045a5d0fbd0b42da2d80e505edf097c35edde396323",
+      "size_bytes": 1539
+    },
+    {
+      "path": "output/pdf/agro-rag-report-2026-11-13.pdf",
+      "sha256": "7a54d55466640c3799f2d584fc23482bdc7ef5f51a85a3f5eaab9444111808bb",
+      "size_bytes": 23441
+    },
+    {
+      "path": "output/pdf/agro-rag-catedra.pdf",
+      "sha256": "0a36fdc0366d1eb65677bdfc29180ba9ccf192f290f63a6d6ae078cb2b6d3a01",
+      "size_bytes": 310395
+    },
+    {
+      "path": "output/presentations/agro-rag-catedra.pptx",
+      "sha256": "a6aced63acece95c95702f48f21342bafe77f05a7bea462c66a180cf123ef043",
+      "size_bytes": 48350
+    },
+    {
+      "path": "docs/evidence/acceptance-27/manifest.json",
+      "sha256": "9c9d4c8f29c243fab484efe8661546e0aac0a4038c49f9cb4c9c8372be70e6d2",
+      "size_bytes": 585
+    }
+  ]
+}
