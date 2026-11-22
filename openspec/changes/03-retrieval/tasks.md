@@ -142,3 +142,9 @@ conserva para trazabilidad y no debe leerse como si los escenarios siguieran sin
 - [ ] 3.2 Actualizar documentación, trazabilidad y handoff; enlazar evidencia y commit.
 - [ ] 3.3 Revisión del diff por revisor disponible, registrar autor y riesgos; integrar cuando Definition of Done esté satisfecha.
 - [ ] 3.4 Archivar el cambio y promover deltas a specs sólo después de verificar implementación real.
+
+## Perfil semántico OpenAI
+
+- [x] RET-03-tiktoken-openai. Responsable: coordinador en `feat/openai-tiktoken-context`.
+  Propiedad: adaptador, bootstrap/settings, dependencia, pruebas de tokenizer/runtime y runbook.
+  [Evidencia](../../../docs/evidence/tdd/RET-03-tiktoken-openai.md).

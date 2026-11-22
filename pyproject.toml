@@ -22,6 +22,7 @@ tracing = ["opentelemetry-sdk==1.45.1"]
 semantic = [
     "pinecone>=10,<11",
     "sentence-transformers>=5.1,<6",
+    "tiktoken==0.14.0",
 ]
 
 [project.scripts]

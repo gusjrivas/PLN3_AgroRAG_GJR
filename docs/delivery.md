@@ -13,7 +13,8 @@ Corresponde a la candidata `d38814b4`; la promoción formal V2 permanece pendien
 
 La preparación documental no declara finalizado el producto completo: META-05..07 siguen abiertas.
 El checkout limpio reprodujo la instalación, la ingesta, la API y el navegador. Se restauró la
-compatibilidad del benchmark y se verificó una consulta con `hybrid_rerank` en un arnés local.
+compatibilidad del benchmark y se verificó una consulta con `hybrid_rerank` y GPT-4o desde la API
+con el perfil `tiktoken` configurado. [Evidencia](evidence/tdd/RET-03-tiktoken-openai.md).
 Quedan verificar el paquete final sobre su commit de entrega y ensayar la exposición.
 No se envió correo ni se realizó una publicación académica.
 

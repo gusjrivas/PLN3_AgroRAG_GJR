@@ -85,7 +85,30 @@ def test_semantic_runtime_requires_explicit_secret_and_tokenizer(mode: str) -> N
         build_retrieval_runtime(config, Catalogue("v1", (evidence(),)))
 
 
-def test_hybrid_runtime_delivers_complete_filters_to_pinecone_and_closes_resources() -> None:
+@pytest.mark.parametrize(("provider", "model"), [("ollama", "gpt-4o"), ("openai", "")])
+def test_tiktoken_requires_an_openai_model_before_loading_providers(provider, model) -> None:
+    from agro_rag.bootstrap.retrieval import RetrievalFactories, build_retrieval_runtime
+
+    config = Settings(
+        _env_file=None,
+        retrieval_mode="hybrid_rerank",
+        retrieval_tokenizer_backend="tiktoken",
+        pinecone_api_key="test-secret",
+        model_provider=provider,
+        openai_model=model,
+    )
+    with pytest.raises(ValueError, match="AGRO_MODEL_PROVIDER=openai"):
+        build_retrieval_runtime(
+            config,
+            Catalogue("v1", (evidence(),)),
+            factories=RetrievalFactories(load_embedder=ForbiddenFactory()),
+        )
+
+
+@pytest.mark.parametrize("tokenizer_backend", ["transformers", "tiktoken"])
+def test_hybrid_runtime_delivers_complete_filters_to_pinecone_and_closes_resources(
+    tokenizer_backend: str,
+) -> None:
     from agro_rag.application.retrieval import RetrievalFilters
     from agro_rag.bootstrap.retrieval import RetrievalFactories, build_retrieval_runtime
 
@@ -171,8 +194,11 @@ def test_hybrid_runtime_delivers_complete_filters_to_pinecone_and_closes_resourc
         embedding_revision="revision-1",
         reranker_model="reranker",
         reranker_revision="revision-r",
-        retrieval_tokenizer_model="tokenizer",
-        retrieval_tokenizer_revision="revision-t",
+        retrieval_tokenizer_backend=tokenizer_backend,
+        retrieval_tokenizer_model="tokenizer" if tokenizer_backend == "transformers" else "",
+        retrieval_tokenizer_revision="revision-t" if tokenizer_backend == "transformers" else "",
+        model_provider="openai",
+        openai_model="gpt-4o",
         semantic_local_files_only=True,
     )
     base = evidence()
@@ -192,7 +218,12 @@ def test_hybrid_runtime_delivers_complete_filters_to_pinecone_and_closes_resourc
             connect_pinecone=connect,
             load_embedder=load_embedder,
             load_reranker=load_reranker,
-            load_token_counter=load_counter,
+            load_token_counter=load_counter
+            if tokenizer_backend == "transformers"
+            else ForbiddenFactory(),
+            load_tiktoken_counter=load_counter
+            if tokenizer_backend == "tiktoken"
+            else ForbiddenFactory(),
         ),
     )
 
@@ -227,6 +258,9 @@ def test_hybrid_runtime_delivers_complete_filters_to_pinecone_and_closes_resourc
     }
     assert calls["connect"]["api_key"] == "test-secret"
     assert calls["tokenizer"]["local_files_only"] is True
+    if tokenizer_backend == "tiktoken":
+        assert calls["tokenizer"]["model_name"] == "gpt-4o"
+        assert "revision" not in calls["tokenizer"]
     assert calls["reranked"][0] == "humedad"
 
     runtime.close()

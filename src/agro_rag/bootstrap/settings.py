@@ -61,6 +61,7 @@ class Settings(BaseSettings):
     reranker_model: str = "BAAI/bge-reranker-v2-m3"
     reranker_revision: str = "953dc6f6f85a1b2dbfca4c34a2796e7dde08d41e"
     retrieval_mode: Literal["bm25", "vector", "hybrid", "hybrid_rerank"] = "bm25"
+    retrieval_tokenizer_backend: Literal["transformers", "tiktoken"] = "transformers"
     retrieval_tokenizer_model: str = ""
     retrieval_tokenizer_revision: str = ""
     retrieval_token_budget: int = Field(default=3000, gt=0)
