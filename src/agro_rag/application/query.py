@@ -10,6 +10,7 @@ from typing import Any, Literal, Protocol, cast
 from uuid import uuid4
 
 from agro_rag.application.audit import AuditOutcome, AuditSink, QueryAuditEvent
+from agro_rag.application.metrics import query_metrics
 from agro_rag.application.retrieval import Crop, RetrievalFilters, Retriever
 from agro_rag.application.tracing import trace_stage
 from agro_rag.domain.evidence import ApplicableRegion, Evidence, GrowthStage
@@ -178,6 +179,8 @@ class QueryService:
     def _record_audit(self, event: QueryAuditEvent) -> None:
         if self.audit_sink is not None:
             self.audit_sink.record(event)
+        if (metrics := query_metrics.get()) is not None:
+            metrics.outcome(event.outcome)
 
     @staticmethod
     def _safe_error_type(exc: Exception) -> str:
@@ -214,6 +217,8 @@ class QueryService:
             filters.region,
         )
         with trace_stage("retrieval"):
+            if (metrics := query_metrics.get()) is not None:
+                metrics.cache_lookup(cache_key in self._retrieval_cache)
             try:
                 hits = self._retrieval_cache.pop(cache_key)
                 self._retrieval_cache[cache_key] = hits

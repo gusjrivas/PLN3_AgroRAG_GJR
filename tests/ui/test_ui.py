@@ -25,7 +25,7 @@ def test_preview_shows_provenance_without_duplicate_request(monkeypatch):
 
     monkeypatch.setattr(ApiClient, "search", search)
     monkeypatch.setenv("AGRO_READER_KEY", "test-reader-token-123456")
-    app = AppTest.from_file(str(Path("src/agro_rag_ui/app.py").resolve())).run()
+    app = AppTest.from_file(str(Path("src/agro_rag_ui/app.py").resolve())).run(timeout=10)
     app.text_area[0].set_value("¿Cómo regar la lechuga?")
     app.button[0].click().run()
     assert not app.exception

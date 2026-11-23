@@ -1,7 +1,7 @@
 from pathlib import Path
 from typing import Literal
 
-from pydantic import Field, SecretStr, model_validator
+from pydantic import AnyHttpUrl, Field, SecretStr, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -71,6 +71,7 @@ class Settings(BaseSettings):
     semantic_local_files_only: bool = True
     catalogue_path: Path = Path("data/processed/catalogue")
     tracing_enabled: bool = False
+    otlp_endpoint: AnyHttpUrl | None = None
     release_version: str = "0.1.0"
     commit_sha: str = "unknown"
     image_digest: str = "unknown"
@@ -91,6 +92,20 @@ class Settings(BaseSettings):
     )
     openai_model: str = ""
     openai_url: str = "https://api.openai.com/v1"
+
+    @model_validator(mode="after")
+    def validate_otlp_origin(self) -> "Settings":
+        endpoint = self.otlp_endpoint
+        if endpoint is not None and (
+            not self.tracing_enabled
+            or endpoint.username is not None
+            or endpoint.password is not None
+            or endpoint.path not in (None, "/")
+            or endpoint.query is not None
+            or endpoint.fragment is not None
+        ):
+            raise ValueError("AGRO_OTLP_ENDPOINT requiere trazas habilitadas y un origen HTTP(S)")
+        return self
 
     @model_validator(mode="after")
     def resolve_secret_files(self) -> "Settings":

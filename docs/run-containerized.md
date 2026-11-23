@@ -93,6 +93,44 @@ docker compose -f compose.yaml -f compose.dev.yaml down
 para un volumen de prueba explícito. Para aislar ensayos, definir por ejemplo
 `AGRO_CATALOGUE_VOLUME=agrorag_catalogue_v2_test` antes de ejecutar Compose.
 
+## Grafana local para la demo
+
+Preparar el catálogo con el job de Compose local. Levantar Ollama y elegir un modelo ya
+disponible que responda con JSON estructurado. En Docker Desktop, la API llega a Ollama por
+`host.docker.internal:11434`. Si el motor usa otra topología, definir `AGRO_OLLAMA_URL`
+con una URL alcanzable desde el contenedor de API.
+
+```powershell
+$env:AGRO_MODEL = '<modelo-ollama-local>'
+$compose = @('-f', 'compose.yaml', '-f', 'compose.dev.yaml', '-f', 'compose.observability.yaml')
+docker compose @compose up --build --wait
+```
+
+Abrir Streamlit en `http://127.0.0.1:8501` y Grafana en `http://127.0.0.1:3000`.
+En la imagen local, Grafana arranca con `admin/admin` y puede pedir cambiar la contraseña.
+El tablero provisionado se llama **AgroRAG local**. El puerto de Grafana puede cambiarse
+con `AGRO_GRAFANA_PORT`. La API envía OTLP por la red de Compose y Grafana sólo escucha
+en loopback del host.
+
+En Streamlit, elegir **Respuesta verificada** y enviar una pregunta contextualizada
+que pueda llegar al investigador y al verificador. En el tablero, abrir una traza de
+`POST /v1/query` y localizar `retrieval`, `researcher` y `verifier`. Repetir la misma
+consulta para verificar el acierto de caché de recuperación. Dar unos segundos al envío
+por lotes y al refresco del tablero. Los percentiles se calculan sobre las observaciones
+acumuladas desde el arranque de la API.
+
+```powershell
+docker compose @compose stop observability
+# Enviar otra consulta desde Streamlit y comprobar su respuesta.
+docker compose @compose start observability
+# Enviar una consulta nueva y comprobar que reaparece en el tablero.
+docker compose @compose down
+```
+
+Durante la caída pueden perderse lotes pendientes. El contenido de las consultas queda
+fuera de la telemetría. `down` conserva el catálogo, y los datos de observabilidad de
+la demo se almacenan en el contenedor. [Contrato de observabilidad](../openspec/changes/add-local-observability/specs/local-observability/spec.md).
+
 ## E2E Compose reproducible
 
 El E2E de browser es opt-in porque requiere Docker y Chromium de Playwright. CI debe construir las

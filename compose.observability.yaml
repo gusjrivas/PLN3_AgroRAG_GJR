@@ -1,0 +1,34 @@
+services:
+  api:
+    image: agrorag-api:observability
+    build:
+      context: .
+      target: api-observability
+    environment:
+      AGRO_TRACING_ENABLED: "true"
+      AGRO_OTLP_ENDPOINT: http://observability:4318
+      AGRO_OLLAMA_URL: ${AGRO_OLLAMA_URL:-http://host.docker.internal:11434}
+      AGRO_MODEL: ${AGRO_MODEL:-}
+
+  observability:
+    image: grafana/otel-lgtm:0.41.1@sha256:1b852b77d7bcadb7699bfe7c78a51d059dff85168de674728cf7abf4474645e5
+    ports:
+      - name: grafana-http
+        target: 3000
+        published: ${AGRO_GRAFANA_PORT:-3000}
+        host_ip: 127.0.0.1
+        protocol: tcp
+    networks: [application]
+    volumes:
+      - type: bind
+        source: ./infra/observability/provisioning.yaml
+        target: /otel-lgtm/grafana/conf/provisioning/dashboards/agrorag.yaml
+        read_only: true
+        bind:
+          create_host_path: false
+      - type: bind
+        source: ./infra/observability/agrorag-local.json
+        target: /otel-lgtm/grafana/conf/provisioning/dashboards/agrorag/agrorag-local.json
+        read_only: true
+        bind:
+          create_host_path: false

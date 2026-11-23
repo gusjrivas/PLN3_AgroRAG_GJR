@@ -25,7 +25,7 @@ from agro_rag.infrastructure.ollama import OllamaModel
 from agro_rag.infrastructure.openai import OpenAIModel
 
 if TYPE_CHECKING:
-    from agro_rag.infrastructure.tracing import ConsoleTracing
+    from agro_rag.infrastructure.tracing import QueryTracing
 
 
 def _http_logger() -> logging.Logger:
@@ -77,7 +77,7 @@ def create_app(
             retrieval_mode=retrieval_runtime.mode,
         )
 
-    tracing: ConsoleTracing | None = None
+    tracing: QueryTracing | None = None
 
     @asynccontextmanager
     async def lifespan(app: FastAPI) -> AsyncIterator[None]:
@@ -85,14 +85,22 @@ def create_app(
         try:
             if config.tracing_enabled:
                 try:
-                    from agro_rag.infrastructure.tracing import ConsoleTracing
+                    from agro_rag.infrastructure.tracing import QueryTracing
+
+                    endpoint = str(config.otlp_endpoint) if config.otlp_endpoint else None
+                    tracing = QueryTracing(endpoint)
                 except ModuleNotFoundError as exc:
-                    if exc.name not in {"opentelemetry", "opentelemetry.sdk"}:
+                    if exc.name not in {
+                        "opentelemetry",
+                        "opentelemetry.sdk",
+                        "opentelemetry.exporter",
+                        "opentelemetry.exporter.otlp",
+                        "requests",
+                    }:
                         raise
                     raise RuntimeError(
                         "AGRO_TRACING_ENABLED requires uv sync --extra tracing"
                     ) from None
-                tracing = ConsoleTracing()
             yield
         finally:
             try:
