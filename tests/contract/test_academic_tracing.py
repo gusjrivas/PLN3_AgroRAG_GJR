@@ -1,3 +1,5 @@
+from threading import Event
+
 import pytest
 from fastapi.testclient import TestClient
 
@@ -170,3 +172,98 @@ def test_tracing_rejects_disabled_sdk(exporters, monkeypatch):
     with pytest.raises(RuntimeError, match="OTEL_SDK_DISABLED"):
         with TestClient(create_app(settings)):
             pytest.fail("Tracing-enabled API started without a recording SDK")
+
+
+@pytest.mark.parametrize("collector_status", [200, 400, None])
+def test_otlp_exports_private_traces_and_aggregates(monkeypatch, collector_status):
+    pytest.importorskip("opentelemetry.exporter.otlp.proto.http")
+    from opentelemetry.proto.collector.metrics.v1.metrics_service_pb2 import (
+        ExportMetricsServiceRequest,
+    )
+    from opentelemetry.proto.collector.trace.v1.trace_service_pb2 import ExportTraceServiceRequest
+    from requests import Response, Session
+    from requests.exceptions import ConnectionError
+
+    packets = []
+    request_attempted = Event()
+
+    def send(self, request, **kwargs):
+        packets.append(request)
+        request_attempted.set()
+        if collector_status is None:
+            raise ConnectionError("collector unavailable")
+        response = Response()
+        response.status_code = collector_status
+        response._content = b""
+        return response
+
+    monkeypatch.setattr(Session, "send", send)
+    monkeypatch.setenv("OTEL_EXPORTER_OTLP_HEADERS", "x-secret=header-sentinel")
+    monkeypatch.setenv("AGRO_TRACING_ENABLED", "true")
+    monkeypatch.setenv("AGRO_OTLP_ENDPOINT", "http://collector:4318")
+    settings = Settings(_env_file=None, reader_key=KEY)
+    model = Model()
+    service = QueryService(Retriever(), model, "v1")
+    with TestClient(create_app(settings, service=service)) as client:
+        assert post(client).status_code == 200
+        if collector_status != 200:
+            assert request_attempted.wait(timeout=5)
+        assert post(client).status_code == 200
+        assert post(client, "").status_code == 422
+        model.fail = True
+        assert post(client).status_code == 502
+
+    traces = []
+    metrics = []
+    for packet in packets:
+        assert b"sentinel" not in packet.body
+        assert "x-secret" not in packet.headers
+        if packet.url == "http://collector:4318/v1/traces":
+            traces.extend(ExportTraceServiceRequest.FromString(packet.body).resource_spans)
+        elif packet.url == "http://collector:4318/v1/metrics":
+            metrics.extend(ExportMetricsServiceRequest.FromString(packet.body).resource_metrics)
+        else:
+            pytest.fail("Unexpected OTLP endpoint")
+
+    unique_spans = {
+        span.span_id: span
+        for resource in traces
+        for scope in resource.scope_spans
+        for span in scope.spans
+    }
+    spans = list(unique_spans.values())
+    roots = [span for span in spans if span.name == "POST /v1/query"]
+    child_counts = [sum(span.parent_span_id == root.span_id for span in spans) for root in roots]
+    assert sorted(child_counts) == [0, 2, 3, 3]
+    for root in roots:
+        assert all(
+            span.trace_id == root.trace_id for span in spans if span.parent_span_id == root.span_id
+        )
+    points = {
+        metric.name: getattr(metric, metric.WhichOneof("data")).data_points
+        for resource in metrics
+        for scope in resource.scope_metrics
+        for metric in scope.metrics
+    }
+    assert {
+        p.attributes[0].value.string_value: p.as_int for p in points["agro_rag.query.requests"]
+    } == {"200": 2, "422": 1, "502": 1}
+    assert sum(p.count for p in points["agro_rag.query.duration"]) == 4
+    assert {
+        p.attributes[0].value.string_value: p.as_int for p in points["agro_rag.query.outcomes"]
+    } == {"answered": 2, "operational_error": 1}
+    assert {
+        p.attributes[0].value.string_value: p.as_int
+        for p in points["agro_rag.retrieval.cache.lookups"]
+    } == {"hit": 2, "miss": 1}
+    assert not any(p.exemplars for data_points in points.values() for p in data_points)
+
+
+@pytest.mark.parametrize(
+    "endpoint", ["http://user:pass@collector:4318", "http://collector:4318/v1/traces?x=1"]
+)
+def test_otlp_origin_rejects_embedded_credentials_and_paths(endpoint):
+    from pydantic import ValidationError
+
+    with pytest.raises(ValidationError, match="AGRO_OTLP_ENDPOINT"):
+        Settings(_env_file=None, tracing_enabled=True, otlp_endpoint=endpoint)

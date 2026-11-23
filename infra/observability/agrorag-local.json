@@ -1,0 +1,124 @@
+{
+  "uid": "agrorag-local",
+  "title": "AgroRAG local",
+  "editable": false,
+  "schemaVersion": 41,
+  "refresh": "10s",
+  "time": {"from": "now-30m", "to": "now"},
+  "panels": [
+    {
+      "id": 1,
+      "type": "timeseries",
+      "title": "Solicitudes por estado HTTP",
+      "description": "Conteo acumulado desde el arranque de la API.",
+      "gridPos": {"x": 0, "y": 0, "w": 12, "h": 8},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {"defaults": {"unit": "short", "decimals": 0}},
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {"type": "prometheus", "uid": "prometheus"},
+          "range": true,
+          "expr": "sum by (http_response_status_code) (agro_rag_query_requests_total{service_name=\"agro-rag\"})",
+          "legendFormat": "{{http_response_status_code}}"
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "type": "timeseries",
+      "title": "Latencia p50 y p95",
+      "description": "Percentiles estimados desde el arranque de la API. Interpretarlos junto con el número de solicitudes.",
+      "gridPos": {"x": 12, "y": 0, "w": 12, "h": 8},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {"defaults": {"unit": "s"}},
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {"type": "prometheus", "uid": "prometheus"},
+          "range": true,
+          "expr": "histogram_quantile(0.95, sum by (le) (agro_rag_query_duration_seconds_bucket{service_name=\"agro-rag\"}))",
+          "legendFormat": "p95"
+        },
+        {
+          "refId": "B",
+          "datasource": {"type": "prometheus", "uid": "prometheus"},
+          "range": true,
+          "expr": "histogram_quantile(0.50, sum by (le) (agro_rag_query_duration_seconds_bucket{service_name=\"agro-rag\"}))",
+          "legendFormat": "p50"
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "type": "timeseries",
+      "title": "Resultados de consulta",
+      "description": "Conteo acumulado por resultado de auditoría desde el arranque de la API.",
+      "gridPos": {"x": 0, "y": 8, "w": 12, "h": 8},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {"defaults": {"unit": "short", "decimals": 0}},
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {"type": "prometheus", "uid": "prometheus"},
+          "range": true,
+          "expr": "sum by (outcome) (agro_rag_query_outcomes_total{service_name=\"agro-rag\"})",
+          "legendFormat": "{{outcome}}"
+        }
+      ]
+    },
+    {
+      "id": 4,
+      "type": "timeseries",
+      "title": "Caché de recuperaciones",
+      "description": "Conteo acumulado de hits y misses desde el arranque de la API.",
+      "gridPos": {"x": 12, "y": 8, "w": 12, "h": 8},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {"defaults": {"unit": "short", "decimals": 0}},
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {"type": "prometheus", "uid": "prometheus"},
+          "range": true,
+          "expr": "sum by (cache_result) (agro_rag_retrieval_cache_lookups_total{service_name=\"agro-rag\"})",
+          "legendFormat": "{{cache_result}}"
+        }
+      ]
+    },
+    {
+      "id": 5,
+      "type": "table",
+      "title": "Trazas recientes de consultas",
+      "gridPos": {"x": 0, "y": 16, "w": 18, "h": 9},
+      "datasource": {"type": "tempo", "uid": "tempo"},
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {"type": "tempo", "uid": "tempo"},
+          "queryType": "traceql",
+          "query": "{ resource.service.name = \"agro-rag\" && span:name = \"POST /v1/query\" }",
+          "tableType": "traces",
+          "limit": 20
+        }
+      ]
+    },
+    {
+      "id": 6,
+      "type": "stat",
+      "title": "Aciertos de caché",
+      "description": "Aciertos sobre las búsquedas de caché iniciadas desde el arranque de la API.",
+      "gridPos": {"x": 18, "y": 16, "w": 6, "h": 9},
+      "datasource": {"type": "prometheus", "uid": "prometheus"},
+      "fieldConfig": {"defaults": {"unit": "percentunit", "decimals": 1}},
+      "targets": [
+        {
+          "refId": "A",
+          "datasource": {"type": "prometheus", "uid": "prometheus"},
+          "instant": true,
+          "range": false,
+          "expr": "(sum(agro_rag_retrieval_cache_lookups_total{service_name=\"agro-rag\",cache_result=\"hit\"}) or vector(0)) / sum(agro_rag_retrieval_cache_lookups_total{service_name=\"agro-rag\"})"
+        }
+      ]
+    }
+  ]
+}

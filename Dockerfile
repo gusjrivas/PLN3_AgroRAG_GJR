@@ -17,7 +17,11 @@ COPY pyproject.toml uv.lock README.md ./
 COPY src ./src
 RUN uv sync --frozen --no-dev --no-editable
 
-FROM ${PYTHON_IMAGE} AS runtime
+FROM builder AS observability-builder
+
+RUN uv sync --frozen --no-dev --no-editable --extra tracing
+
+FROM ${PYTHON_IMAGE} AS runtime-base
 
 ARG APP_VERSION=0.1.0
 ARG VCS_REF=unknown
@@ -42,13 +46,24 @@ ENV PATH=/opt/venv/bin:$PATH \
     HOME=/tmp \
     XDG_CONFIG_HOME=/tmp/.config
 WORKDIR /app
-COPY --from=builder --chown=10001:10001 /opt/venv /opt/venv
 
-FROM runtime AS api
+FROM runtime-base AS api-base
 
 USER 10001:10001
 EXPOSE 8000
 CMD ["uvicorn", "agro_rag.bootstrap.app:create_app", "--factory", "--host", "0.0.0.0", "--port", "8000", "--no-access-log"]
+
+FROM api-base AS api
+
+COPY --from=builder --chown=10001:10001 /opt/venv /opt/venv
+
+FROM api-base AS api-observability
+
+COPY --from=observability-builder --chown=10001:10001 /opt/venv /opt/venv
+
+FROM runtime-base AS runtime
+
+COPY --from=builder --chown=10001:10001 /opt/venv /opt/venv
 
 FROM runtime AS ui
 

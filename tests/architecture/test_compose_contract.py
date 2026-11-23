@@ -1,5 +1,6 @@
 import json
 import os
+import re
 import subprocess
 from pathlib import Path
 from typing import Any
@@ -72,6 +73,52 @@ def test_cmp_v2_dev_publishes_loopback_only_and_has_healthchecks() -> None:
     )
     assert services["api"]["healthcheck"]["test"] == ["CMD", "agro-rag-healthcheck"]
     assert services["ui"]["healthcheck"]["test"][0:2] == ["CMD", "python"]
+
+
+def test_observability_overlay_provisions_loopback_grafana_and_optional_api() -> None:
+    base_files = ("compose.yaml", "compose.dev.yaml")
+    baseline = _compose_config(*base_files)["services"]
+    overlay = _compose_config(
+        *base_files, "compose.observability.yaml", extra_env={"AGRO_GRAFANA_PORT": "3000"}
+    )["services"]
+    api, grafana = overlay["api"], overlay["observability"]
+
+    assert "observability" not in baseline
+    assert baseline["api"]["build"]["target"] == "api"
+    assert "AGRO_TRACING_ENABLED" not in baseline["api"]["environment"]
+    assert overlay["ui"] == baseline["ui"]
+    assert overlay["catalogue-admin"] == baseline["catalogue-admin"]
+    assert api["image"] != baseline["api"]["image"]
+    assert api["build"]["target"] == "api-observability"
+    assert api["environment"]["AGRO_TRACING_ENABLED"] == "true"
+    assert api["environment"]["AGRO_OTLP_ENDPOINT"] == "http://observability:4318"
+    assert set(api["networks"]) & set(grafana["networks"])
+    assert "depends_on" not in api
+
+    assert re.fullmatch(r"grafana/otel-lgtm:\d+\.\d+\.\d+@sha256:[0-9a-f]{64}", grafana["image"])
+    assert len(grafana["ports"]) == 1
+    port = grafana["ports"][0]
+    assert (port["host_ip"], port["published"], port["target"]) == ("127.0.0.1", "3000", 3000)
+    mounts = grafana["volumes"]
+    assert all(mount["read_only"] for mount in mounts)
+    provider = next(Path(mount["source"]) for mount in mounts if mount["target"].endswith(".yaml"))
+    dashboard = next(mount for mount in mounts if mount["target"].endswith(".json"))
+    assert dashboard["target"].rsplit("/", 1)[0] in provider.read_text(encoding="utf-8")
+    panels = json.loads(Path(dashboard["source"]).read_text(encoding="utf-8"))["panels"]
+    expressions = {
+        target["expr"]
+        for panel in panels
+        for target in panel["targets"]
+        if panel["datasource"]["uid"] == "prometheus"
+    }
+    for metric in (
+        "agro_rag_query_requests_total",
+        "agro_rag_query_duration_seconds_bucket",
+        "agro_rag_query_outcomes_total",
+        "agro_rag_retrieval_cache_lookups_total",
+    ):
+        assert any(metric in expression for expression in expressions)
+    assert any(panel["datasource"]["uid"] == "tempo" for panel in panels)
 
 
 def test_sec_v2_production_exposes_only_gateway_and_uses_immutable_images(tmp_path: Path) -> None:
