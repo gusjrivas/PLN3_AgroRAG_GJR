@@ -12,6 +12,20 @@ RED/GREEN cuando cambie comportamiento y los comandos registrados en el PR.
 - No verificado: e2e (Playwright), `integration_live`, `openspec validate`, build de imágenes y Garak.
 - Rama de trabajo: `claude/keen-cray-q65p1j`.
 
+## Traspaso a Codex (estado al 23/11/2026)
+
+- Rama de trabajo: `claude/cobertura-c2-c3` (sale de `claude/keen-cray-q65p1j`). No tocar `main`:
+  todo llega por PR y el merge lo decide el responsable.
+- PR abierto: https://github.com/gusjrivas/PLN3_AgroRAG_GJR/pull/60 (listo para revisión).
+  Su CI de GitHub Actions aún no se había ejecutado al escribir esto; revisar antes de seguir.
+- Leer primero `AGENTS.md` (orden de lectura, camino ODD, límites técnicos) y este archivo.
+- Hechos: H2 (CVE OpenTelemetry), C2 (cobertura) y C3 (CI). Pendientes: C1, C4 y C5.
+- Orden sugerido: 1) confirmar CI verde del PR #60; 2) C4; 3) C5; 4) C1 cuando se decida cómo
+  escanear imágenes (hace falta Docker y un escáner; el CI usa `trivy-action`).
+- Reglas: un commit pequeño por ítem, test primero cuando cambie comportamiento, sin secretos,
+  sin push a `main`, sin force-push. Registrar comandos y resultados en el PR.
+- Dos decisiones siguen siendo del responsable: C1 (dónde escanear) y C5.2 (regla `Teoria*`).
+
 ## Hecho
 
 - **H2. CVE-2026-126360 en OpenTelemetry.** `opentelemetry-sdk` pasó de 1.45.1 a 1.45.2 en
@@ -42,7 +56,9 @@ CVE-2026-78661 (x/net).
 
 Hecho cuando: el check de política pasa con `--today` igual a la fecha actual.
 
-## C2. Cobertura de infraestructura (prioridad media)
+## C2. Cobertura de infraestructura (prioridad media) — HECHO en PR #60
+
+Resultado: tokenizer 100 %, pinecone 96 %, bootstrap/app 96 %; global 87 % → 92 % con la CI nueva.
 
 Un commit por módulo; sin llamadas a LLM ni descarga de modelos; test rojo primero.
 
@@ -55,7 +71,7 @@ Un commit por módulo; sin llamadas a LLM ni descarga de modelos; test rojo prim
 
 Hecho cuando: sube la cobertura global sin excluir código.
 
-## C3. Cobertura de tracing en CI (prioridad media)
+## C3. Cobertura de tracing en CI (prioridad media) — HECHO en PR #60
 
 Archivo: `.github/workflows/ci.yml`. El paso "Verify optional tracing contract" no suma al informe.
 Recomendado: agregar `--cov --cov-append` a ese paso y generar el informe después. Si hay duda sobre
