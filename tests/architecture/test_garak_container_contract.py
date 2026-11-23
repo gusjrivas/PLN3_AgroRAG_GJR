@@ -1,4 +1,7 @@
+import re
 from pathlib import Path
+
+from packaging.version import Version
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -8,10 +11,16 @@ def test_garak_is_a_pinned_separate_one_shot_profile() -> None:
     compose = (ROOT / "compose.security.yaml").read_text(encoding="utf-8")
     lock = (ROOT / "infra" / "garak" / "requirements.lock").read_text(encoding="utf-8")
 
-    assert "garak==0.17.0" in dockerfile
-    assert "garak==0.17.0" in lock
+    assert "garak==0.17.1" in dockerfile
+    assert "garak==0.17.1" in lock
+    policy = (ROOT / "infra" / "garak" / "policy.json").read_text(encoding="utf-8")
+    assert '"garak_version": "0.17.1"' in policy
+    assert "datasets==5.2.0" in lock
     assert "filelock==4.2.1" in lock
-    assert len(lock.splitlines()) == 197
+    assert all(re.fullmatch(r"[A-Za-z0-9_.-]+==[^=]+", line) for line in lock.splitlines())
+    fsspec = re.search(r"(?m)^fsspec==([^\s]+)$", lock)
+    assert fsspec is not None
+    assert Version(fsspec.group(1)) >= Version("2026.6.0")
     assert 'TARGETARCH" = "amd64"' in dockerfile
     assert "profiles: [security]" in compose
     assert 'restart: "no"' in compose
@@ -45,10 +54,8 @@ def test_raw_garak_reports_are_never_versioned() -> None:
     assert "output/garak/raw/" in ignore
 
 
-def test_garak_vulnerability_exception_is_isolated_from_product_policy() -> None:
+def test_fixed_garak_fsspec_vulnerability_is_no_longer_excepted() -> None:
     exceptions = ROOT / "configs" / "security" / "garak-runner-vulnerability-exceptions.json"
     content = exceptions.read_text(encoding="utf-8")
 
-    assert '"component": "garak-runner"' in content
-    assert "CVE-2026-104851" in content
-    assert "gateway" not in content
+    assert "CVE-2026-104851" not in content

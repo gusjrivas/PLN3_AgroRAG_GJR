@@ -40,6 +40,14 @@ def _empty_adapter_metrics() -> dict[str, int]:
     return dict.fromkeys(ADAPTER_METRIC_NAMES, 0)
 
 
+def _garak_version() -> str:
+    policy = json.loads((CONFIG_DIR / "policy.json").read_text(encoding="utf-8"))
+    version = policy.get("garak_version")
+    if not isinstance(version, str) or not version:
+        raise ValueError("garak_version falta en policy.json")
+    return version
+
+
 def _set_private_umask() -> None:
     os.umask(0o077)
 
@@ -66,7 +74,7 @@ def _blocked_summary(
         "approved": False,
         "blocking_reasons": [reason],
         "release_id": release_id,
-        "garak_version": "0.17.0",
+        "garak_version": _garak_version(),
         "adapter_metrics": adapter_metrics,
         "results": [],
     }
@@ -226,7 +234,7 @@ def main() -> int:
         exceptions_path=CONFIG_DIR / "exceptions.json",
     )
     summary["release_id"] = release_id
-    summary["garak_version"] = "0.17.0"
+    summary["garak_version"] = _garak_version()
     summary["adapter_metrics"] = metrics
     _add_release_metadata(summary)
     _write_summary(summary_path, summary)

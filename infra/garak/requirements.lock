@@ -25,7 +25,7 @@ cryptography==50.0.2
 cuda-bindings==13.4.4
 cuda-pathfinder==1.8.5
 cuda-toolkit==13.2.2
-datasets==3.6.0
+datasets==5.2.0
 datetime==6.0
 deepl==1.17.0
 defusedxml==0.7.1
@@ -38,9 +38,9 @@ fastavro==1.13.1
 fastuuid==0.14.0
 filelock==4.2.1
 frozenlist==1.8.0
-fsspec==2025.3.0
+fsspec==2026.9.0
 ftfy==6.3.1
-garak==0.17.0
+garak==0.17.1
 google-api-core==2.43.2
 google-api-python-client==2.201.0
 google-auth==2.62.0
@@ -174,7 +174,7 @@ tokenizers==0.23.3
 tomli==2.5.0
 torch==2.15.0
 tqdm==4.70.1
-transformers==5.22.0
+transformers==5.19.0
 triton==3.9.0
 truststore==0.10.5
 typer==0.27.3
