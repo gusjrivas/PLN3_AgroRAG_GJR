@@ -353,6 +353,11 @@ dependencias de Garak 0.17.0. La excepción vive aislada en
 API/UI/gateway. Referencia primaria:
 https://github.com/fsspec/filesystem_spec/security/advisories/GHSA-27vj-qcqg-25rc.
 
+### Revisión de dependencias del runner (2026-11-22)
+
+La imagen local de la rama de auditoría actualiza Garak a 0.17.1 y fija el lock compatible de 197 paquetes: `datasets 5.2.0`, `transformers 5.19.0` y `fsspec 2026.9.0`. La imagen de auditoría queda etiquetada `agrorag-garak:security-audit`; no se publica ni se ejecuta Garak. El scan Trivy 0.76.1 reportó cero vulnerabilidades CRITICAL/HIGH y cero secretos; el gate fechado el 22/11/2026 aprobó y la excepción de `CVE-2026-104851` se retiró. El informe de verificación está en `docs/evidence/tdd/SEC-DEP-01.md`.
+
+La build y los scans locales se ejecutaron sobre el commit de implementación documentado en `docs/evidence/tdd/SEC-DEP-01.md`.
 ### Publicación y scan autorizado desde GitHub
 
 El workflow manual `garak-runner-supply-chain` construye `Dockerfile.garak` una sola vez en
