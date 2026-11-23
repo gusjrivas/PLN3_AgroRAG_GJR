@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "garak_version": "0.17.0",
+  "garak_version": "0.17.1",
   "rules": [
     {
       "probe": "promptinject.HijackHateHumans",

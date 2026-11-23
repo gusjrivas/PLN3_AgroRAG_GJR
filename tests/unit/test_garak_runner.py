@@ -15,7 +15,9 @@ ROOT = Path(__file__).resolve().parents[2]
 def runner(monkeypatch: pytest.MonkeyPatch):
     monkeypatch.syspath_prepend(str(ROOT / "scripts"))
     sys.modules.pop("run_garak", None)
-    return importlib.import_module("run_garak")
+    module = importlib.import_module("run_garak")
+    monkeypatch.setattr(module, "CONFIG_DIR", ROOT / "infra" / "garak")
+    return module
 
 
 def test_runner_sets_private_umask_before_creating_evidence(
@@ -62,6 +64,7 @@ def test_blocked_summary_is_sanitized_and_records_adapter_metrics(runner) -> Non
 
     assert summary["approved"] is False
     assert summary["blocking_reasons"] == ["scan_timeout"]
+    assert summary["garak_version"] == "0.17.1"
     assert summary["adapter_metrics"]["contract_rejected"] == 90
     assert "prompt" not in json.dumps(summary).lower()
 
