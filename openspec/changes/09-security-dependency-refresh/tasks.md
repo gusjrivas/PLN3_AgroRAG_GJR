@@ -23,7 +23,7 @@ Responsable: coordinador. Rama: `fix/main-audit-2026-11-23`. Base:
 
 - [x] 3.1 Confirm RED for the missing coverage append and identified infrastructure branches.
 - [x] 3.2 Append tracing coverage in CI and move report/threshold steps after tracing tests.
-- [ ] 3.4 Run full suite, lint, format, typing, import boundaries, OpenSpec validation and GitHub CI.
+- [x] 3.4 Run full suite, lint, format, typing, import boundaries, OpenSpec validation and GitHub CI.
 
 Do not execute Garak, call model providers, publish images, or merge this branch as part of the
 change.

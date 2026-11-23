@@ -22,6 +22,7 @@ appended and the tracing environment was not audited.
 - Static checks: Ruff, format check, mypy (40 source files), and import-linter (2 contracts kept)
   passed.
 - `npx --yes @fission-ai/openspec@1.14.3 validate --all --strict` — 11 passed, 0 failed.
+- GitHub Actions for PR #61 at source commit `9a8d56c`: `offline`, `specs`, `browser`, and `container-supply-chain` all passed. The image publish steps were skipped for the pull request event.
 - Garak lock resolved to 197 exact pins, including Garak 0.17.1, datasets 5.2.0, transformers
   5.19.0 and fsspec 2026.9.0.
 - Local image `agrorag-garak:security-audit`: runtime UID 10003; `garak --version` reported 0.17.1.
