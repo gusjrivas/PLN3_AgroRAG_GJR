@@ -14,7 +14,7 @@ Responsable: coordinador. Rama: `fix/main-audit-2026-11-23`. Base:
 
 - [x] 2.1 Confirm RED architecture contract for fsspec minimum and exception removal.
 - [x] 2.2 Resolve Garak 0.17.1 dependency set with fsspec >= 2026.6.0 and preserve compatible pins.
-- [ ] 2.3 Build runner image locally; verify user, Garak version and startup contract.
+- [x] 2.3 Build runner image locally; verify user, Garak version and startup contract.
 - [x] 2.4 Scan the built image; remove the fsspec exception only after the current-date gate passes.
 - [x] 2.5 Remove gateway exceptions absent from the latest scan for main.
 - [x] 2.6 Update the current runbook while preserving historical scan evidence.
