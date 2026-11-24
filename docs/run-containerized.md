@@ -95,15 +95,53 @@ para un volumen de prueba explícito. Para aislar ensayos, definir por ejemplo
 
 ## Grafana local para la demo
 
-Preparar el catálogo con el job de Compose local. Levantar Ollama y elegir un modelo ya
-disponible que responda con JSON estructurado. En Docker Desktop, la API llega a Ollama por
-`host.docker.internal:11434`. Si el motor usa otra topología, definir `AGRO_OLLAMA_URL`
-con una URL alcanzable desde el contenedor de API.
+En la raíz del repositorio, preparar `.env` con `AGRO_READER_KEY` y descargar las fuentes
+con `uv run agro-rag download data/manifest.json`. El job de ingesta crea el catálogo
+en un volumen Docker. Elegir **un** proveedor generativo antes de levantar los servicios.
+
+```powershell
+$compose = @('-f', 'compose.yaml', '-f', 'compose.dev.yaml', '-f', 'compose.observability.yaml')
+docker compose @compose --profile admin run --rm --build catalogue-admin
+```
+
+### Ollama
+
+Arrancar Ollama en el host y elegir un modelo instalado que responda con JSON estructurado.
+En Docker Desktop, la API usa `host.docker.internal:11434`. En otra topología, definir
+`AGRO_OLLAMA_URL` con una URL alcanzable desde el contenedor de API.
 
 ```powershell
 $env:AGRO_MODEL = '<modelo-ollama-local>'
-$compose = @('-f', 'compose.yaml', '-f', 'compose.dev.yaml', '-f', 'compose.observability.yaml')
+```
+
+### OpenAI
+
+Guardar `OPENAI_API_KEY` y `AGRO_OPENAI_MODEL` en `.env`. Este overlay local monta la clave
+como secreto y la entrega sólo a la API. La prueba de tokens usó `AGRO_OPENAI_MODEL=gpt-4o`.
+
+```powershell
+New-Item -ItemType Directory -Force .tmp | Out-Null
+@'
+services:
+  api:
+    environment:
+      AGRO_MODEL_PROVIDER: openai
+      AGRO_OPENAI_MODEL: ${AGRO_OPENAI_MODEL:-gpt-4o}
+      OPENAI_API_KEY_FILE: /run/secrets/openai_demo
+    secrets: [openai_demo]
+
+secrets:
+  openai_demo:
+    environment: OPENAI_API_KEY
+'@ | Set-Content -LiteralPath .tmp/compose.openai.local.yaml -Encoding UTF8
+$compose += @('-f', '.tmp/compose.openai.local.yaml')
+```
+
+### Arrancar y probar
+
+```powershell
 docker compose @compose up --build --wait
+docker compose @compose ps
 ```
 
 Abrir Streamlit en `http://127.0.0.1:8501` y Grafana en `http://127.0.0.1:3000`.
@@ -125,7 +163,13 @@ desde el arranque de la API, ingresar arriba las dos tarifas del modelo en USD p
 tokens (usar punto decimal). El valor `-1` deja la estimación deshabilitada. El cálculo usa la
 tarifa base e incluye los tokens marcados como estimados. La facturación puede aplicar descuentos
 de caché del proveedor u otras condiciones.
+[Prueba operativa de tokens y costo](evidence/tdd/OPS-TOKENS-01.md).
 
+Para detener la demo y retomar con los mismos contenedores, usar `docker compose @compose stop`
+y `docker compose @compose start`. Si el puerto de API está ocupado, asignar
+`AGRO_API_PORT=18000` antes de `up`. Streamlit seguirá consultando a la API por la red de Compose.
+
+`stop` y `start` del servicio de observabilidad permiten ensayar su recuperación:
 ```powershell
 docker compose @compose stop observability
 # Enviar otra consulta desde Streamlit y comprobar su respuesta.

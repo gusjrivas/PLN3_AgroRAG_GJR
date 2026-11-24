@@ -1,7 +1,7 @@
 # Guion reproducible de demo - 15 minutos
 
-Actualización documental: 13/11/2026. Commit, corpus, modelo, hardware y fecha se anotan antes de comenzar. Usar el stack local preparado
-según `docs/run-local.md`. No mostrar `.env`, consolas con secretos ni paneles de proveedor.
+Actualización documental: 24/11/2026. Anotar commit, corpus, modelo, hardware y fecha antes de comenzar.
+Para mostrar trazas, caché y tokens, usar el [Compose de observabilidad](run-containerized.md#grafana-local-para-la-demo).
 
 ## 00:00 a 02:00 - problema y corpus
 
@@ -24,6 +24,9 @@ según `docs/run-local.md`. No mostrar `.env`, consolas con secretos ni paneles 
 3. Consultar: "¿Cuándo es crítico evitar la falta de agua en tomate?".
 4. Expandir la cita y mostrar título, edición, página física/impresa y pasaje.
 5. Si OpenAI u Ollama está configurado, cambiar a **Respuesta verificada** y repetir la pregunta.
+   En Grafana abrir la traza `POST /v1/query` y señalar recuperación, investigador y verificador.
+   Repetir con los mismos filtros para mostrar el acierto de caché. En los paneles de tokens y
+   costo, identificar la tarifa usada y el intervalo de operación desde el arranque.
 6. Mostrar la regresión validada: "Hace mucho calor, ¿debería cambiar el riego?", con cultivo,
    etapa y región sin especificar y suelo vacío. Debe pedir aclaración, sin recomendar un cambio.
 7. Si queda tiempo, mostrar "¿Va a llover mañana en mi lote?": debe indicar evidencia insuficiente.
@@ -80,6 +83,16 @@ Smoke previo:
 uv run pytest -q
 uv run python scripts/build_report.py
 ```
+
+## Control previo a la entrega
+
+- Comprobar que API, UI y Grafana pasen los healthchecks de Compose en el equipo de la exposición.
+- Abrir una cita en **Respuesta verificada**, verificar su traza en Tempo y comprobar un acierto de
+  caché al repetir la consulta. Confirmar que se ven tokens de entrada, salida y costo estimado.
+- Ejecutar `uv run agro-rag verify-delivery --root .` para verificar el paquete base versionado.
+- Abrir el PDF V3 de 15 páginas y el PPTX V3 de 18 diapositivas. Ensayar con
+  `docs/entrega/guion-presentacion_V3.md` cuando ese material esté disponible en el checkout local.
+- Registrar el tag y commit que se van a entregar. Confirmar la fecha y modalidad con la cátedra.
 
 ## Contingencia
 

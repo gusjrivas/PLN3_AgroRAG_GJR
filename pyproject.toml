@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "pln3-agro-rag"
-version = "0.1.0"
+version = "0.2.0"
 description = "Asistente documental verificable para horticultura"
 requires-python = ">=3.12,<3.13"
 dependencies = [
