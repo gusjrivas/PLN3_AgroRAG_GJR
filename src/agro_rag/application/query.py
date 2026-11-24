@@ -6,11 +6,11 @@ import time
 import unicodedata
 from collections import OrderedDict
 from dataclasses import dataclass
-from typing import Any, Literal, Protocol, cast
+from typing import Any, Protocol, cast
 from uuid import uuid4
 
 from agro_rag.application.audit import AuditOutcome, AuditSink, QueryAuditEvent
-from agro_rag.application.metrics import query_metrics
+from agro_rag.application.metrics import LlmRole, query_metrics
 from agro_rag.application.retrieval import Crop, RetrievalFilters, Retriever
 from agro_rag.application.tracing import trace_stage
 from agro_rag.domain.evidence import ApplicableRegion, Evidence, GrowthStage
@@ -311,9 +311,7 @@ class QueryService:
             )
             return result
 
-        async def generate(
-            role: Literal["researcher", "verifier"], payload: dict[str, Any]
-        ) -> dict[str, Any]:
+        async def generate(role: LlmRole, payload: dict[str, Any]) -> dict[str, Any]:
             # Byte count is a conservative upper estimate for UTF-8 BPE input;
             # reserve room for the system instructions and capped output.
             reserve = len(json.dumps(payload, ensure_ascii=False).encode()) + 2048
@@ -327,6 +325,10 @@ class QueryService:
                 generated = await self.model.generate(role, payload, remaining)
             if generated.input_tokens < 0 or generated.output_tokens < 0:
                 raise UpstreamError("Usage inválido")
+            if (metrics := query_metrics.get()) is not None:
+                metrics.llm_tokens(
+                    role, generated.input_tokens, generated.output_tokens, generated.estimated
+                )
             usage["llm_calls"] += 1
             usage["input_tokens"] += generated.input_tokens
             usage["output_tokens"] += generated.output_tokens

@@ -13,6 +13,7 @@ from opentelemetry.sdk.trace.export import BatchSpanProcessor
 from requests import PreparedRequest, Session
 
 from agro_rag.application.audit import AuditOutcome
+from agro_rag.application.metrics import LlmRole
 
 _EXPORT_TIMEOUT_SECONDS = 2
 _HEADERS = {"Content-Type": "application/x-protobuf"}
@@ -80,6 +81,7 @@ class OtlpQueryMetrics:
         self._duration = meter.create_histogram(_DURATION, unit="s")
         self._outcomes = meter.create_counter("agro_rag.query.outcomes")
         self._cache = meter.create_counter("agro_rag.retrieval.cache.lookups")
+        self._tokens = meter.create_counter("agro_rag.llm.tokens")
 
     def http_completed(self, status: int, seconds: float) -> None:
         attributes = {"http.response.status_code": str(status)}
@@ -91,6 +93,13 @@ class OtlpQueryMetrics:
 
     def cache_lookup(self, hit: bool) -> None:
         self._cache.add(1, {"cache.result": "hit" if hit else "miss"})
+
+    def llm_tokens(
+        self, role: LlmRole, input_tokens: int, output_tokens: int, estimated: bool
+    ) -> None:
+        labels = {"role": role, "source": "estimated" if estimated else "reported"}
+        self._tokens.add(input_tokens, {**labels, "direction": "input"})
+        self._tokens.add(output_tokens, {**labels, "direction": "output"})
 
     def shutdown(self) -> None:
         self._provider.shutdown()
