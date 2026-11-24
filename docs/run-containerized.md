@@ -119,6 +119,13 @@ consulta para verificar el acierto de caché de recuperación. Dar unos segundos
 por lotes y al refresco del tablero. Los percentiles se calculan sobre las observaciones
 acumuladas desde el arranque de la API.
 
+**Tokens y costo estimado.** El tablero muestra tokens de entrada y salida por agente, con
+`reported` para el conteo provisto y `estimated` para el estimado. Para ver el costo acumulado
+desde el arranque de la API, ingresar arriba las dos tarifas del modelo en USD por millón de
+tokens (usar punto decimal). El valor `-1` deja la estimación deshabilitada. El cálculo usa la
+tarifa base e incluye los tokens marcados como estimados. La facturación puede aplicar descuentos
+de caché del proveedor u otras condiciones.
+
 ```powershell
 docker compose @compose stop observability
 # Enviar otra consulta desde Streamlit y comprobar su respuesta.

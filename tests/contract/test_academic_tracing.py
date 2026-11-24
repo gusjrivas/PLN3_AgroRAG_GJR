@@ -37,9 +37,10 @@ class Retriever:
 class Model:
     def __init__(self, fail=False):
         self.fail = fail
+        self.fail_role = None
 
     async def generate(self, role, payload, timeout):
-        if self.fail:
+        if self.fail or self.fail_role == role:
             raise UpstreamError("exception-sentinel")
         if role == "researcher":
             return Generation(
@@ -50,7 +51,7 @@ class Model:
                 100,
                 20,
             )
-        return Generation({"decision": "approve", "feedback": ""}, 100, 20)
+        return Generation({"decision": "approve", "feedback": ""}, 80, 10, estimated=True)
 
 
 def post(client, question=QUESTION):
@@ -210,7 +211,7 @@ def test_otlp_exports_private_traces_and_aggregates(monkeypatch, collector_statu
             assert request_attempted.wait(timeout=5)
         assert post(client).status_code == 200
         assert post(client, "").status_code == 422
-        model.fail = True
+        model.fail_role = "verifier"
         assert post(client).status_code == 502
 
     traces = []
@@ -234,7 +235,7 @@ def test_otlp_exports_private_traces_and_aggregates(monkeypatch, collector_statu
     spans = list(unique_spans.values())
     roots = [span for span in spans if span.name == "POST /v1/query"]
     child_counts = [sum(span.parent_span_id == root.span_id for span in spans) for root in roots]
-    assert sorted(child_counts) == [0, 2, 3, 3]
+    assert sorted(child_counts) == [0, 3, 3, 3]
     for root in roots:
         assert all(
             span.trace_id == root.trace_id for span in spans if span.parent_span_id == root.span_id
@@ -256,6 +257,15 @@ def test_otlp_exports_private_traces_and_aggregates(monkeypatch, collector_statu
         p.attributes[0].value.string_value: p.as_int
         for p in points["agro_rag.retrieval.cache.lookups"]
     } == {"hit": 2, "miss": 1}
+    assert {
+        tuple(sorted((a.key, a.value.string_value) for a in p.attributes)): p.as_int
+        for p in points["agro_rag.llm.tokens"]
+    } == {
+        (("direction", "input"), ("role", "researcher"), ("source", "reported")): 300,
+        (("direction", "output"), ("role", "researcher"), ("source", "reported")): 60,
+        (("direction", "input"), ("role", "verifier"), ("source", "estimated")): 160,
+        (("direction", "output"), ("role", "verifier"), ("source", "estimated")): 20,
+    }
     assert not any(p.exemplars for data_points in points.values() for p in data_points)
 
 

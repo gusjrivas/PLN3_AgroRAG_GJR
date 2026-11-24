@@ -104,7 +104,8 @@ def test_observability_overlay_provisions_loopback_grafana_and_optional_api() ->
     provider = next(Path(mount["source"]) for mount in mounts if mount["target"].endswith(".yaml"))
     dashboard = next(mount for mount in mounts if mount["target"].endswith(".json"))
     assert dashboard["target"].rsplit("/", 1)[0] in provider.read_text(encoding="utf-8")
-    panels = json.loads(Path(dashboard["source"]).read_text(encoding="utf-8"))["panels"]
+    board = json.loads(Path(dashboard["source"]).read_text(encoding="utf-8"))
+    panels = board["panels"]
     expressions = {
         target["expr"]
         for panel in panels
@@ -116,9 +117,14 @@ def test_observability_overlay_provisions_loopback_grafana_and_optional_api() ->
         "agro_rag_query_duration_seconds_bucket",
         "agro_rag_query_outcomes_total",
         "agro_rag_retrieval_cache_lookups_total",
+        "agro_rag_llm_tokens_total",
     ):
         assert any(metric in expression for expression in expressions)
     assert any(panel["datasource"]["uid"] == "tempo" for panel in panels)
+    tariffs = {item["name"]: item["current"]["value"] for item in board["templating"]["list"]}
+    assert tariffs == {"input_usd_per_million": "-1", "output_usd_per_million": "-1"}
+    cost = next(panel for panel in panels if panel["id"] == 8)
+    assert {target["legendFormat"] for target in cost["targets"]} == {"Entrada", "Salida", "Total"}
 
 
 def test_sec_v2_production_exposes_only_gateway_and_uses_immutable_images(tmp_path: Path) -> None:
