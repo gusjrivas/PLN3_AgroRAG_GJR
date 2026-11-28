@@ -239,6 +239,13 @@ mejora factual causalmente atribuible al verificador.
 
 ## 7. Seguridad, operación y costos
 
+La demo en Docker incorpora el Collector, Tempo, Prometheus y Grafana. La API envía por OTLP
+duración de consultas, latencia por etapa, resultados, caché y tokens de entrada y salida por agente.
+Grafana estima el costo acumulado con dos tarifas configurables en USD por millón. Una consulta
+real con GPT-4o registró 4.025 tokens de entrada y 107 de salida en 3,328 s, con USD 0,01113250
+estimados a tarifa base. Es una comprobación operativa de una consulta.
+[Prueba en Docker](evidence/tdd/OPS-TOKENS-01.md).
+
 Secretos fuera de Git; CI usa secret store. La API exige `X-API-Key`, valida esquema/tamaño,
 limita concurrencia y redacta errores. La descarga administrativa restringe dominios, redirects,
 rutas y hashes; startup no crea ni borra índices. Auditoría conserva request ID, corpus, decisión,

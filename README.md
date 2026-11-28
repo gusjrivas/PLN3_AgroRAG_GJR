@@ -5,8 +5,48 @@ Autor y responsable académico: Gustavo Julián Rivas. Fecha del plan: 21/10/202
 
 Repositorio independiente: https://github.com/gusjrivas/PLN3_AgroRAG_GJR
 
-**Estado al 22/11/2026:** POC local reproducido desde un checkout limpio. El informe vigente
-incluye el flujo de consulta y el diagrama del despliegue V2. El guion cubre 15 minutos.
+**Estado al 24/11/2026.** La demo local con Docker Compose incluye API, Streamlit y Grafana.
+El tablero muestra trazas por etapa, latencia, resultados, caché, tokens de entrada y salida y
+costo estimado con tarifas configurables. La exposición está preparada para 15 minutos.
+[Evidencia de observabilidad](docs/evidence/tdd/OPS-OBS-03.md) · [Prueba de tokens y costo](docs/evidence/tdd/OPS-TOKENS-01.md).
+
+## Arranque rápido con Docker Compose
+
+Desde la raíz del repositorio, con Docker Desktop o Docker Engine, Compose, Python 3.12 y `uv`:
+
+```powershell
+uv sync --frozen
+if (-not (Test-Path .env)) { Copy-Item .env.example .env }
+uv run agro-rag download data/manifest.json
+```
+
+Definir `AGRO_READER_KEY` en `.env`. Los comandos de abajo permiten arrancar y explorar fuentes.
+Para la demo con respuestas verificadas, seguir el arranque completo con
+[Ollama u OpenAI](docs/run-containerized.md#grafana-local-para-la-demo).
+
+```powershell
+$compose = @('-f', 'compose.yaml', '-f', 'compose.dev.yaml', '-f', 'compose.observability.yaml')
+docker compose @compose --profile admin run --rm --build catalogue-admin
+docker compose @compose up --build --wait
+```
+
+Abrir [Streamlit](http://127.0.0.1:8501), [Grafana](http://127.0.0.1:3000/d/agrorag-local/agrorag-local)
+y [la documentación de la API](http://127.0.0.1:8000/docs). En Grafana, el tablero provisionado
+se llama **AgroRAG local**. Si el puerto 8000 está en uso, ejecutar
+`$env:AGRO_API_PORT = '18000'` antes de levantar el stack. Para detenerlo y conservar el catálogo,
+ejecutar `docker compose @compose stop`.
+
+**Prueba de la demo.** En Streamlit, elegir **Respuesta verificada** y preguntar
+«¿Qué recomienda INTA sobre mantener la humedad del suelo durante el crecimiento de la lechuga?».
+Abrir la cita y buscar la traza en Grafana. Repetir la consulta con los mismos filtros para ver
+el acierto de caché. Los paneles de tokens se actualizan con las llamadas de ambos agentes.
+Para calcular el costo, completar las dos tarifas del modelo en USD por millón de tokens.
+[Arranque y comprobaciones](docs/run-containerized.md#grafana-local-para-la-demo).
+
+Para usar Python en dos terminales, consultar [el arranque local](docs/run-local.md).
+
+## Evidencia del proyecto
+
 Benchmark histórico: 49 PASS y 11 FAIL de contenido/citas, con 60/60 estados correctos.
 E1/E2 y piloto E3 se ejecutaron sobre `dev`; BM25 sigue como default.
 La ingesta limpia conserva los 27 IDs del corpus histórico y valida los 60 casos congelados.
@@ -78,15 +118,15 @@ TDD obligatorio; ningún test no ejecutado se informa como aprobado. Las evaluac
 
 Ver [fuentes](docs/sources.md), [protocolo de evaluación](docs/evaluation.md) y [estado de validación](docs/validation.md).
 
-Informe técnico vigente: [PDF del 22/11/2026](output/pdf/agro-rag-report-2026-11-22.pdf) y
-[fuente versionada](docs/report.md). El PDF sin fecha conserva el cierre histórico de octubre.
-Presentación de nueve diapositivas: [PowerPoint editable](output/presentations/agro-rag-catedra.pptx),
-[PDF](output/pdf/agro-rag-catedra.pdf) y [notas de exposición](docs/presentation.md).
+El material de entrega V3 consta de un informe PDF de 15 páginas y una presentación editable
+de 18 diapositivas con su guion. Ver [control previo a la entrega](docs/demo.md#control-previo-a-la-entrega).
+Como antecedentes versionados se conservan el [informe del 22/11/2026](output/pdf/agro-rag-report-2026-11-22.pdf),
+la [fuente técnica](docs/report.md) y la [presentación de nueve diapositivas](output/presentations/agro-rag-catedra.pptx).
 Seguridad Garak: [informe legible](docs/evidence/garak/garak-d38814b4-human-report.md),
 [PDF](output/pdf/garak-d38814b4-human-report.pdf) y
 [libro de revisión DAN](docs/evidence/workbooks/garak-d38814b4-revision-humana-dan.xlsx).
-Exposición: [guion reproducible de 15 minutos](docs/demo.md). Verificación offline:
-`uv run agro-rag verify-delivery --root .`.
+Exposición: [guion reproducible de 15 minutos](docs/demo.md).
+Verificación offline del paquete base: `uv run agro-rag verify-delivery --root .`.
 Libros Excel originales de pruebas y revisión: [docs/evidence/workbooks](docs/evidence/workbooks/README.md).
 
 ## Ejecutar la base
@@ -98,10 +138,9 @@ uv run uvicorn agro_rag.bootstrap.app:create_app --factory --host 127.0.0.1 --po
 
 `GET /health/live` devuelve `{"status":"ok"}`. Pruebas: `uv run pytest --cov`.
 
-**OpenTelemetry para la demo.** La API puede exportar a consola una traza de cada consulta con
-recuperación, investigador y verificador. Está desactivado por defecto. Instalar con
-`uv sync --locked --extra tracing` y activar `AGRO_TRACING_ENABLED=true` antes de arrancar la API.
-La traza omite preguntas, pasajes, respuestas y credenciales.
+**Trazas sin Docker.** Instalar el extra con `uv sync --locked --extra tracing` y habilitar
+`AGRO_TRACING_ENABLED=true` para ver trazas en la consola de la API. El overlay de Compose
+habilita el envío por OTLP/HTTP a Grafana.
 [Instrucciones](docs/run-local.md#trazas-opcionales-para-la-demo-académica).
 
 Descargar e ingerir el corpus piloto: [docs/corpus.md](docs/corpus.md). La selección vigente contiene 27 fragmentos revisados de cinco fuentes institucionales; no equivale a una evaluación científica completa.
